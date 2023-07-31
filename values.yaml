@@ -2135,7 +2135,7 @@ dags:
     existingClaim:
     ## optional subpath for dag volume mount
     subPath: ~
-  gitSync1:
+  gitSync:
     enabled: true
 
     # git repo clone url
@@ -2191,7 +2191,6 @@ dags:
     wait: 5
     containerName: git-sync
     uid: 65533
-
 
     # When not set, the values defined in the global securityContext will be used
     securityContext: {}
