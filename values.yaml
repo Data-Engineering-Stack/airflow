@@ -391,7 +391,7 @@ fernetKey: ~
 fernetKeySecretName: ~
 
 # Flask secret key for Airflow Webserver: `[webserver] secret_key` in airflow.cfg
-webserverSecretKey: a7b6e1874d60ecbe815461838b1870b6
+webserverSecretKey: ~
 webserverSecretKeySecretName: ~
 
 # In order to use kerberos you need to create secret containing the keytab file
@@ -2136,7 +2136,7 @@ dags:
     ## optional subpath for dag volume mount
     subPath: ~
   gitSync:
-    enabled: false
+    enabled: true
 
     # git repo clone url
     # ssh example: git@github.com:apache/airflow.git
@@ -2144,7 +2144,7 @@ dags:
     repo: https://github.com/Amin-Siddique/airflow.git
     branch: main
     rev: HEAD
-    depth: 2
+    depth: 1
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
     # subpath within the repo where dags are located
@@ -2162,7 +2162,7 @@ dags:
     #     GIT_SYNC_PASSWORD: <base64_encoded_git_password>
     # and specify the name of the secret below
     #
-    credentialsSecret: AIRFLOW_USER-git-credentials
+    credentialsSecret: airflow-git-credentials
     #
     #
     # If you are using an ssh clone url, you can load
@@ -2176,7 +2176,7 @@ dags:
     #     # key needs to be gitSshKey
     #     gitSshKey: <base64_encoded_data>
     # and specify the name of the secret below
-    # sshKeySecret: airflow-ssh-secret
+    #sshKeySecret: airflow-git-credentials
     #
     # If you are using an ssh private key, you can additionally
     # specify the content of your known_hosts file, example:
@@ -2188,7 +2188,7 @@ dags:
     # interval between git sync attempts in seconds
     # high values are more likely to cause DAGs to become out of sync between different components
     # low values cause more traffic to the remote git repository
-    wait: 10
+    wait: 5
     containerName: git-sync
     uid: 65533
 

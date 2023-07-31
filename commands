@@ -1,5 +1,13 @@
+helm install airflow apache-airflow/airflow --namespace airflow --create-namespace  --debug
 helm show values apache-airflow/airflow > values.yaml
 
+kubectl apply -f secret.yaml -n airflow
+
+
 helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yaml --debug
+kubectl rollout restart deployment airflow-scheduler -n airflow
+kubectl rollout restart deployment airflow-webserver -n airflow
 
 helm delete airflow --namespace airflow
+
+kubectl port-forward svc/airflow-webserver 8081:8080 --namespace airflow
