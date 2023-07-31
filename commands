@@ -1,0 +1,5 @@
+helm show values apache-airflow/airflow > values.yaml
+
+helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yaml --debug
+
+helm delete airflow --namespace airflow
