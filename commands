@@ -1,10 +1,21 @@
-helm install airflow apache-airflow/airflow --namespace airflow --create-namespace  --debug
-helm show values apache-airflow/airflow > values.yaml
-
+#first create namespace where every resource related to airflow will belong:
+kubectl create namespace  airflow
+# apply the secret for gitSync:
 kubectl apply -f secret.yaml -n airflow
 
-
+# airflow helm:
+helm install airflow apache-airflow/airflow --namespace airflow --create-namespace  --debug
+helm show values apache-airflow/airflow > values.yaml
 helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yaml --debug
+
+# run traefik to run airflow UI on localhost
+helm upgrade --install traefik traefik/traefik -f values_ingress.yaml
+kubectl apply -f .\ingress_traefik.yaml
+
+#if not traefik then run locally:
+kubectl port-forward svc/airflow-webserver 8081:8080 --namespace airflow
+
+#restart container:
 kubectl rollout restart deployment airflow-scheduler -n airflow
 kubectl rollout restart deployment airflow-webserver -n airflow
 
@@ -12,4 +23,5 @@ helm delete airflow --namespace airflow
 
 kubectl create namespace airflow
 kubectl delete namespace airflow
-kubectl port-forward svc/airflow-webserver 8081:8080 --namespace airflow
+
+
