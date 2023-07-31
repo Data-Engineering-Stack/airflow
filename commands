@@ -10,4 +10,6 @@ kubectl rollout restart deployment airflow-webserver -n airflow
 
 helm delete airflow --namespace airflow
 
+kubectl create namespace airflow
+kubectl delete namespace airflow
 kubectl port-forward svc/airflow-webserver 8081:8080 --namespace airflow

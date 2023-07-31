@@ -387,11 +387,11 @@ data:
 
 # Fernet key settings
 # Note: fernetKey can only be set during install, not upgrade
-fernetKey: ~
+fernetKey: lYY_RebNDa1JiVgdLIYcIFh8CGFXKdjw99om-NCATN4=
 fernetKeySecretName: ~
 
 # Flask secret key for Airflow Webserver: `[webserver] secret_key` in airflow.cfg
-webserverSecretKey: ~
+webserverSecretKey: 8c40406c4811fb35fc3803eb910ef840
 webserverSecretKeySecretName: ~
 
 # In order to use kerberos you need to create secret containing the keytab file
@@ -2135,7 +2135,7 @@ dags:
     existingClaim:
     ## optional subpath for dag volume mount
     subPath: ~
-  gitSync:
+  gitSync1:
     enabled: true
 
     # git repo clone url
@@ -2191,6 +2191,7 @@ dags:
     wait: 5
     containerName: git-sync
     uid: 65533
+
 
     # When not set, the values defined in the global securityContext will be used
     securityContext: {}
