@@ -30,3 +30,8 @@ kubectl delete namespace airflow
 ##https://helm.sh/docs/helm/helm_get_manifest/
 helm show chart apache-airflow/airflow --version 1.10.0  > chart.yaml
 helm get manifest airflow -n airflow > manifest.yaml
+
+
+docker logout
+docker login
+docker push {username}/{imagename}:{versionNumber}

@@ -5,6 +5,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
     traefik.ingress.kubernetes.io/router.tls: "false"
+    ingress.kubernetes.io/rewrite-target: /
   namespace: airflow
 
 spec:
@@ -12,10 +13,10 @@ spec:
   - host: airflow.net #change it from here: C:\Windows\System32\drivers\etc
     http:
       paths:
-      - backend:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
           service:
             name: airflow-webserver
             port:
               number: 8080
-        path: /
-        pathType: ImplementationSpecific

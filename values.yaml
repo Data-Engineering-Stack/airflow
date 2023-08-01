@@ -48,10 +48,10 @@ securityContexts:
 airflowHome: /opt/airflow
 
 # Default airflow repository -- overridden by all the specific images below
-defaultAirflowRepository: apache/airflow
+defaultAirflowRepository: maxvan112/airflow-amin
 
 # Default airflow tag to deploy
-defaultAirflowTag: "2.6.2"
+defaultAirflowTag: "1.0"
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
@@ -1489,7 +1489,7 @@ dagProcessor:
 flower:
   # Enable flower.
   # If True, and using CeleryExecutor/CeleryKubernetesExecutor, will deploy flower app.
-  enabled: false
+  enabled: true
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -1548,8 +1548,8 @@ flower:
   secretName: ~
 
   # Else, if username and password are set, create secret from username and password
-  username: ~
-  password: ~
+  username: flower
+  password: flower
 
   service:
     type: ClusterIP
