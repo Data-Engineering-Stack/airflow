@@ -1489,7 +1489,7 @@ dagProcessor:
 flower:
   # Enable flower.
   # If True, and using CeleryExecutor/CeleryKubernetesExecutor, will deploy flower app.
-  enabled: true
+  enabled: false
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
