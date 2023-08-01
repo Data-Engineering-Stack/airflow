@@ -2146,7 +2146,7 @@ dags:
     rev: HEAD
     depth: 1
     # the number of consecutive failures allowed before aborting
-    maxFailures: 0
+    maxFailures: 1
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
     subPath: "code/dags"
@@ -2188,7 +2188,7 @@ dags:
     # interval between git sync attempts in seconds
     # high values are more likely to cause DAGs to become out of sync between different components
     # low values cause more traffic to the remote git repository
-    wait: 5
+    wait: 60
     containerName: git-sync
     uid: 65533
 
