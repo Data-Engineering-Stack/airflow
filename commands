@@ -1,16 +1,19 @@
 #first create namespace where every resource related to airflow will belong:
 kubectl create namespace  airflow
+
+## create secret & traefik before to avoid pod initiation issue: edit hostname: C:\Windows\System32\drivers\etc
 # apply the secret for gitSync:
 kubectl apply -f secret.yaml -n airflow
+# run traefik to run airflow UI on localhost
+helm upgrade --install traefik traefik/traefik -f values_ingress.yaml
+kubectl apply -f .\ingress_traefik.yaml
 
 # airflow helm:
 helm install airflow apache-airflow/airflow --namespace airflow --create-namespace  --debug
 helm show values apache-airflow/airflow > values.yaml
 helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yaml --debug
 
-# run traefik to run airflow UI on localhost
-helm upgrade --install traefik traefik/traefik -f values_ingress.yaml
-kubectl apply -f .\ingress_traefik.yaml
+
 
 #if not traefik then run locally:
 kubectl port-forward svc/airflow-webserver 8081:8080 --namespace airflow
@@ -24,4 +27,6 @@ helm delete airflow --namespace airflow
 kubectl create namespace airflow
 kubectl delete namespace airflow
 
-
+##https://helm.sh/docs/helm/helm_get_manifest/
+helm show chart apache-airflow/airflow --version 1.10.0  > chart.yaml
+helm get manifest airflow -n airflow > manifest.yaml

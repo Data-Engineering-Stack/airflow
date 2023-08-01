@@ -4,12 +4,12 @@ metadata:
   name: airflow-ingress
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-#    traefik.ingress.kubernetes.io/router.tls: "false"
+    traefik.ingress.kubernetes.io/router.tls: "false"
   namespace: airflow
 
 spec:
   rules:
-  - host: localhost
+  - host: airflow.net #change it from here: C:\Windows\System32\drivers\etc
     http:
       paths:
       - backend:
