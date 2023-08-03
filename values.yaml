@@ -459,7 +459,7 @@ kerberos:
 # Airflow Worker Config
 workers:
   # Number of airflow celery workers in StatefulSet
-  replicas: 1
+  replicas: 4
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
