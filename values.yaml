@@ -252,7 +252,7 @@ allowPodLaunching: true
 # Environment variables for all airflow containers
 env: 
   - name: AIRFLOW__WEBSERVER__NAVBAR_COLOR
-    value: "#CA94FF"
+    value: "#CDCBFF"
   - name: AIRFLOW__LOGGING__REMOTE__LOGGING
     value: "True"  
   - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
