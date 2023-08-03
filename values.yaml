@@ -250,9 +250,14 @@ executor: "KubernetesExecutor"
 allowPodLaunching: true
 
 # Environment variables for all airflow containers
-env: []
-# - name: ""
-#   value: ""
+env: 
+  - name: AIRFLOW__WEBSERVER__NAVBAR_COLOR
+    value: "#CA94FF"
+  - name: AIRFLOW__LOGGING__REMOTE__LOGGING
+    value: "True"  
+  - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
+    value: "/var/lib/k8s-pvs/airflow-logs"
+
 
 # Volumes for all airflow containers
 volumes: []
@@ -604,8 +609,14 @@ workers:
   #     - name: my-templated-extra-volume
   #       mountPath: "{{ .Values.my_custom_path }}"
   #       readOnly: true
-  extraVolumes: []
-  extraVolumeMounts: []
+  extraVolumes: 
+    - name: airflowlog
+      hostPath:
+        path: /var/lib/k8s-pvs/airflow-logs
+
+  extraVolumeMounts: 
+    - name: airflowlog
+      mountPath: /var/lib/k8s-pvs/airflow-logs
 
   # Select certain nodes for airflow worker pods.
   nodeSelector: {}
@@ -1252,7 +1263,7 @@ triggerer:
     container: {}
   persistence:
     # Enable persistent volumes
-    enabled: true
+    enabled: false
     # Volume size for triggerer StatefulSet
     size: 100Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
@@ -2222,7 +2233,7 @@ dags:
 logs:
   persistence:
     # Enable persistent volume for storing logs
-    enabled: false
+    enabled: true
     # Volume size for logs
     size: 100Gi
     # Annotations for the logs PVC
@@ -2231,4 +2242,3 @@ logs:
     storageClassName:
     ## the name of an existing PVC to use
     existingClaim:
-

@@ -40,3 +40,5 @@ docker push {username}/{imagename}:{versionNumber}
 ## get .kubeconfig file:
 kubectl config view --minify --flatten
 kubectl config use-context docker-desktop  #set context
+
+kubectl delete all --all
