@@ -47,3 +47,12 @@ kubectl config use-context docker-desktop  #set context
 kubectl delete all --all
 
 kubectl get pv
+
+
+
+helm install spark bitnami/spark --namespace spark --create-namespace  --debug
+
+
+###### SPARK:
+helm install spark oci://registry-1.docker.io/bitnamicharts/spark --namespace spark --create-namespace  -f spark_values.yaml --debug
+helm delete spark -n spark

@@ -255,6 +255,14 @@ env:
     value: "#CDCBFF"
   - name: AIRFLOW__LOGGING__REMOTE__LOGGING
     value: "True"  
+  - name: JAVA_HOME
+    value: "/usr"  
+  - name: SPARK_HOME
+    value: "/home/airflow/.local/lib/python3.7/site-packages/pyspark"
+  - name: PYSPARK_PYTHON
+    value: "python=3.7"
+  - name: PYTHONPATH
+    value: "/opt/airflow/dags/repo/"
   # - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
   #   value: "/var/lib/k8s-pvs/airflow-logs"
 
