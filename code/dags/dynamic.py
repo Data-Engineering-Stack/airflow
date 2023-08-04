@@ -4,7 +4,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import  PythonOperator
-)
+
 
 
 with DAG(dag_id="example_dynamic_task_mapping", start_date=datetime(2022, 3, 4),catchup=False) as dag:
