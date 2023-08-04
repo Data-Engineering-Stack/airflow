@@ -5,6 +5,8 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import  PythonOperator
 
+def dum(x):
+    print(f"hi, the number is {x}")
 
 
 with DAG(dag_id="example_dynamic_task_mapping", start_date=datetime(2022, 3, 4),catchup=False) as dag:
@@ -24,7 +26,7 @@ with DAG(dag_id="example_dynamic_task_mapping", start_date=datetime(2022, 3, 4),
     
     python_test = PythonOperator.partial(
             task_id="python_test_task",
-            python_callable=lambda: print(f'Hi {x} from python operator'),
+            python_callable=dum,
         ).expand_kwargs([{'x':1}, {'x':2}, {'x':3}])
 
 python_test
