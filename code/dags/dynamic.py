@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import  PythonOperator
 
-def dum(x, **kwargs):
+def dum(x):
     print(f"hi, the number is {x}")
 
 
@@ -28,5 +28,5 @@ with DAG(dag_id="example_dynamic_task_mapping", start_date=datetime(2022, 3, 4),
             task_id="python_test_task",
             python_callable=dum,
         ).expand(op_kwargs=[{'x':'1'}, {'x':'2'}, {'x':'3'}])
-
+##.expand(op_kwargs=XComArg(some_previous_task, key='return_value'))
 python_test
