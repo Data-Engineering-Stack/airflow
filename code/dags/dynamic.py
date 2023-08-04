@@ -6,12 +6,12 @@ from airflow.decorators import task
 from airflow.operators.python import  PythonOperator
 import random
 
-d={}
 kwargs=[]
 for i in range(5):
-    d['filename']=str(i)
-    d['tablename']=str(i+10)
-    kwargs.append(d)
+    dta = dict()
+    dta['filename']=str(i)
+    dta['tablename']=str(i+10)
+    kwargs.append(dta)
 
 
 def dum(filename,tablename,**kwargs):
