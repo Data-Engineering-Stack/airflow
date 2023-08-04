@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.python import  PythonOperator
 
-def dum(x):
+def dum(x, **kwargs):
     print(f"hi, the number is {x}")
 
 
