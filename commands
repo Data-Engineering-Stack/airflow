@@ -8,6 +8,9 @@ kubectl apply -f secret.yaml -n airflow
 helm upgrade --install traefik traefik/traefik -f values_ingress.yaml
 kubectl apply -f .\ingress_traefik.yaml
 
+#apply persistent volume to store logs locally \\wsl.localhost\docker-desktop-data\data\k8s-pvs\airflow-pv1
+kubectl apply -f .\PV.yaml  
+
 # airflow helm:
 helm install airflow apache-airflow/airflow --namespace airflow --create-namespace  --debug
 helm show values apache-airflow/airflow > values.yaml

@@ -255,8 +255,8 @@ env:
     value: "#CDCBFF"
   - name: AIRFLOW__LOGGING__REMOTE__LOGGING
     value: "True"  
-  - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
-    value: "/var/lib/k8s-pvs/airflow-logs"
+  # - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
+  #   value: "/var/lib/k8s-pvs/airflow-logs"
 
 
 # Volumes for all airflow containers
@@ -610,13 +610,10 @@ workers:
   #       mountPath: "{{ .Values.my_custom_path }}"
   #       readOnly: true
   extraVolumes: 
-    - name: airflowlog
-      hostPath:
-        path: /var/lib/k8s-pvs/airflow-logs
+
 
   extraVolumeMounts: 
-    - name: airflowlog
-      mountPath: /var/lib/k8s-pvs/airflow-logs
+
 
   # Select certain nodes for airflow worker pods.
   nodeSelector: {}
@@ -2239,6 +2236,6 @@ logs:
     # Annotations for the logs PVC
     annotations: {}
     # If using a custom storageClass, pass name here
-    storageClassName:
+    storageClassName: local-storage
     ## the name of an existing PVC to use
-    existingClaim:
+    existingClaim: airflow-pvc1
