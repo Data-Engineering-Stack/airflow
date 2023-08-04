@@ -28,4 +28,5 @@ with DAG(dag_id="example_dynamic_task_mapping", start_date=datetime(2022, 3, 4),
             task_id="python_test_task",
             python_callable=lambda: print(f'Hi {x}, from python operator'),
         ).expand_kwargs([{'x':1}, {'x':2}, {'x':3}])
-    x
+        
+    x()
