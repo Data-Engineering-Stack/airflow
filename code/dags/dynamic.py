@@ -9,8 +9,8 @@ import random
 d={}
 kwargs=[]
 for i in range(5):
-    d['filename']=i
-    d['tablename']=i+10
+    d['filename']=str(i)
+    d['tablename']=str(i+10)
     kwargs.append(d)
 
 
