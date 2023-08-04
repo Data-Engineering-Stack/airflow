@@ -14,7 +14,8 @@ for i in range(5):
     kwargs.append(d)
 
 
-def dum(filename,tablename):
+def dum(filename,tablename,**kwargs):
+    print(kwargs)
     print(f"hi, the filename is {filename} and tablename is {tablename}")
 
 
