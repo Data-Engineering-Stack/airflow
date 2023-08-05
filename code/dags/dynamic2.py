@@ -37,14 +37,14 @@ with DAG(dag_id="test_expand",
     @task
     def generate_args(init,tableschema):
         context = get_current_context()
-        print(context)
+        print(f'printing the context: {context}')
         config = context['dag_run'].conf
         list_kwargs = []
 
         op_kwargs={}
         op_kwargs['init'] = init
         op_kwargs['file_name'] = config['filename']
-        op_kwargs['tablename'] = config['tablename']
+        op_kwargs['tablename'] = config['target_table']
         op_kwargs['tableschema'] = tableschema
         list_kwargs.append(op_kwargs)
         print(list_kwargs)
