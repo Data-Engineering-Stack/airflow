@@ -56,6 +56,7 @@ with DAG(dag_id="test_expand",
     python_test = PythonOperator.partial(
             task_id="python_test_task",
             python_callable=ops,
+            do_xcom_push=False
         ).expand(op_kwargs=op_kwargs)
 
 op_kwargs >> python_test
