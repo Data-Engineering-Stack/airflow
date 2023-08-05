@@ -10,7 +10,7 @@ from airflow.models.param import Param
 
 tableschema= 'ABCD'
 filename = "{{ params.filename }}"
-filename = "{{ params.target_table }}"
+tablename = "{{ params.target_table }}"
 
 
 init = {
@@ -21,7 +21,7 @@ init = {
 }
 
 def ops(init,file_name,tablename,tableschema,**kwargs):
-    print(f"{init}, the filename is {filename} and tablename is {tableschema}.{tablename}")
+    print(f"{init}, the filename is {file_name} and tablename is {tableschema}.{tablename}")
 
 
 with DAG(dag_id="test_expand", 
@@ -47,13 +47,15 @@ with DAG(dag_id="test_expand",
         op_kwargs['tablename'] = config['tablename']
         op_kwargs['tableschema'] = tableschema
         list_kwargs.append(op_kwargs)
+        print(list_kwargs)
         return op_kwargs
 
     op_kwargs = generate_args(init,tableschema)
+
 
     python_test = PythonOperator.partial(
             task_id="python_test_task",
             python_callable=ops,
         ).expand(op_kwargs=op_kwargs)
 
-python_test
+op_kwargs >> python_test
