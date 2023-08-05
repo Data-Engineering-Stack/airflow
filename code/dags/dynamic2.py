@@ -20,8 +20,8 @@ init = {
 
 }
 
-def ops(env,file_name,tablename,tableschema):
-    print(f"{env}, the filename is {file_name} and tablename is {tableschema}.{tablename}")
+def ops(init,file_name,tablename,tableschema):
+    print(f"{init}, the filename is {file_name} and tablename is {tableschema}.{tablename}")
 
 
 with DAG(dag_id="test_expand", 
@@ -42,7 +42,7 @@ with DAG(dag_id="test_expand",
         list_kwargs = []
 
         op_kwargs={}
-        op_kwargs['env'] = init['env']
+        op_kwargs['init'] = init
         op_kwargs['file_name'] = config['filename']
         op_kwargs['tablename'] = config['target_table']
         op_kwargs['tableschema'] = tableschema
