@@ -48,7 +48,7 @@ with DAG(dag_id="test_expand",
         op_kwargs['tableschema'] = tableschema
         list_kwargs.append(op_kwargs)
         print(list_kwargs)
-        return op_kwargs
+        return list_kwargs
 
     op_kwargs = generate_args(init,tableschema)
 
