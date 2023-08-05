@@ -20,7 +20,7 @@ init = {
 
 }
 
-def ops(env,file_name,tablename,tableschema,**kwargs):
+def ops(env,file_name,tablename,tableschema):
     print(f"{env}, the filename is {file_name} and tablename is {tableschema}.{tablename}")
 
 
