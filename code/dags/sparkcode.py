@@ -10,7 +10,6 @@ spark = SparkSession \
     .appName("testSparkJob") \
     .getOrCreate()
 
-spark.sparkcontext.setLogLevel("ERROR")
 
 data2 = [("James","","Smith","36636","M",3000),
     ("Michael","Rose","","40288","M",4000),
