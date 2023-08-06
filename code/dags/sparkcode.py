@@ -9,7 +9,6 @@ sc = SparkContext("local","testsc")
 
 spark = SparkSession \
     .builder \
-    .master("spark://spark-master-0.spark-headless.spark.svc.cluster.local:7077") \
     .appName("testSparkJob") \
     .getOrCreate()
 
