@@ -9,8 +9,8 @@ def get_executor_config():
             metadata=k8s.V1ObjectMeta(
             labels={ "spark" : "driver"}
             )
-        ),
-        spec = k8s.V1PodSpec(
+        ,
+        spec=k8s.V1PodSpec(
         set_hostname_as_fqdn=True,
         containers=[
             k8s.V1Container(
@@ -30,6 +30,7 @@ def get_executor_config():
             )
         ],
     ),
+    )
 }
     return executor_config
 
