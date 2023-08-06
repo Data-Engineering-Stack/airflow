@@ -5,7 +5,7 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 app = 'spark.py'
 
 
-with DAG('spark_job',schedule=None,sstart_date=datetime(2022, 3, 4),catchup=False) as dag:
+with DAG('spark_job',schedule=None,start_date=datetime(2022, 3, 4),catchup=False) as dag:
 
 
     SparkSubmitOperator_task = SparkSubmitOperator(
