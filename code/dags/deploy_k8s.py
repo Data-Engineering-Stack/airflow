@@ -25,7 +25,7 @@ def get_executor_config():
                     k8s.V1EnvVar(name="SPARK_HOME",
                                  value="/home/airflow/.local/lib/python3.8/site-packages/pyspark"
                                  ),
-                    k8s.V1EnvVar(name="PYSPARK_DRIVER_PYTHON",value=sys.executable)
+                    k8s.V1EnvVar(name="PYSPARK_DRIVER_PYTHON",value=sys.executable),
                 ],
             )
         ],
