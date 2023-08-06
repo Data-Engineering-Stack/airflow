@@ -12,7 +12,12 @@ with DAG('spark_job',schedule=None,start_date=datetime(2022, 3, 4),catchup=False
     task_id='SparkSubmitOperator_task',
     application=app,
     conf=None,
-    conn_id='spark_conn'
+    conn_id='spark_conn',
+    verbose=True,
+    name='testspark'
     )
+
+
+
 
 SparkSubmitOperator_task
