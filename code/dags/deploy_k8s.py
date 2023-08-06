@@ -21,7 +21,7 @@ def get_executor_config():
                 + [k8s.V1ContainerPort(container_port=port) for port in range(42000,42049)],
                 env=[
                     k8s.V1EnvVar(name="JAVA_HOME",
-                                 value="usr/lib/jvm/java-11-openjdk-amd64/"
+                                 value="/usr/lib/jvm/java-11-openjdk-amd64/"
                                  ),
                     k8s.V1EnvVar(name="SPARK_HOME",
                                  value="/home/airflow/.local/lib/python3.10/site-packages/pyspark"
