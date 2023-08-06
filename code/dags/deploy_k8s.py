@@ -3,6 +3,7 @@ import sys
 from airflow.models import Variable
 
 
+#https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/executor/kubernetes.html
 def get_executor_config():
     executor_config = {
         "pod_override": k8s.V1Pod(
@@ -15,7 +16,7 @@ def get_executor_config():
         containers=[
             k8s.V1Container(
                 name="base",
-                image="maxvan112/airflow-amin",
+                image="maxvan112/airflow-amin:1.2",
                 ports=[k8s.V1ContainerPort(container_port=4040),k8s.V1ContainerPort(container_port=7337)]
                 + [k8s.V1ContainerPort(container_port=port) for port in range(42000,42049)],
                 env=[
