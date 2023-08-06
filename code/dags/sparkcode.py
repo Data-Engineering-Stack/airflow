@@ -7,6 +7,7 @@ sc = SparkContext("local","testsc")
 
 spark = SparkSession \
     .builder \
+    .master("http://localhost:8081/") \
     .appName("testSparkJob") \
     .getOrCreate()
 
