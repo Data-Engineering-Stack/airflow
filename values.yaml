@@ -256,11 +256,11 @@ env:
   - name: AIRFLOW__LOGGING__REMOTE__LOGGING
     value: "True"  
   - name: JAVA_HOME
-    value: "/usr"  
+    value: "/usr/lib/jvm/java-11-openjdk-amd64/"  
   - name: SPARK_HOME
-    value: "/home/airflow/.local/lib/python3.7/site-packages/pyspark"
-  - name: PYSPARK_PYTHON
-    value: "python=3.7"
+    value: "/home/airflow/.local/lib/python3.10/site-packages/pyspark"
+  # - name: PYSPARK_PYTHON
+  #   value: "python=3.10"
   - name: PYTHONPATH
     value: "/opt/airflow/dags/repo/"
   # - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
