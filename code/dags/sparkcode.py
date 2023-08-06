@@ -1,7 +1,9 @@
 from pyspark.sql.session import SparkSession
 from pyspark import SparkContext
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+import findspark
 
+findspark.init()
 
 sc = SparkContext("local","testsc")
 
