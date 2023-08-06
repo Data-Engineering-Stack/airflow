@@ -29,9 +29,8 @@ def get_executor_config():
                 ],
             )
         ],
-        ),
-        
-    }
+    ),
+}
     return executor_config
 
 executor_config = get_executor_config()
