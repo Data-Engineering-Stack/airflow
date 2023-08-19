@@ -1,4 +1,4 @@
-FROM apache/airflow:2.6.3-python3.10
+FROM apache/airflow:2.7.0-python3.10
 
 USER root
 COPY ./r.txt /opt/airflow
