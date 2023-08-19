@@ -29,7 +29,7 @@ with DAG(
     # Add our method as a SLA callback
     sla_miss_callback=print_sla_miss,
     # A common interval to make the job fire when we run it
-    schedule_interval=timedelta(hours=1),
+    schedule_interval='30 11 * * *',
     catchup=False
 ) as dag:
 
