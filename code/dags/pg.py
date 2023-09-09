@@ -59,9 +59,11 @@ def my_task(query):
     hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     df = hook.get_pandas_df(sql=query)
     df_html = df.to_html(index=False)
-    html_body = "Please find the below dags:\n\n"
+    html_body = "Please find the below result:\n"
     memory_file.write(html_body)
     memory_file.write(df_html)
+    html_extra = "\nRegards,\nAirflow-bot :)Have a great day!\n"
+    memory_file.write(html_extra)
     memory_file_contents = memory_file.getvalue()
     send_email(f'Monitor/Prod: [dag statistics] - {now}',memory_file_contents)
     memory_file.close()
