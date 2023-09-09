@@ -5,7 +5,9 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator
 from airflow.operators.email_operator import EmailOperator
 from airflow.operators.python import get_current_context
+import io
 
+memory_file = io.StringIO()
 postgres_conn_id='internal_postgres'
 
 init = {
@@ -33,28 +35,37 @@ default_args={
     # 'trigger_rule': 'all_success'
 }
 
-# Define the SQL query you want to execute
-sql_query = """
- select * from dag_run limit 1;
-"""
-
-def my_task():
-    hook = PostgresHook(postgres_conn_id=postgres_conn_id)
-    df = hook.get_pandas_df(sql=sql_query)
-    df_html = df.to_html(index=False)
-
-    html_content = f""" Please find the below dags:\n\n{df_html}"""
+def send_email(subject,html):
     email_task = EmailOperator(
     task_id='send_email_task',
     to=init['notification_emails'],  # Replace with the recipient's email address
-    subject='DataFrame Table in Email',
-    html_content=html_content,  # HTML content with the DataFrame table
+    subject=subject,
+    html_content=html,  # HTML content with the DataFrame table
     )
 
     email_task.execute(get_current_context())
 
-    return True
+# Define the SQL query you want to execute
+query1 = """
+ select * from dag_run limit 1;
+"""
+query2 = """
+ select * from task_instance limit 1;
+"""
 
+def my_task(query):
+    from datetime import datetime
+    now = datetime.today()
+    hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+    df = hook.get_pandas_df(sql=query)
+    df_html = df.to_html(index=False)
+    html_body = "Please find the below dags:\n\n"
+    memory_file.write(html_body)
+    memory_file.write(df_html)
+    memory_file_contents = memory_file.getvalue()
+    send_email(f'Monitor/Prod: [dag statistics] - {now}',memory_file_contents)
+    memory_file.close()
+    return True
 
 
 # Define your Airflow DAG
@@ -68,13 +79,12 @@ with DAG(
 ) as dag:
 
 
-    run_this = PythonOperator(
+    query1 = PythonOperator(
         task_id='postgres_task',
         python_callable=my_task,
+        op_args = [query1]
     )
 
 
-
-
-run_this
+query1
 
