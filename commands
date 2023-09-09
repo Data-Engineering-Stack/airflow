@@ -27,7 +27,7 @@ kubectl rollout restart deployment airflow-scheduler -n airflow
 kubectl rollout restart deployment airflow-webserver -n airflow
 
 helm delete airflow --namespace airflow
-
+delete  pvc airflow-pvc #delete pvc before pv
 kubectl create namespace airflow
 kubectl delete namespace airflow
 
