@@ -5,13 +5,14 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator
 from airflow.operators.email_operator import EmailOperator
 from airflow.operators.python import get_current_context
+from airflow.models import Variable
 import io
 
 memory_file = io.StringIO()
 postgres_conn_id='internal_postgres'
 
 init = {
-    'notification_emails' : 'aminsiddique95@gmail.com'
+    'notification_emails' : str(Variable.get("notification_emails"))
 }
 
 default_args={
