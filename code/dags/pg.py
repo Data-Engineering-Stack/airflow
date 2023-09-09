@@ -57,16 +57,12 @@ query2 = """
 def my_task(query):
     from datetime import datetime
     now = datetime.today()
-    hook = PostgresHook(postgres_conn_id=postgres_conn_id)
-    df = hook.get_pandas_df(sql=query)
-    df_html = df.to_html(index=False)
+    db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+    df_html = db_hook.get_pandas_df(sql=query).to_html(index=False)
     html_body = "Please find the below result:<br><br>"
-    memory_file.write(html_body)
-    memory_file.write(df_html)
-    html_extra = "<br>Regards,<br>Airflow-bot :)<br>Have a great day!<br>"
-    memory_file.write(html_extra)
-    memory_file_contents = memory_file.getvalue()
-    send_email(f'Monitor/Prod: [dag statistics] - {now}',memory_file_contents)
+    html_end = "<br>Regards,<br>Airflow-bot :)<br>Have a great day!<br>"
+    memory_file.write(html_body + df_html + html_end)
+    send_email(f'Monitor/Prod: [dag statistics] - {now}',memory_file.getvalue())
     memory_file.close()
     return True
 
