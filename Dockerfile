@@ -1,4 +1,4 @@
-FROM apache/airflow:2.7.0-python3.10
+FROM apache/airflow:2.7.1-python3.10
 
 USER root
 COPY ./r.txt /opt/airflow
@@ -14,6 +14,9 @@ RUN apt update && \
     apt-get install -y ant && \
     apt-get clean;
 
+RUN apt-get install -y git
+RUN apt-get install -y vim
+
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 RUN export JAVA_HOME
 
@@ -26,7 +29,7 @@ RUN pip install --no-cache-dir \
     apache-airflow-providers-postgres==5.5.0 \
     findspark==2.0.1 \
     pyspark==3.2.1 \
-    pynessie==0.48.2 
+    pynessie==0.48.2 \
 
 
 
