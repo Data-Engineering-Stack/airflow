@@ -44,7 +44,7 @@ def get_previous_run_task_status(dag_id, task_id):
     prev_dag_run = DagRun.find(
         dag_id=dag_id,
         state="success",
-        execution_date=DagRun.get_last_dagrun(dag_id).execution_date,
+        execution_date=DagRun.get_previous_dagrun(dag_id).execution_date,
         include_subdags=False,
     )
 
@@ -54,7 +54,8 @@ def get_previous_run_task_status(dag_id, task_id):
             task=task_id,
             execution_date=prev_dag_run.execution_date,
         )
-
+        print(prev_task_instance)
+        print(f"end_Date: {prev_task_instance.end_date}")
         # Get the status of the task in the previous DagRun
         task_status = prev_task_instance.current_state()
         print(f"task_Status_amin: {task_status}")
