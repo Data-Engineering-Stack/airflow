@@ -41,14 +41,14 @@ default_args={
 
 
 
-def get_prev_state(task_id,context):
-    ti = context['task_instance']
-    print(ti.dag_id)
+def get_prev_state(task_id,**kwargs):
+    dag_run = kwargs['dag_run']
+    print(dag_run.dag_id)
     sql = f""" select 
     case when lower(state)='success' then end_date at TIME zone 'CEST' else Start_Date at time zone 'CEST' end as prev_ti_end_date
-    from task_instance where task_id='{task_id}' and  dag_id='{ti.dag_id}' and state != 'running'
+    from task_instance where task_id='{task_id}' and  dag_id='{dag_run.dag_id}' and state != 'running'
     and run_id != (select max(run_id) from task_instance where task_id='{task_id}'
-    and  dag_id='{ti.dag_id}')     order by run_id desc limit 1 """
+    and  dag_id='{dag_run.dag_id}')     order by run_id desc limit 1 """
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
     print(res)
