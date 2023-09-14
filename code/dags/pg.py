@@ -7,6 +7,8 @@ from airflow.operators.email_operator import EmailOperator
 from airflow.operators.python import get_current_context
 from airflow.models import Variable
 import io
+from airflow.operators.bash import BashOperator
+
 
 memory_file = io.StringIO()
 postgres_conn_id='internal_postgres'
@@ -38,36 +40,19 @@ default_args={
 
 
 
-def get_previous_run_task_status(dag_id, task_id):
-    from airflow.models import DagRun, TaskInstance
-    # Find the previous DagRun
-    prev_dag_run = DagRun.find(
-        dag_id=dag_id,
-        state="success",
-        execution_date=DagRun.get_previous_dagrun(dag_id).execution_date,
-        include_subdags=False,
-    )
 
-    if prev_dag_run:
-        # Find the TaskInstance for the specified task in the previous DagRun
-        prev_task_instance = TaskInstance(
-            task=task_id,
-            execution_date=prev_dag_run.execution_date,
-        )
-        print(prev_task_instance)
-        print(f"end_Date: {prev_task_instance.end_date}")
-        # Get the status of the task in the previous DagRun
-        task_status = prev_task_instance.current_state()
-        print(f"task_Status_amin: {task_status}")
-        return task_status
-    else:
-        return None
-
-def print_previous_task_status(**kwargs):
-    task_id = 'postgres_task'  # Replace with your actual task ID
-    previous_task_status = get_previous_run_task_status(kwargs['dag'].dag_id, task_id)
-    print(f"Previous Run Task Status for Task {task_id}: {previous_task_status}")
-
+def get_prev_state(task_id,**kwargs):
+    dag_id = kwargs['dag'].dag_id
+    print(dag_id)
+    sql = f""" select 
+    case when lower(state)='success' then end_date at TIME zone 'CEST' else Start_Date at time zone 'CEST' end as prev_ti_end_date
+    from task_instance where task_id='{task_id}' and  dag_id='{dag_id}' and state != 'running'
+    and run_id != (select max(run_id) from task_instance where task_id='{task_id}'
+    and  dag_id='{dag_id}')     order by run_id desc limit 1 """
+    db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+    res = db_hook.get_records(sql)
+    print(res)
+    return res
 
 def send_email(subject,html):
     email_task = EmailOperator(
@@ -107,9 +92,19 @@ with DAG(
     start_date=datetime(2023, 9, 9),  
     schedule_interval=None, 
     default_args=default_args,
-    catchup=False  # Set to False if you don't want to backfill
+    catchup=False,  # Set to False if you don't want to backfill
+    user_defined_macros={"my_macro":get_prev_state}
 ) as dag:
 
+    state = "'{{ get_prev_state(postgres_task) }}'"
+
+    bash_task = BashOperator(
+        task_id="bash_task",
+        bash_command=f'echo "{state}"',
+        # env: Optional[Dict[str, str]] = None,
+        # output_encoding: str = 'utf-8',
+        # skip_exit_code: int = 99,
+    )
 
     query1 = PythonOperator(
         task_id='postgres_task',
@@ -117,13 +112,12 @@ with DAG(
         op_args = [query1]
     )
 
-    task1 = PythonOperator(
-        task_id='task1',
-        python_callable=print_previous_task_status,
-        provide_context=True,
-        dag=dag,
+    postgres_task = PythonOperator(
+        task_id='postgres_task',
+        python_callable=get_prev_state,
+        op_args = ['postgres_task']
     )
 
 query1
-task1
+
 
