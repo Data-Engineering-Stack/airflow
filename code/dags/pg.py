@@ -113,11 +113,14 @@ with DAG(
     )
 
     postgres_task = PythonOperator(
-        task_id='postgres_task',
+        task_id='get_prev_state',
         python_callable=get_prev_state,
         op_args = ['postgres_task']
     )
 
 query1
+postgres_task
+bash_task
+
 
 
