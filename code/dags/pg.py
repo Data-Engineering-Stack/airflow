@@ -36,6 +36,38 @@ default_args={
     # 'trigger_rule': 'all_success'
 }
 
+
+
+def get_previous_run_task_status(dag_id, task_id):
+    from airflow.models import DagRun, TaskInstance
+    # Find the previous DagRun
+    prev_dag_run = DagRun.find(
+        dag_id=dag_id,
+        state="success",
+        execution_date=DagRun.get_last_dagrun(dag_id).execution_date,
+        include_subdags=False,
+    )
+
+    if prev_dag_run:
+        # Find the TaskInstance for the specified task in the previous DagRun
+        prev_task_instance = TaskInstance(
+            task=task_id,
+            execution_date=prev_dag_run.execution_date,
+        )
+
+        # Get the status of the task in the previous DagRun
+        task_status = prev_task_instance.current_state()
+        print(f"task_Status_amin: {task_status}")
+        return task_status
+    else:
+        return None
+
+def print_previous_task_status(**kwargs):
+    task_id = 'postgres_task'  # Replace with your actual task ID
+    previous_task_status = get_previous_run_task_status(kwargs['dag'].dag_id, task_id)
+    print(f"Previous Run Task Status for Task {task_id}: {previous_task_status}")
+
+
 def send_email(subject,html):
     email_task = EmailOperator(
     task_id='send_email_task',
@@ -84,6 +116,13 @@ with DAG(
         op_args = [query1]
     )
 
+    task1 = PythonOperator(
+        task_id='task1',
+        python_callable=print_previous_task_status,
+        provide_context=True,
+        dag=dag,
+    )
 
 query1
+task1
 
