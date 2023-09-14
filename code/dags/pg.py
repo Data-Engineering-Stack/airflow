@@ -41,8 +41,8 @@ default_args={
 
 
 
-def get_prev_state(task_id,**kwargs):
-    ti = kwargs['task_instance']
+def get_prev_state(task_id,context):
+    ti = context['task_instance']
     print(ti.dag_id)
     sql = f""" select 
     case when lower(state)='success' then end_date at TIME zone 'CEST' else Start_Date at time zone 'CEST' end as prev_ti_end_date
