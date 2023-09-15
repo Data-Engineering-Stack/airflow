@@ -104,7 +104,7 @@ def my_task(query):
 with DAG(
     'query_postgres_table',
     start_date=datetime(2023, 9, 9),  
-    schedule_interval=None, 
+    schedule_interval='@continuous', 
     default_args=default_args,
     catchup=False,  # Set to False if you don't want to backfill
     user_defined_macros={"my_macro":get_prev_state}
@@ -117,17 +117,18 @@ with DAG(
         bash_command=f'find . type -f iname "x.*" -newermt "{state}" -mmin+1 | grep .',
         poke_interval=10,
         timeout = 60,
-        mode= "poke"
+        mode= "poke",
+        soft_fail=True
         # env: Optional[Dict[str, str]] = None,
         # output_encoding: str = 'utf-8',
         # skip_exit_code: int = 99,
     )
 
-    query1 = PythonOperator(
-        task_id='postgres_task',
-        python_callable=my_task,
-        op_args = [query1]
-    )
+    # query1 = PythonOperator(
+    #     task_id='postgres_task',
+    #     python_callable=my_task,
+    #     op_args = [query1]
+    # )
 
     # postgres_task = PythonOperator(
     #     task_id='get_prev_state',
@@ -135,7 +136,7 @@ with DAG(
     #     op_args = ['postgres_task']
     # )
 
-query1
+# query1
 # postgres_task
 bash_task
 
