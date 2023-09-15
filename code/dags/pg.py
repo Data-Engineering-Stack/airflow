@@ -48,6 +48,7 @@ def get_prev_state(dag,task_id):
     # ti = context["ti"]
     # print(ti.dag_id)
     sql = f""" select TO_CHAR(prev_ti_end_date, 'YYYY-MM-DD HH24:MI:SS.MS') from (
+    select 
     case when lower(state)='success' then end_date at TIME zone 'CEST' else Start_Date at time zone 'CEST' end as prev_ti_end_date
     from task_instance where task_id='{task_id}' and  dag_id='{dag.dag_id}' and state != 'running'
     and run_id != (select max(run_id) from task_instance where task_id='{task_id}'
