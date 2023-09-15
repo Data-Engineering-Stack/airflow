@@ -111,7 +111,7 @@ with DAG(
     user_defined_macros={"my_macro":get_prev_state}
 ) as dag:
 
-    state = "'{{ my_macro(dag,'postgres_task') }}'"
+    state = "'{{ my_macro(dag,'bash_task') }}'"
 
     bash_task = BashSensor(
         task_id="bash_task",
