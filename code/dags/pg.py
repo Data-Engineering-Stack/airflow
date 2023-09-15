@@ -7,7 +7,7 @@ from airflow.operators.email_operator import EmailOperator
 from airflow.operators.python import get_current_context
 from airflow.models import Variable
 import io
-from airflow.operators.bash import BashOperator
+from airflow.operators.bash import BashOperator,BashSensor
 
 
 memory_file = io.StringIO()
@@ -41,16 +41,16 @@ default_args={
 
 from airflow.operators.python import get_current_context
 
-def get_prev_state(task_id,**kwargs):
-    
-    context = get_current_context()
-    ti = context["ti"]
-    print(ti.dag_id)
+def get_prev_state(dag,task_id):
+    print(dag)
+    # context = get_current_context()
+    # ti = context["ti"]
+    # print(ti.dag_id)
     sql = f""" select 
     case when lower(state)='success' then end_date at TIME zone 'CEST' else Start_Date at time zone 'CEST' end as prev_ti_end_date
-    from task_instance where task_id='{task_id}' and  dag_id='{ti.dag_id}' and state != 'running'
+    from task_instance where task_id='{task_id}' and  dag_id='{dag.dag_id}' and state != 'running'
     and run_id != (select max(run_id) from task_instance where task_id='{task_id}'
-    and  dag_id='{ti.dag_id}')     order by run_id desc limit 1 """
+    and  dag_id='{dag.dag_id}')     order by run_id desc limit 1 """
 
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
@@ -101,11 +101,14 @@ with DAG(
     user_defined_macros={"my_macro":get_prev_state}
 ) as dag:
 
-    state = "'{{ my_macro('postgres_task') }}'"
+    state = "'{{ my_macro(dag,'postgres_task') }}'"
 
-    bash_task = BashOperator(
+    bash_task = BashSensor(
         task_id="bash_task",
-        bash_command=f'echo "{state}"',
+        bash_command=f'find . type -f iname "x.*" -newermt "{state}" -mmin+1 | grep .',
+        poke_interval=10,
+        timeout = 60,
+        mode= "poke"
         # env: Optional[Dict[str, str]] = None,
         # output_encoding: str = 'utf-8',
         # skip_exit_code: int = 99,
