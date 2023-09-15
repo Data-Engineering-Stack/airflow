@@ -7,7 +7,8 @@ from airflow.operators.email_operator import EmailOperator
 from airflow.operators.python import get_current_context
 from airflow.models import Variable
 import io
-from airflow.operators.bash import BashOperator,BashSensor
+from airflow.operators.bash import BashOperator
+from airflow.sensors.bash import BashSensor
 
 
 memory_file = io.StringIO()
