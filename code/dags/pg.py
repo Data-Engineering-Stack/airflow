@@ -47,18 +47,25 @@ def get_prev_state(dag,task_id):
     # context = get_current_context()
     # ti = context["ti"]
     # print(ti.dag_id)
-    sql = f""" select 
+    sql = f""" select TO_CHAR(prev_ti_end_date, 'YYYY-MM-DD HH24:MI:SS.MS') from (
     case when lower(state)='success' then end_date at TIME zone 'CEST' else Start_Date at time zone 'CEST' end as prev_ti_end_date
     from task_instance where task_id='{task_id}' and  dag_id='{dag.dag_id}' and state != 'running'
     and run_id != (select max(run_id) from task_instance where task_id='{task_id}'
-    and  dag_id='{dag.dag_id}')     order by run_id desc limit 1 """
-
+    and  dag_id='{dag.dag_id}')     order by run_id desc limit 1 ) q1 """
+    print(sql)
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+
     res = db_hook.get_records(sql)
-    if res is None:
+
+    for row in res:
+        formatted_timestamp = row[0]
+        print(formatted_timestamp)
+    
+
+    if formatted_timestamp is None:
         print('result is empty!!!!')
-    print(res)
-    return res
+
+    return formatted_timestamp
 
 def send_email(subject,html):
     email_task = EmailOperator(
@@ -121,14 +128,14 @@ with DAG(
         op_args = [query1]
     )
 
-    postgres_task = PythonOperator(
-        task_id='get_prev_state',
-        python_callable=get_prev_state,
-        op_args = ['postgres_task']
-    )
+    # postgres_task = PythonOperator(
+    #     task_id='get_prev_state',
+    #     python_callable=get_prev_state,
+    #     op_args = ['postgres_task']
+    # )
 
 query1
-postgres_task
+# postgres_task
 bash_task
 
 
