@@ -42,9 +42,9 @@ default_args={
 
 
 def get_prev_state(task_id,**kwargs):
-    print(**kwargs)
-    ti = kwargs['ti']
-    print(ti.dag_id)
+    # print(**kwargs)
+    # ti = kwargs['ti']
+    # print(ti.dag_id)
     # dag_run = kwargs['dag_run']
     # print(dag_run.dag_id)
     # sql = f""" select 
