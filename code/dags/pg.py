@@ -107,6 +107,7 @@ with DAG(
     schedule_interval='@continuous', 
     default_args=default_args,
     catchup=False,  # Set to False if you don't want to backfill
+    max_active_runs=1,
     user_defined_macros={"my_macro":get_prev_state}
 ) as dag:
 
