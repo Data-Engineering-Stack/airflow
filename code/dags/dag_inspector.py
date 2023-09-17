@@ -89,17 +89,17 @@ with DAG(
         bash_command=f"""echo "{dags_list}" """,
     )
 
-    @task(task_id="dag_triggerer")
-    def dag_triggerer(dag_id):
-        print(dag_id)
-        trigger = TriggerDagRunOperator (
-                task_id='trigger_dag',
-                trigger_dag_id=dag_id,
-                wait_for_completion=False
-                )
-        trigger.execute(context=get_current_context())
+    # @task(task_id="dag_triggerer")
+    # def dag_triggerer(dag_id):
+    #     print(dag_id)
+    #     trigger = TriggerDagRunOperator (
+    #             task_id='trigger_dag',
+    #             trigger_dag_id=dag_id,
+    #             wait_for_completion=False
+    #             )
+    #     trigger.execute(context=get_current_context())
 
-    dag_triggerer = dag_triggerer.expand(dag_id=dags_list)
+    # dag_triggerer = dag_triggerer.expand(dag_id=dags_list)
 
 
 
@@ -116,4 +116,4 @@ with DAG(
 
 
 
-verify_inputs >> debug >> ( dag_triggerer,dag_triggerer_bash )
+verify_inputs >> debug >> dag_triggerer_bash 
