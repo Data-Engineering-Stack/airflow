@@ -52,7 +52,7 @@ def get_all_dags(dag):
 
     return dag_list
 
-def verify_input():
+def verify_input(**kwargs):
 
     context = get_current_context()
     config = context["dag_run"].conf        
@@ -88,5 +88,18 @@ with DAG(
         trigger.execute(context=get_current_context())
 
     dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags)
+
+
+
+    @task(task_id="dag_triggerer")
+    def dag_triggerer(dag_id):
+        trigger = BashOperator(
+            task_id="run_after_loop",
+            bash_command="echo 1",
+        )
+
+
+
+
 
 dag_triggerer
