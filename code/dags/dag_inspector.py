@@ -83,16 +83,16 @@ with DAG(
             
 
 
-    @task(task_id="dag_triggerer")
-    def dag_triggerer(dag_id):
-        trigger = TriggerDagRunOperator (
-                task_id='start-ssh-job',
-                trigger_dag_id=dag_id,
-                wait_for_completion=False
-                )
-        trigger.execute(context=get_current_context())
+    # @task(task_id="dag_triggerer")
+    # def dag_triggerer(dag_id):
+    #     trigger = TriggerDagRunOperator (
+    #             task_id='start-ssh-job',
+    #             trigger_dag_id=dag_id,
+    #             wait_for_completion=False
+    #             )
+    #     trigger.execute(context=get_current_context())
 
-    dag_triggerer = dag_triggerer.expand(dag_id=verify_input())
+    # dag_triggerer = dag_triggerer.expand(dag_id=verify_input())
 
 
 
@@ -109,4 +109,5 @@ with DAG(
 
 
 
-debug >> dag_triggerer
+debug 
+#>> dag_triggerer
