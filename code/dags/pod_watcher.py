@@ -53,7 +53,7 @@ with DAG(
 
     monitor = BashOperator(
         task_id="monitor",
-        bash_command=f"""python watch_pods.py """,
+        bash_command=f"""python /opt/airflow/dags/repo/code/dags/watch_pods.py """,
     )
 
 
