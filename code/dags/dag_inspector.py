@@ -1,4 +1,4 @@
-from airflow import DAG
+from airflow import DAG,XComArg
 from airflow.decorators import task
 from airflow.operators.empty import EmptyOperator
 from datetime import datetime, timedelta 
@@ -85,11 +85,11 @@ with DAG(
         # templates_exts: Optional[List] = None
     )
 
-    dags = verify_inputs
+    dags_list = XComArg(verify_inputs)
 
     debug = BashOperator(
         task_id="debugger",
-        bash_command=f"""echo "{dags}" """,
+        bash_command=f"""echo "{dags_list}" """,
     )
 
     # @task(task_id="dag_triggerer")
