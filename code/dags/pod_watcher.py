@@ -8,6 +8,8 @@ from airflow.operators.python import get_current_context
 from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+import monitor_specific_pods
+
 
 postgres_conn_id='internal_postgres'
 
@@ -37,7 +39,8 @@ default_args={
 
 
 
-# def get_all_dags(dag):
+def monitor_py(dag):
+    monitor_specific_pods()
 
 
 with DAG(
@@ -56,5 +59,11 @@ with DAG(
         bash_command=f"""python /opt/airflow/dags/repo/code/dags/watch_pods.py """,
     )
 
+    monitor_pods = PythonOperator(
+        task_id="python_task",
+        python_callable=monitor_py,
+        do_xcom_push=True
+    )
 
-monitor
+#monitor
+monitor_pods
