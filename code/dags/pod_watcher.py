@@ -15,7 +15,7 @@ postgres_conn_id='internal_postgres'
 default_args={
     "owner": "Amin",
     "depends_on_past": False,
-    # "email": ["airflow@example.com"],
+    # "email": ["airflow@example.com"],,
     # "email_on_failure": True,
     # "email_on_retry": False,
     # "retries": 1,
