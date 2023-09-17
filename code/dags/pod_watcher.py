@@ -39,7 +39,7 @@ default_args={
 
 
 
-def monitor_py(dag):
+def monitor_py():
     watch_pods.monitor_specific_pod
 
 
