@@ -41,7 +41,7 @@ dag_list_id = "{{ params.dag_id_list }}"
 def get_all_dags(dag):
     ''' returns list of all dags'''
     dag_list = []
-    sql = f""" select dag_id from dag  """
+    sql = f""" select dag_id from dag limit 1 ; """
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
 
@@ -70,36 +70,22 @@ with DAG(
 ) as dag:
     
 
+    # debug = BashOperator(
+    #     task_id="debugger",
+    #     bash_command=f"""echo "{dags}" """,
+    # )
 
-    def verify_input():
+    @task(task_id="dag_triggerer")
+    def dag_triggerer(dag_id):
+        print(dag_id)
+        trigger = TriggerDagRunOperator (
+                task_id='start-ssh-job',
+                trigger_dag_id=dag_id,
+                wait_for_completion=False
+                )
+        trigger.execute(context=get_current_context())
 
-        if dag_list_id:
-            return dag_list_id
-             
-        elif dag_list_id is None: 
-            dags= get_all_dags(dag)  
-            return dags
-        else:
-            return "something wrong"
-         
-            
-    dags = verify_input()
-
-    debug = BashOperator(
-        task_id="debugger",
-        bash_command=f"""echo "{dags}" """,
-    )
-
-    # @task(task_id="dag_triggerer")
-    # def dag_triggerer(dag_id):
-    #     trigger = TriggerDagRunOperator (
-    #             task_id='start-ssh-job',
-    #             trigger_dag_id=dag_id,
-    #             wait_for_completion=False
-    #             )
-    #     trigger.execute(context=get_current_context())
-
-    # dag_triggerer = dag_triggerer.expand(dag_id=verify_input())
+    dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags(dag))
 
 
 
@@ -116,5 +102,5 @@ with DAG(
 
 
 
-debug 
-#>> dag_triggerer
+#debug 
+dag_triggerer
