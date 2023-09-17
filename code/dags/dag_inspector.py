@@ -6,7 +6,7 @@ from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import get_current_context
 from airflow.models.param import Param
-
+from airflow.operators.bash import BashOperator
 
 postgres_conn_id='internal_postgres'
 
@@ -52,6 +52,16 @@ def get_all_dags(dag):
 
     return dag_list
 
+def verify_input():
+
+    context = get_current_context()
+    config = context["dag_run"].conf        
+
+    print(config)
+    if not bool(config):
+        return get_all_dags(dag)
+    else:
+        return config
 
 with DAG(
     'dag_inspector',
@@ -65,17 +75,6 @@ with DAG(
         "dag_id_list" : Param("",type="list",description="provide list of dag_ids in list to trigger")
     }
 ) as dag:
-
-    def verify_input():
-
-        context = get_current_context()
-        config = context["dag_run"].conf        
-
-        print(config)
-        if not bool(config):
-            return get_all_dags(dag)
-        else:
-            return config
 
     get_all_dags = verify_input()
 
