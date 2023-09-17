@@ -19,7 +19,7 @@ init = {
 
 def callback_f(context):
     subject = "Monitor/Prod: Pod Failed! "
-    html = context["task_instance"].xcom_pull(task_ids="monitor_pods")
+    html = context.get("exception")
     send_email = EmailOperator(
         task_id='send_email_task',
         to=init['notification_emails'],  # Replace with the recipient's email address
@@ -84,6 +84,8 @@ with DAG(
         python_callable=monitor_py,
         do_xcom_push=True
     )
+
+    res = XComArg(monitor_pods)
 
 #monitor
 monitor_pods
