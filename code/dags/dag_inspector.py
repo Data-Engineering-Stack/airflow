@@ -79,11 +79,7 @@ with DAG(
     verify_inputs = PythonOperator(
         task_id="python_task",
         python_callable=verify_inputs,
-        do_xcom_push=True,
-        # op_kwargs: Optional[Dict] = None,
-        # op_args: Optional[List] = None,
-        # templates_dict: Optional[Dict] = None
-        # templates_exts: Optional[List] = None
+        do_xcom_push=True
     )
 
     dags_list = XComArg(verify_inputs)
@@ -93,32 +89,31 @@ with DAG(
         bash_command=f"""echo "{dags_list}" """,
     )
 
-    # @task(task_id="dag_triggerer")
-    # def dag_triggerer(dag_id):
-    #     print(dag_id)
-    #     trigger = TriggerDagRunOperator (
-    #             task_id='start-ssh-job',
-    #             trigger_dag_id=dag_id,
-    #             wait_for_completion=False
-    #             )
-    #     trigger.execute(context=get_current_context())
+    @task(task_id="dag_triggerer")
+    def dag_triggerer(dag_id):
+        print(dag_id)
+        trigger = TriggerDagRunOperator (
+                task_id='trigger_dag',
+                trigger_dag_id=dag_id,
+                wait_for_completion=False
+                )
+        trigger.execute(context=get_current_context())
 
-    # dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags(dag))
-
-
-
-    # @task(task_id="dag_triggerer")
-    # def dag_triggerer(dag_id):
-    #     trigger = BashOperator(
-    #         task_id="dag_triggerer",
-    #         bash_command=f"airflow dags trigger {dag_id}",
-    #     )
-    #     trigger.execute(context=get_current_context())
-
-    # dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags)
+    dag_triggerer = dag_triggerer.expand(dag_id=dags_list)
 
 
 
+    @task(task_id="dag_triggerer_bash")
+    def dag_triggerer_bash(dag_id):
+        trigger = BashOperator(
+            task_id="dag_triggerer",
+            bash_command=f"airflow dags trigger {dag_id}",
+        )
+        trigger.execute(context=get_current_context())
 
-#debug 
-verify_inputs >> debug #>>dag_triggerer
+    dag_triggerer_bash = dag_triggerer_bash.expand(dag_id=dags_list)
+
+
+
+
+verify_inputs >> debug >> ( dag_triggerer,dag_triggerer_bash )
