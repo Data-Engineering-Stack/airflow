@@ -41,7 +41,7 @@ dag_list_id = "{{ params.dag_id_list }}"
 def get_all_dags(dag):
     ''' returns list of all dags'''
     dag_list = []
-    sql = f""" select dag_id from dag where dag_id != '{dag.dag_id}' and is_active=True; """
+    sql = f""" select dag_id from dag where dag_id != '{dag.dag_id}' ; """
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
 
@@ -83,7 +83,7 @@ with DAG(
     dags = verify_input()
 
     debug = BashOperator(
-        task_id="dag_triggerer",
+        task_id="debugger",
         bash_command=f"""echo "{dags}" """,
     )
 
