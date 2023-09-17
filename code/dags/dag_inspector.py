@@ -56,10 +56,12 @@ def get_all_dags(dag):
 
 def verify_inputs(**kwargs):
     config = kwargs["dag_run"].conf
-
+    print(config)
     if config == "test":
         print("ok")
         return "ok"
+    else:
+        return "notOK"
 
 
 with DAG(
