@@ -60,8 +60,6 @@ with DAG(
     max_active_runs=1,
 ) as dag:
 
-    start = EmptyOperator(task_id='start')
-
 
     @task(task_id="dag_triggerer")
     def dag_triggerer(dag_id):
@@ -74,6 +72,4 @@ with DAG(
 
     dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags(dag))
 
-    end = EmptyOperator(task_id='end')
-
-    start >> dag_triggerer >> end
+dag_triggerer
