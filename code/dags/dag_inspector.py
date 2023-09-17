@@ -37,11 +37,11 @@ dag_list_id = "{{ params.dag_id_list }}"
 
 
 
-
+# where dag_id != '{dag.dag_id}'
 def get_all_dags(dag):
     ''' returns list of all dags'''
     dag_list = []
-    sql = f""" select dag_id from dag where dag_id != '{dag.dag_id}' ; """
+    sql = f""" select dag_id from dag  """
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
 
@@ -50,7 +50,7 @@ def get_all_dags(dag):
         print(dag_id)
         dag_list.append(dag_id)
 
-    return dag_id
+    return dag_list
 
 
 
