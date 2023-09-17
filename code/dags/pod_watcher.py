@@ -19,7 +19,7 @@ init = {
 
 def callback_f(context):
     subject = "Monitor/Prod: Pod Failed! "
-    html = context.get("exception")
+    html = str(context.get("exception"))
     send_email = EmailOperator(
         task_id='send_email_task',
         to=init['notification_emails'],  # Replace with the recipient's email address
