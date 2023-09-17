@@ -79,6 +79,7 @@ with DAG(
     verify_inputs = PythonOperator(
         task_id="python_task",
         python_callable=verify_inputs,
+        do_xcom_push=True,
         # op_kwargs: Optional[Dict] = None,
         # op_args: Optional[List] = None,
         # templates_dict: Optional[Dict] = None
