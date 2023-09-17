@@ -56,12 +56,11 @@ def get_all_dags(dag):
 
 def verify_inputs(**kwargs):
     config = kwargs["dag_run"].conf
-    print(config)
-    if config == "test":
-        print("ok")
-        return "ok"
+
+    if config["dag_id_list"] == "conn-check":
+        return get_all_dags(dag)
     else:
-        return "notOK"
+        return config["dag_id_list"]
 
 
 with DAG(
@@ -73,7 +72,7 @@ with DAG(
     catchup=False,  
     max_active_runs=1,
     params={
-        "dag_id_list" : Param("test",type="string",description="provide list of dag_ids in list to trigger")
+        "dag_id_list" : Param("conn-check",type="string",description="provide list of dag_ids in list to trigger")
     }
 ) as dag:
     
@@ -86,24 +85,24 @@ with DAG(
         # templates_exts: Optional[List] = None
     )
 
+    dags = verify_inputs
 
+    debug = BashOperator(
+        task_id="debugger",
+        bash_command=f"""echo "{dags}" """,
+    )
 
-    # debug = BashOperator(
-    #     task_id="debugger",
-    #     bash_command=f"""echo "{dags}" """,
-    # )
+    # @task(task_id="dag_triggerer")
+    # def dag_triggerer(dag_id):
+    #     print(dag_id)
+    #     trigger = TriggerDagRunOperator (
+    #             task_id='start-ssh-job',
+    #             trigger_dag_id=dag_id,
+    #             wait_for_completion=False
+    #             )
+    #     trigger.execute(context=get_current_context())
 
-    @task(task_id="dag_triggerer")
-    def dag_triggerer(dag_id):
-        print(dag_id)
-        trigger = TriggerDagRunOperator (
-                task_id='start-ssh-job',
-                trigger_dag_id=dag_id,
-                wait_for_completion=False
-                )
-        trigger.execute(context=get_current_context())
-
-    dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags(dag))
+    # dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags(dag))
 
 
 
@@ -121,4 +120,4 @@ with DAG(
 
 
 #debug 
-verify_inputs >> dag_triggerer
+verify_inputs >> debug #>>dag_triggerer
