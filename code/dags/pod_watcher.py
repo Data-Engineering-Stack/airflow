@@ -8,7 +8,7 @@ from airflow.operators.python import get_current_context
 from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
-import monitor_specific_pods
+import watch_pods
 
 
 postgres_conn_id='internal_postgres'
@@ -40,7 +40,7 @@ default_args={
 
 
 def monitor_py(dag):
-    monitor_specific_pods()
+    watch_pods.monitor_specific_pod
 
 
 with DAG(
