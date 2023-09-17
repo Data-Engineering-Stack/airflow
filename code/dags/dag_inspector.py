@@ -76,8 +76,9 @@ with DAG(
         if dag_list_id:
             return dag_list_id
              
-        else:   
-            return get_all_dags(dag)  
+        else: 
+            dags= get_all_dags(dag)  
+            return dags
          
             
     dags = verify_input()
