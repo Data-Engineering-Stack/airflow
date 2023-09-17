@@ -68,6 +68,11 @@ with DAG(
         "dag_id_list" : Param("",type="list",description="provide list of dag_ids in list to trigger")
     }
 ) as dag:
+    
+    debug = BashOperator(
+        task_id="dag_triggerer",
+        bash_command=f"""echo "{dag_list_id}" """,
+    )
 
     def verify_input():
 
@@ -104,4 +109,4 @@ with DAG(
 
 
 
-dag_triggerer
+debug >> dag_triggerer
