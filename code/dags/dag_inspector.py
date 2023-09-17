@@ -52,7 +52,7 @@ def get_all_dags(dag):
 
     return dag_list
 
-def verify_input(**kwargs):
+def verify_input():
 
     context = get_current_context()
     config = context["dag_run"].conf        
@@ -76,7 +76,7 @@ with DAG(
     }
 ) as dag:
 
-    get_all_dags = verify_input()
+    get_all_dags = verify_input(get_current_context())
 
     @task(task_id="dag_triggerer")
     def dag_triggerer(dag_id):
@@ -91,13 +91,15 @@ with DAG(
 
 
 
-    @task(task_id="dag_triggerer")
-    def dag_triggerer(dag_id):
-        trigger = BashOperator(
-            task_id="run_after_loop",
-            bash_command="echo 1",
-        )
+    # @task(task_id="dag_triggerer")
+    # def dag_triggerer(dag_id):
+    #     trigger = BashOperator(
+    #         task_id="dag_triggerer",
+    #         bash_command=f"airflow dags trigger {dag_id}",
+    #     )
+    #     trigger.execute(context=get_current_context())
 
+    # dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags)
 
 
 
