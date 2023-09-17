@@ -34,8 +34,8 @@ def collect_pod_logs(namespace, pod_name):
         # Handle any exceptions, such as pod not found or connection errors
         print(f"An error occurred: {str(e)}")
 
-def send_alert(namespace,pod_name):
-    raise Exception(f"{pod_name} failed! \nlogs: {collect_pod_logs(namespace, pod_name)}")
+def send_alert(namespace,pod_name,log):
+    raise Exception(f"{pod_name} failed! \nlogs: {log}")
 
 def monitor_specific_pods(namespace, pod_name_prefix):
     w = watch.Watch()
@@ -51,7 +51,8 @@ def monitor_specific_pods(namespace, pod_name_prefix):
             print(f"Pod Name: {pod_name}, Phase: {pod_phase}")
             if pod_phase == "Failed":
                 # Send an alert when the pod fails
-                send_alert(namespace,pod_name)
+                log = collect_pod_logs(namespace, pod_name)
+                send_alert(namespace,pod_name,log)
 
                 
             print(f"Pod Name: {pod_name}, Phase: {pod_phase}")
