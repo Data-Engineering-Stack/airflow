@@ -72,7 +72,7 @@ with DAG(
                 )
         trigger.execute(context=get_current_context())
 
-    dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags())
+    dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags(dag))
 
     end = EmptyOperator(task_id='end')
 
