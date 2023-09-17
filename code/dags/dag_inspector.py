@@ -52,12 +52,8 @@ def get_all_dags(dag):
 
     return dag_list
 
-def verify_input():
 
-    if dag_list_id:
-        return dag_list_id
-    else:
-        return get_all_dags(dag)
+
 
 
 with DAG(
@@ -73,7 +69,14 @@ with DAG(
     }
 ) as dag:
 
-    get_all_dags = verify_input()
+    def verify_input():
+
+        if dag_list_id=='':
+            return get_all_dags(dag)    
+        else:   
+            return dag_list_id
+            
+
 
     @task(task_id="dag_triggerer")
     def dag_triggerer(dag_id):
@@ -84,7 +87,7 @@ with DAG(
                 )
         trigger.execute(context=get_current_context())
 
-    dag_triggerer = dag_triggerer.expand(dag_id=get_all_dags)
+    dag_triggerer = dag_triggerer.expand(dag_id=verify_input())
 
 
 
