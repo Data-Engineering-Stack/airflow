@@ -59,6 +59,7 @@ def verify_inputs(**kwargs):
 
     if not bool(config):
         print("ok")
+        return "ok"
 
 
 with DAG(
