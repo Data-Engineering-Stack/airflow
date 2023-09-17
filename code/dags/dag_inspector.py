@@ -10,6 +10,7 @@ postgres_conn_id='internal_postgres'
 
 
 default_args={
+    "owner": "Amin",
     "depends_on_past": False,
     # "email": ["airflow@example.com"],
     # "email_on_failure": True,
@@ -33,11 +34,10 @@ default_args={
 
 
 
-def get_all_dags():
+def get_all_dags(dag):
     ''' returns list of all dags'''
-    
     dag_list = []
-    sql = f""" select dag_id from dag; """
+    sql = f""" select dag_id from dag where dag_id != {dag.dag_id} and is_active=True; """
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
 
     res = db_hook.get_records(sql)
@@ -54,7 +54,7 @@ def get_all_dags():
 with DAG(
     'dag_inspector',
     start_date=datetime(2023, 9, 9),  
-    schedule_interval='@continuous', 
+    schedule_interval=None, 
     default_args=default_args,
     catchup=False,  
     max_active_runs=1,
@@ -68,6 +68,7 @@ with DAG(
         trigger = TriggerDagRunOperator (
                 task_id='start-ssh-job',
                 trigger_dag_id=dag_id,
+                wait_for_completion=False
                 )
         trigger.execute(context=get_current_context())
 
