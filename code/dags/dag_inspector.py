@@ -54,14 +54,11 @@ def get_all_dags(dag):
 
 def verify_input():
 
-    context = get_current_context()
-    config = context["dag_run"].conf        
-
-    print(config)
-    if not bool(config):
-        return get_all_dags(dag)
+    if dag_list_id:
+        return dag_list_id
     else:
-        return config
+        return get_all_dags(dag)
+
 
 with DAG(
     'dag_inspector',
@@ -76,7 +73,7 @@ with DAG(
     }
 ) as dag:
 
-    get_all_dags = verify_input(get_current_context())
+    get_all_dags = verify_input()
 
     @task(task_id="dag_triggerer")
     def dag_triggerer(dag_id):
