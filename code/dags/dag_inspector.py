@@ -57,7 +57,7 @@ def get_all_dags(dag):
 def verify_inputs(**kwargs):
     config = kwargs["dag_run"].conf
 
-    if not bool(config):
+    if config == "test":
         print("ok")
         return "ok"
 
@@ -71,7 +71,7 @@ with DAG(
     catchup=False,  
     max_active_runs=1,
     params={
-        "dag_id_list" : Param("",type="string",description="provide list of dag_ids in list to trigger")
+        "dag_id_list" : Param("test",type="string",description="provide list of dag_ids in list to trigger")
     }
 ) as dag:
     
