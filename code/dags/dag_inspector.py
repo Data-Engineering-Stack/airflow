@@ -7,6 +7,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import get_current_context
 from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
 
 postgres_conn_id='internal_postgres'
 
@@ -37,11 +38,11 @@ dag_list_id = "{{ params.dag_id_list }}"
 
 
 
-# where dag_id != '{dag.dag_id}'
+# 
 def get_all_dags(dag):
     ''' returns list of all dags'''
     dag_list = []
-    sql = f""" select dag_id from dag limit 1 ; """
+    sql = f""" select dag_id from dag where dag_id != '{dag.dag_id}' limit 5 ; """
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
 
@@ -53,7 +54,11 @@ def get_all_dags(dag):
     return dag_list
 
 
+def verify_inputs(**kwargs):
+    config = kwargs["dag_run"].conf
 
+    if not bool(config):
+        print("ok")
 
 
 with DAG(
@@ -69,6 +74,16 @@ with DAG(
     }
 ) as dag:
     
+    verify_inputs = PythonOperator(
+        task_id="python_task",
+        python_callable=verify_inputs,
+        # op_kwargs: Optional[Dict] = None,
+        # op_args: Optional[List] = None,
+        # templates_dict: Optional[Dict] = None
+        # templates_exts: Optional[List] = None
+    )
+
+
 
     # debug = BashOperator(
     #     task_id="debugger",
@@ -103,4 +118,4 @@ with DAG(
 
 
 #debug 
-dag_triggerer
+verify_inputs >> dag_triggerer
