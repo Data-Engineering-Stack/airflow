@@ -8,10 +8,26 @@ from airflow.operators.python import get_current_context
 from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
-
-
+from airflow.operators.email_operator import EmailOperator
+from airflow.models import Variable
 
 postgres_conn_id='internal_postgres'
+
+init = {
+    'notification_emails' : str(Variable.get("notification_emails"))
+}
+
+def callback_f(context):
+    subject = "Monitor/Prod: Pod Failed! "
+    html = context["task_instance"].xcom_pull(task_ids="monitor_pods")
+    send_email = EmailOperator(
+        task_id='send_email_task',
+        to=init['notification_emails'],  # Replace with the recipient's email address
+        subject=subject,
+        html_content=html,
+    )
+
+    send_email.execute(context=context)
 
 
 default_args={
@@ -29,7 +45,7 @@ default_args={
     # 'wait_for_downstream': False,
     #'sla': timedelta(seconds=5),
     # 'execution_timeout': timedelta(seconds=300),
-    # 'on_failure_callback': some_function, # or list of functions
+    'on_failure_callback': callback_f, # or list of functions
     # 'on_success_callback': some_other_function, # or list of functions
     # 'on_retry_callback': another_function, # or list of functions
     # 'sla_miss_callback': yet_another_function, # or list of functions
@@ -58,13 +74,13 @@ with DAG(
 ) as dag:
     
 
-    monitor = BashOperator(
-        task_id="monitor",
-        bash_command=f"""python /opt/airflow/dags/repo/code/dags/watch_pods.py """,
-    )
+    # monitor = BashOperator(
+    #     task_id="monitor",
+    #     bash_command=f"""python /opt/airflow/dags/repo/code/dags/watch_pods.py """,
+    # )
 
     monitor_pods = PythonOperator(
-        task_id="python_task",
+        task_id="monitor_pods",
         python_callable=monitor_py,
         do_xcom_push=True
     )
