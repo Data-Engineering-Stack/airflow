@@ -50,7 +50,7 @@ def get_all_dags(dag):
         print(dag_id)
         dag_list.append(dag_id)
 
-    return dag_list
+    return dag_id
 
 
 
