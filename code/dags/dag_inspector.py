@@ -69,19 +69,23 @@ with DAG(
     }
 ) as dag:
     
-    debug = BashOperator(
-        task_id="dag_triggerer",
-        bash_command=f"""echo "{dag_list_id}" """,
-    )
+
 
     def verify_input():
 
-        if dag_list_id=='':
-            return get_all_dags(dag)    
-        else:   
+        if dag_list_id:
             return dag_list_id
+             
+        else:   
+            return get_all_dags(dag)  
+         
             
+    dags = verify_input()
 
+    debug = BashOperator(
+        task_id="dag_triggerer",
+        bash_command=f"""echo "{dags}" """,
+    )
 
     # @task(task_id="dag_triggerer")
     # def dag_triggerer(dag_id):
