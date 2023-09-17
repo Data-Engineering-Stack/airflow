@@ -33,7 +33,7 @@ default_args={
     # 'trigger_rule': 'all_success'
 }
 
-dag_list_id = "{{ params.dag_list }}"
+dag_list_id = "{{ params.dag_id_list }}"
 
 
 
