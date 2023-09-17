@@ -66,8 +66,10 @@ with DAG(
     }
 ) as dag:
 
-    def verify_input(**kwargs):
-        config = kwargs["dag_run"].conf
+    def verify_input():
+
+        context = get_current_context()
+        config = context["dag_run"].conf        
 
         print(config)
         if not bool(config):
