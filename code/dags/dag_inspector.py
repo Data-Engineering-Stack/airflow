@@ -76,7 +76,7 @@ with DAG(
         if dag_list_id:
             return dag_list_id
              
-        elif dag_list_id=="": 
+        elif dag_list_id is None: 
             dags= get_all_dags(dag)  
             return dags
         else:
