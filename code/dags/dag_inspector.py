@@ -76,9 +76,11 @@ with DAG(
         if dag_list_id:
             return dag_list_id
              
-        else: 
+        elif dag_list_id=="": 
             dags= get_all_dags(dag)  
             return dags
+        else:
+            return "something wrong"
          
             
     dags = verify_input()
