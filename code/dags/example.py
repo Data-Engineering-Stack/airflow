@@ -15,11 +15,11 @@ from airflow.providers.common.sql.sensors.sql import SqlSensor
 
 postgres_conn_id='internal_postgres'
 
-def check_previous_task_success(dag,task_id=None):
-
-    sql = """select state from public.task_instance where task_id ='{task_id}' and dag_id ='{dag.dag_id}'
+def check_previous_task_success(task_id=None,**kwargs):
+    dag_id = kwargs['dag'].dag_id
+    sql =f"""select state from public.task_instance where task_id ='{task_id}' and dag_id ='{dag_id}'
     and lower(state)!= 'running' and
-    run_id != (select max(run_id) from public.task_instance where task_id ='{task_id}' and dag_id ='{dag.dag_id}')
+    run_id != (select max(run_id) from public.task_instance where task_id ='{task_id}' and dag_id ='{dag_id}')
     and job_id is not null order by job_id desc limit 1"""
 
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
@@ -81,7 +81,7 @@ with DAG(
     check_previous_task = ShortCircuitOperator(
         task_id='check_previous_task',
         python_callable=check_previous_task_success,
-        op_args=['print_date'],
+        op_args=[dag,'print_date'],
         provide_context=True,
         dag=dag,
     )
