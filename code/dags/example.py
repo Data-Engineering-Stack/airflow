@@ -38,15 +38,15 @@ def check_previous_task_success(task_id=None,**kwargs):
 
 def get_filtered_today_ts():
     email_times = [
-        time(21, 40, 0),  # 09:00:00
-        time(21, 43, 0),  # 10:00:00
-        time(21, 45, 0),  # 11:00:00
-        time(21, 50, 0),  # 11:00:00
+        time(21, 50, 0),  # 09:00:00
+        time(21, 53, 0),  # 10:00:00
+        time(21, 55, 0),  # 11:00:00
+        time(21, 57, 0),  # 11:00:00
         time(23, 45, 0),  # 11:00:00
         # Add more times as needed
     ]
 
-    current_time_utc = datetime.now(timezone.utc).time()
+    current_time_utc = "{{ ts }}"
     filtered_times = [et for et in email_times if et > current_time_utc]
 
     return filtered_times
