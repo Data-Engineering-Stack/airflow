@@ -11,6 +11,8 @@ from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.common.sql.sensors.sql import SqlSensor
+from airflow.operators.sensors.time_sensor import TimeSensor
+from airflow.operators.email_operator import EmailOperator
 
 
 postgres_conn_id='internal_postgres'
@@ -20,7 +22,7 @@ def check_previous_task_success(task_id=None,**kwargs):
     sql =f"""select state from public.task_instance where task_id ='{task_id}' and dag_id ='{dag_id}'
     and lower(state)!= 'running' and
     run_id != (select max(run_id) from public.task_instance where task_id ='{task_id}' and dag_id ='{dag_id}')
-    and job_id is not null order by job_id desc limit 1"""
+    and job_id is not null and date_trunc('DAY',start_date )=current_date order by job_id desc limit 1"""
 
     db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     res = db_hook.get_records(sql)
@@ -63,10 +65,52 @@ with DAG(
     catchup=False,
     tags=["example"],
 ) as dag:
-    # [END instantiate_dag]
 
-    # t1, t2 and t3 are examples of tasks created by instantiating operators
-    # [START basic_task]
+
+
+    email_times = [
+        '09:00:00', '10:00:00', '11:00:00',  # Add your desired times
+        '12:00:00', '13:00:00', '14:00:00',
+        '15:00:00', '16:00:00', '17:00:00',
+        '18:00:00', '19:00:00', '20:00:00',
+    ]
+
+    email_sensors = []
+
+    for time in email_times:
+        sensor_task = TimeSensor(
+            task_id=f'time_sensor_{time}',
+            target_time=time,
+            dag=dag,
+        )
+        email_sensors.append(sensor_task)
+
+    email_content = "This is the email content."
+
+    for i, time in enumerate(email_times):
+        send_email_task = EmailOperator(
+            task_id=f'send_email_{i}',
+            to='aminsiddique95@gmail.com',
+            subject=f'Email at {time}',
+            html_content=email_content,
+            dag=dag,
+        )
+    
+    # Set up dependencies to ensure the email is sent at the specified time
+    email_sensors[i] >> send_email_task
+
+
+
+
+
+
+
+
+
+
+
+
+
     t1 = BashOperator(
         task_id="print_date",
         bash_command="date",
