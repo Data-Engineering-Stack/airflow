@@ -80,7 +80,7 @@ with DAG(
 
 
     current_time_utc = datetime.now(timezone.utc).time()
-    filtered_times = [(k,v) for k,v in email_times if v > current_time_utc]
+    filtered_times = [(k,v) for k,v in email_times.items() if v > current_time_utc]
 
     email_sensors = []
 
