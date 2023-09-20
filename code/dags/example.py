@@ -85,6 +85,7 @@ with DAG(
     for i,time in enumerate(filtered_times):
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
+            mode='poke', 
             target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
             soft_fail=True,
         )
