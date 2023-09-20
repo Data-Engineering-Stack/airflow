@@ -96,20 +96,11 @@ with DAG(
             dag=dag,
         )
     
-        # Set up dependencies to ensure the email is sent at the specified time
+
         email_sensors[i] >> send_email_task
 
 
-
-
-
-
-
-
-
-
-
-
+#############################################################################################
 
     t1 = BashOperator(
         task_id="print_date",
