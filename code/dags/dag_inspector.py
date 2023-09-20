@@ -8,6 +8,7 @@ from airflow.operators.python import get_current_context
 from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.common.sql.sensors.sql import SqlSensor
 
 postgres_conn_id='internal_postgres'
 
@@ -36,7 +37,7 @@ default_args={
 
 dag_list_id = "{{ params.dag_id_list }}"
 
-
+sql1 = f""" select dag_id from dag limit 5 ; """
 
 # 
 def get_all_dags(dag):
@@ -89,6 +90,15 @@ with DAG(
         bash_command=f"""echo "{dags_list}" """,
     )
 
+    SqlSensor_sensor = SqlSensor(
+    task_id='poll_failed_dags',
+    conn_id='postgres_conn_id',
+    sql=sql1,
+    success=None,
+    failure=None,
+    fail_on_empty=False,
+    )
+
     # @task(task_id="dag_triggerer")
     # def dag_triggerer(dag_id):
     #     print(dag_id)
@@ -116,4 +126,4 @@ with DAG(
 
 
 
-verify_inputs >> debug >> dag_triggerer_bash 
+SqlSensor_sensor >> verify_inputs >> debug >> dag_triggerer_bash 
