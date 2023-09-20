@@ -96,8 +96,8 @@ with DAG(
             dag=dag,
         )
     
-    # Set up dependencies to ensure the email is sent at the specified time
-    email_sensors[i] >> send_email_task
+        # Set up dependencies to ensure the email is sent at the specified time
+        email_sensors[i] >> send_email_task
 
 
 
