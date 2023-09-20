@@ -71,6 +71,12 @@ with DAG(
         dag=dag,
     )
 
+    task2 = PythonOperator(
+        task_id='my_task2',
+        python_callable=check_previous_task_success,
+        dag=dag,
+    )
+
     # Define your task (replace with your actual task)
     task = PythonOperator(
         task_id='my_task',
@@ -79,7 +85,7 @@ with DAG(
     )
 
     # Define the execution order
-    check_previous_task >> task
+    check_previous_task >> task2>> task
    
 
 t1 
