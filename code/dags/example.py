@@ -14,7 +14,8 @@ from airflow.providers.common.sql.sensors.sql import SqlSensor
 from airflow.sensors.time_sensor import TimeSensor
 from airflow.operators.email_operator import EmailOperator
 from  airflow.utils.trigger_rule import TriggerRule
-from datetime import datetime, time
+from datetime import datetime, time, timedelta, timezone
+
 
 postgres_conn_id='internal_postgres'
 
@@ -81,7 +82,7 @@ with DAG(
     for i,time in enumerate(email_times):
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
-            target_time=time,
+            target_time= datetime.combine(datetime.now(timezone.utc).date(), time) ,
             dag=dag,
         )
         email_sensors.append(sensor_task)
