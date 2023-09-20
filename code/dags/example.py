@@ -14,6 +14,7 @@ from airflow.providers.common.sql.sensors.sql import SqlSensor
 from airflow.sensors.time_sensor import TimeSensor
 from airflow.operators.email_operator import EmailOperator
 from  airflow.utils.trigger_rule import TriggerRule
+from datetime import datetime, time
 
 postgres_conn_id='internal_postgres'
 
@@ -69,10 +70,10 @@ with DAG(
 
 
     email_times = [
-        '09:00:00', '10:00:00', '11:00:00',  # Add your desired times
-        '12:00:00', '13:00:00', '14:00:00',
-        '15:00:00', '16:00:00', '17:00:00',
-        '18:00:00', '19:00:00', '20:00:00',
+        time(9, 0, 0),  # 09:00:00
+        time(10, 0, 0),  # 10:00:00
+        time(11, 0, 0),  # 11:00:00
+        # Add more times as needed
     ]
 
     email_sensors = []
@@ -88,7 +89,7 @@ with DAG(
     email_content = "This is the email content."
 
     sql = 'select current_date'
-    
+
     for i, time in enumerate(email_times):
         
         checks = SqlSensor(
