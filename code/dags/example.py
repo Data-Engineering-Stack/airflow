@@ -71,7 +71,7 @@ with DAG(
 
 
     email_times = [
-        time(11, 20, 0),  # 09:00:00
+        time(21, 20, 0),  # 09:00:00
         time(13, 25, 0),  # 10:00:00
         time(18, 40, 0),  # 11:00:00
         time(18, 45, 0),  # 11:00:00
@@ -90,11 +90,10 @@ with DAG(
         )
         email_sensors.append(sensor_task)
 
-    email_content = "This is the email content."
+        email_content = "This is the email content."
 
-    sql = 'select current_date'
+        sql = 'select current_date'
 
-    for i, time in enumerate(filtered_times):
         
         checks = SqlSensor(
             task_id = f'check_{i}',
@@ -123,7 +122,7 @@ with DAG(
         )
     
 
-        email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
+    email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
 
 
 #############################################################################################
