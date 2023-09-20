@@ -88,48 +88,48 @@ with DAG(
     @task(task_id='today_endpoint')
     def today_endpoint(filtered_times):
 
-        for i,time in enumerate(filtered_times):
-            sensor_task = TimeSensor(
-                task_id=f'time_sensor_{i}',
-                mode='poke', 
-                target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
-                soft_fail=True,
-            )
-            email_sensors.append(sensor_task)
+        # for i,time in enumerate(filtered_times):
+        sensor_task = TimeSensor(
+            task_id=f'time_sensor_{i}',
+            mode='poke', 
+            target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
+            soft_fail=True,
+        )
+        email_sensors.append(sensor_task)
 
-            email_content = "This is the email content."
+        email_content = "This is the email content."
 
-            sql = 'select current_date'
+        sql = 'select current_date'
 
-            
-            checks = SqlSensor(
-                task_id = f'check_{i}',
-                sql = sql,
-                conn_id=postgres_conn_id,
-                poke_interval=60,
-                timeout=60 * 2,
-                soft_fail= True
-            )
+        
+        checks = SqlSensor(
+            task_id = f'check_{i}',
+            sql = sql,
+            conn_id=postgres_conn_id,
+            poke_interval=60,
+            timeout=60 * 2,
+            soft_fail= True
+        )
 
 
-            send_email_success = EmailOperator(
-                task_id=f'send_success_email_{i}',
-                to='aminsiddique95@gmail.com',
-                subject=f'Email at {time}',
-                html_content=email_content,
-                dag=dag,
-            )
-            send_email_failure = EmailOperator(
-                task_id=f'send_failure_email_{i}',
-                to='aminsiddique95@gmail.com',
-                subject=f'Email at {time}',
-                html_content=email_content,
-                dag=dag,
-                trigger_rule=TriggerRule.ALL_SKIPPED
-            )
+        send_email_success = EmailOperator(
+            task_id=f'send_success_email_{i}',
+            to='aminsiddique95@gmail.com',
+            subject=f'Email at {time}',
+            html_content=email_content,
+            dag=dag,
+        )
+        send_email_failure = EmailOperator(
+            task_id=f'send_failure_email_{i}',
+            to='aminsiddique95@gmail.com',
+            subject=f'Email at {time}',
+            html_content=email_content,
+            dag=dag,
+            trigger_rule=TriggerRule.ALL_SKIPPED
+        )
     
 
-            email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
+        email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
 
     today_endpoint = today_endpoint.expand(filtered_times=filtered_times)
 
