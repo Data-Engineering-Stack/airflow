@@ -13,7 +13,7 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.common.sql.sensors.sql import SqlSensor
 from airflow.sensors.time_sensor import TimeSensor
 from airflow.operators.email_operator import EmailOperator
-
+from  airflow.utils.trigger_rule import TriggerRule
 
 postgres_conn_id='internal_postgres'
 
@@ -87,17 +87,38 @@ with DAG(
 
     email_content = "This is the email content."
 
+    sql = 'select current_date'
+    
     for i, time in enumerate(email_times):
-        send_email_task = EmailOperator(
-            task_id=f'send_email_{i}',
+        
+        checks = SqlSensor(
+            task_id = f'check_{i}',
+            sql = sql,
+            conn_id=postgres_conn_id,
+            poke_interval=60,
+            timeout=60 * 2,
+            soft_fail= True
+        )
+
+
+        send_email_success = EmailOperator(
+            task_id=f'send_success_email_{i}',
             to='aminsiddique95@gmail.com',
             subject=f'Email at {time}',
             html_content=email_content,
             dag=dag,
         )
+        send_email_failure = EmailOperator(
+            task_id=f'send_failure_email_{i}',
+            to='aminsiddique95@gmail.com',
+            subject=f'Email at {time}',
+            html_content=email_content,
+            dag=dag,
+            trigger_rule=TriggerRule.ALL_SKIPPED
+        )
     
 
-        email_sensors[i] >> send_email_task
+        email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
 
 
 #############################################################################################
