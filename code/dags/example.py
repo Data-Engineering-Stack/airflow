@@ -36,7 +36,20 @@ def check_previous_task_success(task_id=None,**kwargs):
         return False # skip the downstream task if prev dag run task instance was successfull
     return True  
 
+def get_filtered_today_ts():
+    email_times = [
+        time(21, 40, 0),  # 09:00:00
+        time(21, 43, 0),  # 10:00:00
+        time(21, 45, 0),  # 11:00:00
+        time(21, 50, 0),  # 11:00:00
+        time(23, 45, 0),  # 11:00:00
+        # Add more times as needed
+    ]
 
+    current_time_utc = datetime.now(timezone.utc).time()
+    filtered_times = [et for et in email_times if et > current_time_utc]
+
+    return filtered_times
 
 with DAG(
     "tutorial0",
@@ -70,17 +83,8 @@ with DAG(
 
 
 
-    email_times = [
-        time(21, 35, 0),  # 09:00:00
-        time(21, 40, 0),  # 10:00:00
-        time(21, 30, 0),  # 11:00:00
-        time(23, 45, 0),  # 11:00:00
-        # Add more times as needed
-    ]
 
-    current_time_utc = datetime.now(timezone.utc).time()
-    filtered_times = [et for et in email_times if et > current_time_utc]
-
+    filtered_times= get_filtered_today_ts()
     email_sensors = []
 
     for i,time in enumerate(filtered_times):
