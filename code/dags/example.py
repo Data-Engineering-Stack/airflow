@@ -74,6 +74,7 @@ with DAG(
         time(9, 0, 0),  # 09:00:00
         time(10, 0, 0),  # 10:00:00
         time(11, 0, 0),  # 11:00:00
+        time(18, 5, 0),  # 11:00:00
         # Add more times as needed
     ]
 
