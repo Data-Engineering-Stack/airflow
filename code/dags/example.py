@@ -70,14 +70,13 @@ with DAG(
 
 
 
-    email_times = [
-        '1a' : time(22, 10, 0),  # 09:00:00
+    email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
         '1b' : time(22, 15, 0),  # 10:00:00
         '1c' : time(22, 20, 0),  # 11:00:00
         '2' : time(22, 25, 0),  # 11:00:00
         '3' : time(23, 45, 0),  # 11:00:00
         # Add more times as needed
-    ]
+    }
 
 
     current_time_utc = datetime.now(timezone.utc).time()
