@@ -87,6 +87,7 @@ with DAG(
     @task(task_id='today_endpoint')
     def today_endpoint(filtered_times):
         i = filtered_times[0][0]
+        time = filtered_times[0][1]
         # for i,time in enumerate(filtered_times):
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
