@@ -122,7 +122,7 @@ with DAG(
         )
     
 
-    email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
+        email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
 
 
 #############################################################################################
