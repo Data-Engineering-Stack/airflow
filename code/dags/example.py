@@ -5,18 +5,32 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator, ShortCircuitOperator
 from datetime import datetime, timedelta
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.operators.python import get_current_context
+from airflow.models.param import Param
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from airflow.providers.common.sql.sensors.sql import SqlSensor
 
 
+postgres_conn_id='internal_postgres'
 
-def check_previous_task_success(**kwargs):
-    ti = kwargs['ti']
-    # Get the previous run's task instance
-    prev_ti = ti.get_previous_ti()
-    print(prev_ti)
-    if prev_ti is not None:
-        # Check if the previous task was successful
-        return prev_ti.state == 'success'
-    return True  # If there is no previous run, proceed
+def check_previous_task_success(dag,task_id=None):
+
+    sql = """select state from public.task_instance where task_id ='{task_id}' and dag_id ='{dag.dag_id}'
+    and lower(state)!= 'running' and
+    run_id != (select max(run_id) from public.task_instance where task_id ='{task_id}' and dag_id ='{dag.dag_id}')
+    and job_id is not null order by job_id desc limit 1"""
+
+    db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+    res = db_hook.get_records(sql)
+
+    for row in res:
+        prev_task_state = row[0]
+
+    if prev_task_state == 'success':
+        return False # skip the downstream task if prev dag run task instance was successfull
+    return True  
 
 
 
@@ -67,6 +81,7 @@ with DAG(
     check_previous_task = ShortCircuitOperator(
         task_id='check_previous_task',
         python_callable=check_previous_task_success,
+        op_args=['print_date'],
         provide_context=True,
         dag=dag,
     )
@@ -85,7 +100,7 @@ with DAG(
     )
 
     # Define the execution order
-    check_previous_task >> task2>> task
+    t1 >> check_previous_task >> task2>> task
    
 
-t1 
+ 
