@@ -71,16 +71,18 @@ with DAG(
 
 
     email_times = [
-        time(9, 0, 0),  # 09:00:00
-        time(10, 0, 0),  # 10:00:00
-        time(11, 0, 0),  # 11:00:00
-        time(18, 15, 0),  # 11:00:00
+        time(11, 20, 0),  # 09:00:00
+        time(13, 25, 0),  # 10:00:00
+        time(18, 30, 0),  # 11:00:00
+        time(18, 35, 0),  # 11:00:00
         # Add more times as needed
     ]
 
+    filtered_times = [et for et in email_times if et > datetime.now(timezone.utc).time()]
+
     email_sensors = []
 
-    for i,time in enumerate(email_times):
+    for i,time in enumerate(filtered_times):
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
             target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
@@ -92,7 +94,7 @@ with DAG(
 
     sql = 'select current_date'
 
-    for i, time in enumerate(email_times):
+    for i, time in enumerate(filtered_times):
         
         checks = SqlSensor(
             task_id = f'check_{i}',
