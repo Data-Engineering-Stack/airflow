@@ -11,7 +11,7 @@ from airflow.models.param import Param
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.common.sql.sensors.sql import SqlSensor
-from airflow.operators.sensors.time_sensor import TimeSensor
+from airflow.sensors.time_sensor import TimeSensor
 from airflow.operators.email_operator import EmailOperator
 
 
