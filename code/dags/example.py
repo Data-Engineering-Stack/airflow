@@ -74,7 +74,7 @@ with DAG(
         time(9, 0, 0),  # 09:00:00
         time(10, 0, 0),  # 10:00:00
         time(11, 0, 0),  # 11:00:00
-        time(18, 5, 0),  # 11:00:00
+        time(18, 15, 0),  # 11:00:00
         # Add more times as needed
     ]
 
@@ -83,8 +83,8 @@ with DAG(
     for i,time in enumerate(email_times):
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
-            target_time= datetime.combine(datetime.now(timezone.utc).date(), time) ,
-            dag=dag,
+            target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
+            soft_fail=True,
         )
         email_sensors.append(sensor_task)
 
