@@ -3,6 +3,22 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator, ShortCircuitOperator
+from datetime import datetime, timedelta
+
+
+
+def check_previous_task_success(**kwargs):
+    ti = kwargs['ti']
+    # Get the previous run's task instance
+    prev_ti = ti.get_previous_ti()
+    print(prev_ti)
+    if prev_ti is not None:
+        # Check if the previous task was successful
+        return prev_ti.state == 'success'
+    return True  # If there is no previous run, proceed
+
+
 
 with DAG(
     "tutorial0",
@@ -42,7 +58,28 @@ with DAG(
         bash_command="date",
         depends_on_past=True
     )
+# Define your task
+    def my_task():
+        # Your task logic goes here
+        print("Task executed.")
 
+    # Create a ShortCircuitOperator to check the previous run's status
+    check_previous_task = ShortCircuitOperator(
+        task_id='check_previous_task',
+        python_callable=check_previous_task_success,
+        provide_context=True,
+        dag=dag,
+    )
+
+    # Define your task (replace with your actual task)
+    task = PythonOperator(
+        task_id='my_task',
+        python_callable=my_task,
+        dag=dag,
+    )
+
+    # Define the execution order
+    check_previous_task >> task
    
 
 t1 
