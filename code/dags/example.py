@@ -72,8 +72,8 @@ with DAG(
 
     email_times = [
         time(21, 20, 0),  # 09:00:00
-        time(21, 40, 0),  # 10:00:00
-        time(22, 10, 0),  # 11:00:00
+        time(21, 25, 0),  # 10:00:00
+        time(21, 30, 0),  # 11:00:00
         time(23, 45, 0),  # 11:00:00
         # Add more times as needed
     ]
