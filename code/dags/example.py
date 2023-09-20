@@ -77,9 +77,9 @@ with DAG(
 
     email_sensors = []
 
-    for time in email_times:
+    for i,time in enumerate(email_times):
         sensor_task = TimeSensor(
-            task_id=f'time_sensor_{time}',
+            task_id=f'time_sensor_{i}',
             target_time=time,
             dag=dag,
         )
