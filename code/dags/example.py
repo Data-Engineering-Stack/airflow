@@ -71,23 +71,23 @@ with DAG(
 
 
     email_times = [
-        time(22, 10, 0),  # 09:00:00
-        time(22, 15, 0),  # 10:00:00
-        time(22, 20, 0),  # 11:00:00
-        time(22, 25, 0),  # 11:00:00
-        time(23, 45, 0),  # 11:00:00
+        '1a' : time(22, 10, 0),  # 09:00:00
+        '1b' : time(22, 15, 0),  # 10:00:00
+        '1c' : time(22, 20, 0),  # 11:00:00
+        '2' : time(22, 25, 0),  # 11:00:00
+        '3' : time(23, 45, 0),  # 11:00:00
         # Add more times as needed
     ]
 
 
     current_time_utc = datetime.now(timezone.utc).time()
-    filtered_times = [datetime.combine(datetime.now(timezone.utc).date(), et) for et in email_times if et > current_time_utc]
+    filtered_times = [(k,v) for k,v in email_times if v > current_time_utc]
 
     email_sensors = []
 
     @task(task_id='today_endpoint')
     def today_endpoint(filtered_times):
-
+        i = filtered_times[0][0]
         # for i,time in enumerate(filtered_times):
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
