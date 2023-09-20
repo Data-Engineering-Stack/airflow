@@ -81,7 +81,7 @@ with DAG(
     check_previous_task = ShortCircuitOperator(
         task_id='check_previous_task',
         python_callable=check_previous_task_success,
-        op_args=[dag,'print_date'],
+        op_args=['print_date'],
         provide_context=True,
         dag=dag,
     )
