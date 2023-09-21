@@ -74,7 +74,7 @@ with DAG(
 
 
 
-    @task(task_id="dag_triggerer_bash")
+    @task(task_id="today_endpoint")
     def today_endpoint():
 
         from datetime import datetime, time, timedelta, timezone
