@@ -59,6 +59,7 @@ def today_endpoint(dag):
             mode='poke', 
             target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
             soft_fail=True,
+            dag=dag
         )
         email_sensors.append(sensor_task)
 
