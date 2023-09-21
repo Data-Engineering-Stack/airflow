@@ -17,6 +17,7 @@ from  airflow.utils.trigger_rule import TriggerRule
 from datetime import datetime, time, timedelta, timezone
 from airflow.decorators import task
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.python_operator import BranchPythonOperator
 
 postgres_conn_id='internal_postgres'
 
@@ -39,7 +40,13 @@ def check_previous_task_success(task_id=None,**kwargs):
 
 
 
-
+def decide_branch(**kwargs):
+    current_time = datetime.now(timezone.utc).time()
+    filtered_times = [(k, v) for k, v in email_times.items() if v > current_time]
+    if filtered_times:
+        return filtered_times[0][0]  # Select the first available time slot
+    else:
+        return 'no_email'
 
 
 with DAG(
@@ -73,6 +80,12 @@ with DAG(
 ) as dag:
 
 
+    branch_task = BranchPythonOperator(
+        task_id='branch_task',
+        python_callable=decide_branch,
+        provide_context=True,
+        dag=dag,
+    )
 
 
 
@@ -88,6 +101,7 @@ with DAG(
     email_sensors = []
 
     for index,(i,time) in enumerate(filtered_times):
+        branch = EmptyOperator(task_id=i, dag=dag)
 
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
@@ -122,7 +136,7 @@ with DAG(
             dag=dag
         )
 
-        email_sensors[index] >>  checks >> (send_email_success,send_email_failure)
+        branch_task >> branch >> sensor_task >>  checks >> (send_email_success,send_email_failure)
 
 
 
