@@ -128,6 +128,8 @@ with DAG(
             email_sensors[index] >>  checks >> (send_email_success,send_email_failure)
 
 
+    today_endpoint = today_endpoint()
+
     today_endpoint
 
 
