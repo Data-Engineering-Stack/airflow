@@ -37,7 +37,7 @@ def check_previous_task_success(task_id=None,**kwargs):
     return True  
 
 
-def today_endpoint():
+def today_endpoint(dag):
     from datetime import datetime, time, timedelta, timezone
     email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
     '1b' : time(22, 35, 0),  # 10:00:00
@@ -134,6 +134,7 @@ with DAG(
     today_endpoint_task = PythonOperator(
         task_id='today_endpoint_task',
         python_callable=today_endpoint,
+        provide_context=True,
         dag=dag,
     )
 
