@@ -38,6 +38,7 @@ def check_previous_task_success(task_id=None,**kwargs):
 
 
 def today_endpoint():
+    from datetime import datetime, time, timedelta, timezone
     email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
     '1b' : time(22, 35, 0),  # 10:00:00
     '1c' : time(23, 20, 0),  # 11:00:00
