@@ -75,7 +75,7 @@ with DAG(
 
 
     @task(task_id="dag_triggerer_bash")
-    def today_endpoint(dag):
+    def today_endpoint():
 
         from datetime import datetime, time, timedelta, timezone
         email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
