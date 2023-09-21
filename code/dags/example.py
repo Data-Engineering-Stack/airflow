@@ -16,6 +16,7 @@ from airflow.operators.email_operator import EmailOperator
 from  airflow.utils.trigger_rule import TriggerRule
 from datetime import datetime, time, timedelta, timezone
 from airflow.decorators import task
+from airflow.operators.empty import EmptyOperator
 
 postgres_conn_id='internal_postgres'
 
@@ -78,20 +79,13 @@ def today_endpoint(dag):
         )
 
 
-        send_email_success = EmailOperator(
+        send_email_success = EmptyOperator(
             task_id=f'send_success_email_{i}',
-            to='aminsiddique95@gmail.com',
-            subject=f'Email at {time}',
-            html_content=email_content,
             dag=dag,
         )
-        send_email_failure = EmailOperator(
+        send_email_failure = EmptyOperator(
             task_id=f'send_failure_email_{i}',
-            to='aminsiddique95@gmail.com',
-            subject=f'Email at {time}',
-            html_content=email_content,
-            dag=dag,
-            trigger_rule=TriggerRule.ALL_SKIPPED
+            dag=dag
         )
 
         dependencies.append(email_sensors[index] >>  checks >> (send_email_success,send_email_failure))
