@@ -37,59 +37,22 @@ def check_previous_task_success(task_id=None,**kwargs):
     return True  
 
 
-with DAG(
-    "tutorial0",
-    default_args={
-        "depends_on_past": False,
-        "email": ["airflow@example.com"],
-        "email_on_failure": False,
-        "email_on_retry": False,
-        "retries": 1,
-        "retry_delay": timedelta(minutes=5),
-        # 'queue': 'bash_queue',
-        # 'pool': 'backfill',
-        # 'priority_weight': 10,
-        # 'end_date': datetime(2016, 1, 1),
-        # 'wait_for_downstream': False,
-        # 'sla': timedelta(hours=2),
-        # 'execution_timeout': timedelta(seconds=300),
-        # 'on_failure_callback': some_function, # or list of functions
-        # 'on_success_callback': some_other_function, # or list of functions
-        # 'on_retry_callback': another_function, # or list of functions
-        # 'sla_miss_callback': yet_another_function, # or list of functions
-        # 'trigger_rule': 'all_success'
-    },
-    # [END default_args]
-    description="A simple tutorial DAG",
-    schedule=timedelta(days=1),
-    start_date=datetime(2021, 1, 1),
-    catchup=False,
-    tags=["example"],
-) as dag:
-
-
-
-
+def today_endpoint():
     email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
-        '1b' : time(22, 15, 0),  # 10:00:00
-        '1c' : time(22, 20, 0),  # 11:00:00
-        '2' : time(22, 25, 0),  # 11:00:00
-        '3' : time(22, 30, 0),  # 11:00:00
-        '3' : time(23, 45, 0),  # 11:00:00
-        # Add more times as needed
+    '1b' : time(22, 35, 0),  # 10:00:00
+    '1c' : time(23, 20, 0),  # 11:00:00
+    '2' : time(22, 25, 0),  # 11:00:00
+    '3' : time(22, 30, 0),  # 11:00:00
+    '3' : time(23, 45, 0),  # 11:00:00
+    # Add more times as needed
     }
-
-
-    current_time_utc = datetime.now(timezone.utc).time()
-    filtered_times = [(k,v) for k,v in email_times.items() if v > current_time_utc]
+    filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
 
     email_sensors = []
+    dependencies = []
 
-    @task(task_id='today_endpoint')
-    def today_endpoint(filtered_times):
-        i = filtered_times[0][0]
-        time = filtered_times[0][1]
-        # for i,time in enumerate(filtered_times):
+    for i,time in enumerate(filtered_times):
+
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
             mode='poke', 
@@ -128,13 +91,61 @@ with DAG(
             dag=dag,
             trigger_rule=TriggerRule.ALL_SKIPPED
         )
+
+        dependencies.append(email_sensors[i] >>  checks >> (send_email_success,send_email_failure))
+
+    print(dependencies)
+    return dependencies
+
+
+with DAG(
+    "tutorial0",
+    default_args={
+        "depends_on_past": False,
+        "email": ["airflow@example.com"],
+        "email_on_failure": False,
+        "email_on_retry": False,
+        "retries": 1,
+        "retry_delay": timedelta(minutes=5),
+        # 'queue': 'bash_queue',
+        # 'pool': 'backfill',
+        # 'priority_weight': 10,
+        # 'end_date': datetime(2016, 1, 1),
+        # 'wait_for_downstream': False,
+        # 'sla': timedelta(hours=2),
+        # 'execution_timeout': timedelta(seconds=300),
+        # 'on_failure_callback': some_function, # or list of functions
+        # 'on_success_callback': some_other_function, # or list of functions
+        # 'on_retry_callback': another_function, # or list of functions
+        # 'sla_miss_callback': yet_another_function, # or list of functions
+        # 'trigger_rule': 'all_success'
+    },
+    # [END default_args]
+    description="A simple tutorial DAG",
+    schedule=timedelta(days=1),
+    start_date=datetime(2021, 1, 1),
+    catchup=False,
+    tags=["example"],
+) as dag:
+
+
+
+    today_endpoint_task = today_endpoint_task(
+        task_id='today_endpoint_task',
+        python_callable=today_endpoint,
+        dag=dag,
+    )
+
+
+    today_endpoint_task
+
+
     
 
-        email_sensors[i] >>  checks >> (send_email_success,send_email_failure)
 
-    today_endpoint = today_endpoint.expand(filtered_times=filtered_times)
 
-    today_endpoint
+        
+
 
 #############################################################################################
 
