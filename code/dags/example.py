@@ -74,8 +74,9 @@ with DAG(
 
 
 
-    @task('today_endpoint')
+    @task(task_id="dag_triggerer_bash")
     def today_endpoint(dag):
+
         from datetime import datetime, time, timedelta, timezone
         email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
         '1b' : time(22, 35, 0),  # 10:00:00
@@ -88,7 +89,6 @@ with DAG(
         filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
 
         email_sensors = []
-        dependencies = []
 
         for index,(i,time) in enumerate(filtered_times):
 
