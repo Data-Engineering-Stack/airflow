@@ -51,7 +51,7 @@ def today_endpoint():
     email_sensors = []
     dependencies = []
 
-    for i,time in enumerate(filtered_times):
+    for index,(i,time) in enumerate(filtered_times):
 
         sensor_task = TimeSensor(
             task_id=f'time_sensor_{i}',
@@ -92,7 +92,7 @@ def today_endpoint():
             trigger_rule=TriggerRule.ALL_SKIPPED
         )
 
-        dependencies.append(email_sensors[i] >>  checks >> (send_email_success,send_email_failure))
+        dependencies.append(email_sensors[index] >>  checks >> (send_email_success,send_email_failure))
 
     print(dependencies)
     return dependencies
