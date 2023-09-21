@@ -48,11 +48,11 @@ email_times = {
 
 def decide_branch(**kwargs):
 
-    filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
+    filtered_times = [k for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
 
 
     if filtered_times:
-        return filtered_times[0][0]  # Select the first available time slot
+        return filtered_times  # Select the first available time slot
     else:
         return 'no_email'
 
