@@ -38,11 +38,19 @@ def check_previous_task_success(task_id=None,**kwargs):
         return False # skip the downstream task if prev dag run task instance was successfull
     return True  
 
-
+email_times = {        
+'1a' : time(8, 20, 0),  # 09:00:00
+'1b' : time(8, 25, 0),  # 10:00:00
+'1c' : time(8, 30, 0),  # 11:00:00
+'2' : time(8, 35, 0),  # 11:00:00
+# Add more times as needed
+}
 
 def decide_branch(**kwargs):
-    current_time = datetime.now(timezone.utc).time()
-    filtered_times = [(k, v) for k, v in email_times.items() if v > current_time]
+
+    filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
+
+
     if filtered_times:
         return filtered_times[0][0]  # Select the first available time slot
     else:
@@ -90,17 +98,10 @@ with DAG(
 
 
     from datetime import datetime, time, timedelta, timezone
-    email_times = {        '1a' : time(8, 7, 0),  # 09:00:00
-    '1b' : time(8, 10, 0),  # 10:00:00
-    '1c' : time(8, 15, 0),  # 11:00:00
-    '2' : time(8, 17, 0),  # 11:00:00
-    # Add more times as needed
-    }
-    filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
 
     email_sensors = []
 
-    for index,(i,time) in enumerate(filtered_times):
+    for index,(i,time) in enumerate(email_times.items()):
         branch = EmptyOperator(task_id=i, dag=dag)
 
         sensor_task = TimeSensor(
