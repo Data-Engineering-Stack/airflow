@@ -130,7 +130,7 @@ with DAG(
 
 
 
-    today_endpoint_task = today_endpoint_task(
+    today_endpoint_task = PythonOperator(
         task_id='today_endpoint_task',
         python_callable=today_endpoint,
         dag=dag,
