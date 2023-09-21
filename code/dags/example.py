@@ -74,63 +74,59 @@ with DAG(
 
 
 
-    @task(task_id="today_endpoint")
-    def today_endpoint():
-
-        from datetime import datetime, time, timedelta, timezone
-        email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
-        '1b' : time(22, 35, 0),  # 10:00:00
-        '1c' : time(23, 20, 0),  # 11:00:00
-        '2' : time(22, 25, 0),  # 11:00:00
-        '3' : time(22, 30, 0),  # 11:00:00
-        '3' : time(23, 45, 0),  # 11:00:00
-        # Add more times as needed
-        }
-        filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
-
-        email_sensors = []
-
-        for index,(i,time) in enumerate(filtered_times):
-
-            sensor_task = TimeSensor(
-                task_id=f'time_sensor_{i}',
-                mode='poke', 
-                target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
-                soft_fail=True,
-                dag=dag
-            )
-            email_sensors.append(sensor_task)
-
-            email_content = "This is the email content."
-
-            sql = 'select current_date'
-
-            
-            checks = SqlSensor(
-                task_id = f'check_{i}',
-                sql = sql,
-                conn_id=postgres_conn_id,
-                poke_interval=60,
-                timeout=60 * 2,
-                soft_fail= True
-            )
 
 
-            send_email_success = EmptyOperator(
-                task_id=f'send_success_email_{i}',
-                dag=dag,
-            )
-            send_email_failure = EmptyOperator(
-                task_id=f'send_failure_email_{i}',
-                dag=dag
-            )
+    from datetime import datetime, time, timedelta, timezone
+    email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
+    '1b' : time(22, 35, 0),  # 10:00:00
+    '1c' : time(23, 20, 0),  # 11:00:00
+    '2' : time(22, 25, 0),  # 11:00:00
+    '3' : time(22, 30, 0),  # 11:00:00
+    '3' : time(23, 45, 0),  # 11:00:00
+    # Add more times as needed
+    }
+    filtered_times = [(k,v) for k,v in email_times.items() if v > datetime.now(timezone.utc).time()]
 
-            email_sensors[index] >>  checks >> (send_email_success,send_email_failure)
+    email_sensors = []
+
+    for index,(i,time) in enumerate(filtered_times):
+
+        sensor_task = TimeSensor(
+            task_id=f'time_sensor_{i}',
+            mode='poke', 
+            target_time= datetime.combine(datetime.now(timezone.utc).date(), time).time() ,
+            soft_fail=True,
+            dag=dag
+        )
+        email_sensors.append(sensor_task)
+
+        email_content = "This is the email content."
+
+        sql = 'select current_date'
+
+        
+        checks = SqlSensor(
+            task_id = f'check_{i}',
+            sql = sql,
+            conn_id=postgres_conn_id,
+            poke_interval=60,
+            timeout=60 * 2,
+            soft_fail= True
+        )
 
 
-    today_endpoint = today_endpoint()
+        send_email_success = EmptyOperator(
+            task_id=f'send_success_email_{i}',
+            dag=dag,
+        )
+        send_email_failure = EmptyOperator(
+            task_id=f'send_failure_email_{i}',
+            dag=dag
+        )
 
-    today_endpoint
+        email_sensors[index] >>  checks >> (send_email_success,send_email_failure)
+
+
 
 
     
