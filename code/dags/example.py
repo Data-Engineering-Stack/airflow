@@ -77,8 +77,8 @@ with DAG(
 
 
     from datetime import datetime, time, timedelta, timezone
-    email_times = {        '1a' : time(22, 10, 0),  # 09:00:00
-    '1b' : time(22, 35, 0),  # 10:00:00
+    email_times = {        '1a' : time(8, 30, 0),  # 09:00:00
+    '1b' : time(8, 40, 0),  # 10:00:00
     '1c' : time(23, 20, 0),  # 11:00:00
     '2' : time(22, 25, 0),  # 11:00:00
     '3' : time(22, 30, 0),  # 11:00:00
