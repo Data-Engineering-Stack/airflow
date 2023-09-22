@@ -28,7 +28,7 @@ with DAG(
         task_id="wait", 
         delta=timedelta(seconds=30),
         mode='poke',
-        poke_interval=60,
+        poke_interval=15,
         timeout=timedelta(minutes=5)
         )
 
