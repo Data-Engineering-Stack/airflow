@@ -26,7 +26,7 @@ with DAG(
 ) as dag:
     wait = TimeDeltaSensor(
         task_id="wait", 
-        delta=datetime.timedelta(seconds=30),
+        delta=timedelta(seconds=30),
         mode='poke',
         poke_interval=60,
         timeout=timedelta(minutes=5)
