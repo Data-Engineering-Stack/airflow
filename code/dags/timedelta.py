@@ -10,6 +10,7 @@ import pendulum
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.sensors.time_delta import TimeDeltaSensor
+from datetime import timedelta
 
 with DAG(
     dag_id="TimeDeltaSensorExample",
@@ -18,6 +19,12 @@ with DAG(
     catchup=False,
     tags=["example"],
 ) as dag:
-    wait = TimeDeltaSensor(task_id="wait", delta=datetime.timedelta(seconds=30))
+    wait = TimeDeltaSensor(task_id="wait", 
+                           delta=datetime.timedelta(seconds=30),
+                           mode='poke',
+                           poke_interval=60,
+                           timeout=timedelta(minutes=5)
+                           
+                           )
     finish = EmptyOperator(task_id="finish")
     wait >> finish
