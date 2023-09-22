@@ -24,20 +24,22 @@ with DAG(
     catchup=False,
     tags=["example"],
 ) as dag:
-    wait = TimeDeltaSensor(
-        task_id="wait", 
-        delta=timedelta(seconds=30),
-        mode='poke',
-        poke_interval=15,
-        timeout=timedelta(minutes=5)
+    
+    for i in range(1,5):
+        wait = TimeDeltaSensor(
+            task_id=f"wait_{i}", 
+            delta=timedelta(seconds=30),
+            mode='poke',
+            poke_interval=15,
+            timeout=timedelta(minutes=5)
+            )
+
+        execute_task = PythonOperator(
+            task_id=f'execute_task_{i}',
+            python_callable=printer,
+            provide_context=True,
+            dag=dag
         )
 
-    execute_task = PythonOperator(
-        task_id='execute_task',
-        python_callable=printer,
-        provide_context=True,
-        dag=dag
-    )
 
-
-    wait >> execute_task
+        wait >> execute_task
