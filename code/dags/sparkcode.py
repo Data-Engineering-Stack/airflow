@@ -1,16 +1,21 @@
 from pyspark.sql.session import SparkSession
-from pyspark import SparkContext
+from pyspark import SparkContext,SparkConf
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 import findspark
 
+
+
+conf= SparkConf()
 findspark.init()
 
-sc = SparkContext("local","testsc")
+# sc = SparkContext("local","testsc")
+sc = SparkContext(appName='test-spark',conf=conf).getOrCreate()
+spark = SparkSession(sc)
 
-spark = SparkSession \
-    .builder \
-    .appName("testSparkJob") \
-    .getOrCreate()
+# spark = SparkSession \
+#     .builder \
+#     .appName("testSparkJob") \
+#     .getOrCreate()
 
 
 data2 = [("James","","Smith","36636","M",3000),

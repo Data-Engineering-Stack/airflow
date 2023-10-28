@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir \
     apache-airflow-providers-postgres==5.5.0 \
     findspark==2.0.1 \
     pyspark==3.2.1 \
-    pynessie==0.48.2 \
+    pynessie==0.48.2 
 
 
 
