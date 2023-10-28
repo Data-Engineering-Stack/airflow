@@ -13,6 +13,7 @@ spark_configurations = {
     "spark.executor.memory": "4g",  # Memory allocated per executor.
     "spark.driver.memory": "4g",  # Memory allocated for the driver.
     "spark.serializer": "org.apache.spark.serializer.KryoSerializer",  # Serializer for data.
+    "spark.dynamicAllocation.enabled":"false"
 }
 
 
