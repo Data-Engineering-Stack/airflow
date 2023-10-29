@@ -22,7 +22,7 @@ spark_configurations = {
 
 with DAG('spark_job',schedule=None,start_date=datetime(2022, 3, 4),catchup=False) as dag:
 
-    print(spark_configurations['spark.driver.host'])
+
     SparkSubmitOperator_task = SparkSubmitOperator(
     task_id='SparkSubmitOperator_task',
     application=app,
