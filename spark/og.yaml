@@ -1,6 +1,3 @@
-# Copyright VMware, Inc.
-# SPDX-License-Identifier: APACHE-2.0
-
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -153,14 +150,19 @@ master:
   daemonMemoryLimit: ""
   ## @param master.configOptions Use a string to set the config options for in the form "-Dx=y"
   ##
-  configOptions: ""
+  configOptions: |
+    -Dspark.ui.reverseProxy=true 
+    -Dspark.ui.reverseProxyUrl=/ 
+    -Dspark.scheduler.allocation.file=file:///data/spark_config/fair_scheduler.xml
   ## @param master.extraEnvVars Extra environment variables to pass to the master container
   ## For example:
   ## extraEnvVars:
   ##  - name: SPARK_DAEMON_JAVA_OPTS
   ##    value: -Dx=y
   ##
-  extraEnvVars: []
+  extraEnvVars:
+    - name: SPARK_LOCAL_DIRS
+      value: "/data"
   ## @param master.extraEnvVarsCM Name of existing ConfigMap containing extra env vars for master nodes
   ##
   extraEnvVarsCM: ""
@@ -276,13 +278,28 @@ master:
   lifecycleHooks: {}
   ## @param master.extraVolumes Optionally specify extra list of additional volumes for the master pod(s)
   ##
-  extraVolumes: []
+  extraVolumes:
+    - name: spark-volume
+      nfs:
+        server: SETPEE12S000456.con-02.emea.dc.corpintra.net
+        path: /SETPEE12S000456_NFS_007/
+    - name: spark-local-storage
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 50Gi
+
   ## @param master.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the master container(s)
   ##
-  extraVolumeMounts: []
-  ## @param master.extraVolumeClaimTemplates Optionally specify extra list of volumesClaimTemplates for the master statefulset
-  ##
-  extraVolumeClaimTemplates: []
+  extraVolumeMounts:
+    - name: spark-volume
+      mountPath: "/data"
+    - name: spark-local-storage
+      mountPath: "/tmp"
   ## Container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We usually recommend not to specify default resources and to leave this as a conscious
@@ -418,7 +435,7 @@ worker:
   daemonMemoryLimit: ""
   ## @param worker.memoryLimit Set the maximum memory the worker is allowed to use
   ##
-  memoryLimit: "2g"
+  memoryLimit: "4g"
   ## @param worker.coreLimit Se the maximum number of cores that the worker can use
   ##
   coreLimit: "1"
@@ -430,14 +447,17 @@ worker:
   javaOptions: ""
   ## @param worker.configOptions Set extra options to configure the worker in the form `-Dx=y`
   ##
-  configOptions: ""
+  configOptions: "-Dspark.ui.reverseProxyUrl=/ -Dspark.ui.reverseProxy=true -Dspark.worker.cleanup.enabled=true -Dspark.worker.cleanup.interval=14400 -Dspark.worker.cleanup.appDataTtl=86400 -Dspark.sql.adaptive.enabled=true -Dspark.shuffle.service.enabled=true -Dspark.scheduler.allocation.file=file:///data/spark_config/fair_scheduler.xml"
+  
   ## @param worker.extraEnvVars An array to add extra env vars
   ## For example:
   ## extraEnvVars:
   ##  - name: SPARK_DAEMON_JAVA_OPTS
   ##    value: -Dx=y
   ##
-  extraEnvVars: []
+  extraEnvVars:
+    - name: SPARK_LOCAL_DIRS
+      value: "/data"
   ## @param worker.extraEnvVarsCM Name of existing ConfigMap containing extra env vars for worker nodes
   ##
   extraEnvVarsCM: ""
@@ -446,7 +466,7 @@ worker:
   extraEnvVarsSecret: ""
   ## @param worker.replicaCount Number of spark workers (will be the minimum number when autoscaling is enabled)
   ##
-  replicaCount: 2
+  replicaCount: 6
   ## Kubernetes Pods Security Context
   ## https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param worker.podSecurityContext.enabled Enable security context
@@ -461,6 +481,7 @@ worker:
     runAsUser: 50000
     runAsGroup: 0
     seLinuxOptions: {}
+
   ## Configure Container Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   ## @param worker.containerSecurityContext.enabled Enabled worker containers' Security Context
@@ -516,7 +537,17 @@ worker:
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ## Note: worker.podAffinityPreset, worker.podAntiAffinityPreset, and worker.nodeAffinityPreset will be ignored when it's set
   ##
-  affinity: {}
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "app.kubernetes.io/component"
+                operator: In
+                values:
+                  - worker
+          topologyKey: "kubernetes.io/hostname"
+
   ## @param worker.nodeSelector Spark worker node labels for pod assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
@@ -560,13 +591,27 @@ worker:
   lifecycleHooks: {}
   ## @param worker.extraVolumes Optionally specify extra list of additional volumes for the worker pod(s)
   ##
-  extraVolumes: []
+  extraVolumes:
+    - name: spark-volume
+      nfs:
+        server: SETPEE12S000456.con-02.emea.dc.corpintra.net
+        path: /SETPEE12S000456_NFS_007/
+    - name: spark-local-storage
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 50Gi
   ## @param worker.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the master container(s)
   ##
-  extraVolumeMounts: []
-  ## @param worker.extraVolumeClaimTemplates Optionally specify extra list of volumesClaimTemplates for the worker statefulset
-  ##
-  extraVolumeClaimTemplates: []
+  extraVolumeMounts:
+    - name: spark-volume
+      mountPath: "/data"
+    - name: spark-local-storage
+      mountPath: "/tmp"
   ## Container resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We usually recommend not to specify default resources and to leave this as a conscious
@@ -578,15 +623,17 @@ worker:
   ##
   resources:
     ## Example:
-    ## limits:
-    ##    cpu: 250m
-    ##    memory: 256Mi
+    # limits:
+    #   cpu: 1000m
+    #   memory: 4Gi
+    # ephemeral-storage: 50Gi
     ##
     limits: {}
     ## Examples:
-    ## requests:
-    ##    cpu: 250m
-    ##    memory: 256Mi
+    # requests:
+    #  cpu: 250m
+    #  memory: 256Mi
+    #  ephemeral-storage: 25Gi
     ##
     requests: {}
   ## Configure extra options for liveness probe
@@ -820,7 +867,6 @@ service:
   ##     timeoutSeconds: 300
   ##
   sessionAffinityConfig: {}
-
 ## Configure the ingress resource that allows you to access the
 ## Spark installation. Set up the URL
 ## ref: https://kubernetes.io/docs/user-guide/ingress/
@@ -891,8 +937,8 @@ ingress:
   ##
   extraTls: []
   ## @param ingress.secrets If you're providing your own certificates, please use this to add the certificates as secrets
-  ## key and certificate should start with -----BEGIN CERTIFICATE----- or
-  ## -----BEGIN RSA PRIVATE KEY-----
+  ## key and certificate should start with -----BEGIN ..ATE----- or
+  ## -----BEGIN .. KEY-----
   ##
   ## name should line up with a tlsSecret set further up
   ## If you're using cert-manager, this is unneeded, as it will create the secret for you if it is not set
@@ -953,15 +999,15 @@ metrics:
   ## @param metrics.masterAnnotations [object] Annotations for the Prometheus metrics on master nodes
   ##
   masterAnnotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/path: '/metrics/'
-    prometheus.io/port: '{{ .Values.master.containerPorts.http }}'
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics/"
+    prometheus.io/port: "{{ .Values.master.containerPorts.http }}"
   ## @param metrics.workerAnnotations [object] Annotations for the Prometheus metrics on worker nodes
   ##
   workerAnnotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/path: '/metrics/'
-    prometheus.io/port: '{{ .Values.worker.containerPorts.http }}'
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics/"
+    prometheus.io/port: "{{ .Values.worker.containerPorts.http }}"
   ## Prometheus Service Monitor
   ## ref: https://github.com/coreos/prometheus-operator
   ##      https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
