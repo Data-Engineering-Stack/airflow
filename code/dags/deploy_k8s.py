@@ -66,13 +66,16 @@ def get_spark_config():
         "spark.sql.timestampType": "TIMESTAMP_NTZ",
         "spark.sql.legacy.timeParserPolicy": "CORRECTED",
         "spark.scheduler.mode": "FAIR",
-        "spark.sql.adaptive.enabled": "true",
+        "spark.sql.adaptive.enabled": "false",
         "spark.shuffle.service.enabled": "true",
         "spark.sql.adaptive.coalescePartitions.enabled": "true",
-        "spark.dynamicAllocation.enabled": "true",
-        "spark.dynamicAllocation.shuffleTracking.enabled": "true",
+        "spark.dynamicAllocation.enabled": "false",
+        "spark.dynamicAllocation.shuffleTracking.enabled": "false",
         "spark.dynamicAllocation.maxExecutors":"2",
-        "spark.executor.memory":"1g"
+        "spark.executor.memory":"200m",
+        "spark.executor.instances":"2",
+        "spark.cores.max":"1"
+
     }
 
 
