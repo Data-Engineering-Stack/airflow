@@ -14,7 +14,7 @@ spark_configurations = {
     "spark.driver.memory": "4g",  # Memory allocated for the driver.
     "spark.serializer": "org.apache.spark.serializer.KryoSerializer",  # Serializer for data.
     "spark.dynamicAllocation.enabled":"false",
-    "spark.driver.host" : "{{ task_instance.hostname }}.airflow.svc.cluster.local "
+    "spark.driver.host" : "{{ task_instance.hostname }}.spark-headless-service.airflow.svc.cluster.local "
 }
 
 
