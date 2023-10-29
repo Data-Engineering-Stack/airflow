@@ -56,7 +56,7 @@ def get_spark_config():
 
 
     spark_conf = {
-        "spark.driver.maxResultSize": "5g",
+        "spark.driver.maxResultSize": "1g",
         "spark.driver.port": "42000",
         "spark.port.maxRetries": "16",
         "spark.driver.host": "{{ task_instance.hostname }}.airflow",
@@ -64,19 +64,14 @@ def get_spark_config():
         "spark.blockManager.port": "42032",
         "spark.sql.execution.pyarrow.enabled": "true",
         "spark.sql.timestampType": "TIMESTAMP_NTZ",
-        "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,org.projectnessie.spark.extensions.NessieSparkSessionExtensions",
-        "spark.hadoop.fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider",
-        "spark.hadoop.fs.s3.aws.credentials.provider": "org.apache.hadoop.fs.s3.SimpleAWSCredentialsProvider",
         "spark.sql.legacy.timeParserPolicy": "CORRECTED",
-        "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
-        "spark.hadoop.fs.s3a.path.style.access": "true",
         "spark.scheduler.mode": "FAIR",
         "spark.sql.adaptive.enabled": "true",
         "spark.shuffle.service.enabled": "true",
         "spark.sql.adaptive.coalescePartitions.enabled": "true",
         "spark.dynamicAllocation.enabled": "true",
         "spark.dynamicAllocation.shuffleTracking.enabled": "true",
-        "spark.dynamicAllocation.maxExecutors":"4",
+        "spark.dynamicAllocation.maxExecutors":"2",
     }
 
 
