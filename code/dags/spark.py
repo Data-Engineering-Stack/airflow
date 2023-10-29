@@ -10,8 +10,8 @@ spark_configurations = {
     "spark.driver.port": "42000",  # The name of your Spark application.
     "spark.driver.blockManager.port": "42016",  # The name of your Spark application.
     "spark.blockManager.port": "42032",  # The name of your Spark application.
-    "spark.executor.memory": "4g",  # Memory allocated per executor.
-    "spark.driver.memory": "4g",  # Memory allocated for the driver.
+    "spark.executor.memory": "1g",  # Memory allocated per executor.
+    "spark.driver.memory": "1g",  # Memory allocated for the driver.
     "spark.serializer": "org.apache.spark.serializer.KryoSerializer",  # Serializer for data.
     "spark.dynamicAllocation.enabled":"false",
     # "spark.driver.host" : "{{ task_instance.hostname }} "

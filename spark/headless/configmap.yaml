@@ -70,7 +70,7 @@ data:
                         else:
                             servicename = pod.metadata.name
 
-                        print(f"Creating headless svc for driver {pod_driver_id}")
+                        print(f"Creating headless svc {servicename} for driver {pod_driver_id}")
 
                         if event["type"] == "ADDED":
                             # add the calico pod-id annotation as label (since services can only select labels)
