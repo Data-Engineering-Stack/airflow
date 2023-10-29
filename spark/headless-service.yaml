@@ -8,4 +8,4 @@ spec:
     app: managed-by-airflow  # Common label for all pods managed by Airflow
   ports:
     - protocol: TCP
-      port: 7077  # Use the appropriate port
+      port: 8083  # Use the appropriate port
