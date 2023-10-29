@@ -56,7 +56,7 @@ def get_spark_config():
 
 
     spark_conf = {
-        "spark.driver.maxResultSize": "1g",
+        "spark.driver.maxResultSize": "2g",
         "spark.driver.port": "42000",
         "spark.port.maxRetries": "16",
         "spark.driver.host": "{{ task_instance.hostname }}.airflow",
@@ -72,10 +72,10 @@ def get_spark_config():
         "spark.dynamicAllocation.enabled": "false",
         "spark.dynamicAllocation.shuffleTracking.enabled": "false",
         "spark.dynamicAllocation.maxExecutors":"2",
-        "spark.executor.memory":"1g",
+        "spark.executor.memory":"2g",
         "spark.executor.instances":"2",
         "spark.cores.max":"2",
-        "spark.driver.memory": "1g",  # Memory allocated for the driver.
+        "spark.driver.memory": "4g",  # Memory allocated for the driver.
         "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
 
     }
