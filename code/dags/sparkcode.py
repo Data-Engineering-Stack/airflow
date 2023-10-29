@@ -36,4 +36,4 @@ print("--------------------------------------> runnning from headless")
 
 df = spark.createDataFrame(data=data2,schema=schema)
 df.printSchema()
-df.collect()
+df.show()
