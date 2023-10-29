@@ -72,9 +72,11 @@ def get_spark_config():
         "spark.dynamicAllocation.enabled": "false",
         "spark.dynamicAllocation.shuffleTracking.enabled": "false",
         "spark.dynamicAllocation.maxExecutors":"2",
-        "spark.executor.memory":"500m",
+        "spark.executor.memory":"1g",
         "spark.executor.instances":"2",
-        "spark.cores.max":"1"
+        "spark.cores.max":"2",
+        "spark.driver.memory": "1g",  # Memory allocated for the driver.
+        "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
 
     }
 
