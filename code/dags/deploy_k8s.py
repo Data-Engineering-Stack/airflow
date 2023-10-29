@@ -72,6 +72,7 @@ def get_spark_config():
         "spark.dynamicAllocation.enabled": "true",
         "spark.dynamicAllocation.shuffleTracking.enabled": "true",
         "spark.dynamicAllocation.maxExecutors":"2",
+        "spark.executor.memory":"1g"
     }
 
 
