@@ -14,7 +14,7 @@ spark_configurations = {
     "spark.driver.memory": "4g",  # Memory allocated for the driver.
     "spark.serializer": "org.apache.spark.serializer.KryoSerializer",  # Serializer for data.
     "spark.dynamicAllocation.enabled":"false",
-    "spark.driver.host" : "10.1.5.34"
+    "spark.driver.host" : "10.110.79.128"
 }
 
 
