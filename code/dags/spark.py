@@ -7,7 +7,7 @@ app = '/opt/airflow/dags/repo/code/dags/sparkcode.py'
 
 
 spark_configurations = {
-    # "spark.driver.port": "42000",  # The name of your Spark application.
+    "spark.driver.port": "31892",  # The name of your Spark application.
     "spark.driver.blockManager.port": "42016",  # The name of your Spark application.
     "spark.blockManager.port": "42032",  # The name of your Spark application.
     "spark.executor.memory": "4g",  # Memory allocated per executor.
