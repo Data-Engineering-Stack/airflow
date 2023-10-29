@@ -8,7 +8,8 @@ def get_executor_config():
     executor_config = {
         "pod_override": k8s.V1Pod(
             metadata=k8s.V1ObjectMeta(
-            labels={ "spark" : "driver"
+            labels={ "spark" : "driver",
+                       "app" : "managed-by-airflow "
                     }
             )
         ,

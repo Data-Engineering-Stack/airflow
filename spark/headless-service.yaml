@@ -2,9 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: spark-headless-service
-  labels:
-    app: spark-headless
 spec:
-  clusterIP: None  # This makes it a headless service
+  clusterIP: None
+  selector:
+    app: managed-by-airflow  # Common label for all pods managed by Airflow
   ports:
-    - port: 7077  # Port used by Spark master
+    - protocol: TCP
+      port: 7077  # Use the appropriate port
