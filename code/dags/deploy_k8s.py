@@ -67,12 +67,12 @@ def get_spark_config():
         "spark.sql.legacy.timeParserPolicy": "CORRECTED",
         "spark.scheduler.mode": "FAIR",
         "spark.sql.adaptive.enabled": "false",
-        "spark.shuffle.service.enabled": "true",
-        "spark.sql.adaptive.coalescePartitions.enabled": "true",
+        "spark.shuffle.service.enabled": "false",
+        "spark.sql.adaptive.coalescePartitions.enabled": "false",
         "spark.dynamicAllocation.enabled": "false",
         "spark.dynamicAllocation.shuffleTracking.enabled": "false",
         "spark.dynamicAllocation.maxExecutors":"2",
-        "spark.executor.memory":"200m",
+        "spark.executor.memory":"500m",
         "spark.executor.instances":"2",
         "spark.cores.max":"1"
 
