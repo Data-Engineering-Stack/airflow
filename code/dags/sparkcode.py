@@ -5,18 +5,18 @@ import findspark
 
 
 
-# conf= SparkConf()
-# print(conf)
-# findspark.init()
+conf= SparkConf()
+print(conf)
+findspark.init()
 
-sc = SparkContext("local","testsc")
-# sc = SparkContext(appName='test-spark',conf=conf).getOrCreate()
-# spark = SparkSession(sc)
+# sc = SparkContext("local","testsc")
+sc = SparkContext(appName='test-spark',conf=conf).getOrCreate()
+spark = SparkSession(sc)
 
-spark = SparkSession \
-    .builder \
-    .appName("testSparkJob") \
-    .getOrCreate()
+# spark = SparkSession \
+#     .builder \
+#     .appName("testSparkJob") \
+#     .getOrCreate()
 
 
 data2 = [("James","","Smith","36636","M",3000),
