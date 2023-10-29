@@ -6,6 +6,7 @@ import findspark
 
 
 conf= SparkConf()
+print(conf)
 findspark.init()
 
 # sc = SparkContext("local","testsc")
@@ -38,4 +39,4 @@ print("--------------------------------------> runnning from headless")
 
 df = spark.createDataFrame(data=data2,schema=schema)
 df.printSchema()
-df.show(truncate=False)
+df.show()
