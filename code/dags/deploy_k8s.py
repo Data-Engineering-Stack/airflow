@@ -75,7 +75,7 @@ def get_spark_config():
         "spark.executor.memory":"2g",
         "spark.executor.instances":"2",
         "spark.cores.max":"2",
-        "spark.driver.memory": "4g",  # Memory allocated for the driver.
+        "spark.driver.memory": "2g",  # Memory allocated for the driver.
         "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
 
     }
