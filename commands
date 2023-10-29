@@ -61,6 +61,8 @@ helm install spark oci://registry-1.docker.io/bitnamicharts/spark --namespace sp
 helm delete spark -n spark
 
 
+helm upgrade --install spark oci://registry-1.docker.io/bitnamicharts/spark --namespace spark -f spark_values.yaml  --debug
+
 
 ## SSL -> Install certificate manager
 #1. install (this will create cert-manager namspace)
