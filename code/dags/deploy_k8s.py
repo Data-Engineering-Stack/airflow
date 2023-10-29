@@ -5,21 +5,21 @@ from airflow.models import Variable
 
 #https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/executor/kubernetes.html
 def get_executor_config():
+
+    # Kubernetes executor config
+    labels = {
+        "spark": "driver",
+        "airflow": "spark",
+    }
     executor_config = {
         "pod_override": k8s.V1Pod(
-            metadata=k8s.V1ObjectMeta(
-            labels={ "spark" : "driver",
-                    "airflow": "spark"
-                    # "app" : "managed-by-airflow "
-                    }
-            )
-        ,
+        metadata=k8s.V1ObjectMeta(labels=labels),
         spec=k8s.V1PodSpec(
         set_hostname_as_fqdn=True,
         containers=[
             k8s.V1Container(
                 name="base",
-                image="maxvan112/airflow-amin:1.2",
+                image="maxvan112/airflow-amin:1.8",
                 ports=[k8s.V1ContainerPort(container_port=4040),k8s.V1ContainerPort(container_port=7337)]
                 + [k8s.V1ContainerPort(container_port=port) for port in range(42000,42049)],
                 env=[
@@ -39,3 +39,45 @@ def get_executor_config():
     return executor_config
 
 executor_config = get_executor_config()
+
+
+
+
+
+
+
+
+
+
+
+
+
+def get_spark_config():
+
+
+    spark_conf = {
+        "spark.driver.maxResultSize": "5g",
+        "spark.driver.port": "42000",
+        "spark.port.maxRetries": "16",
+        "spark.driver.host": "{{ task_instance.hostname }}.airflow",
+        "spark.driver.blockManager.port": "42016",
+        "spark.blockManager.port": "42032",
+        "spark.sql.execution.pyarrow.enabled": "true",
+        "spark.sql.timestampType": "TIMESTAMP_NTZ",
+        "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,org.projectnessie.spark.extensions.NessieSparkSessionExtensions",
+        "spark.hadoop.fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider",
+        "spark.hadoop.fs.s3.aws.credentials.provider": "org.apache.hadoop.fs.s3.SimpleAWSCredentialsProvider",
+        "spark.sql.legacy.timeParserPolicy": "CORRECTED",
+        "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
+        "spark.hadoop.fs.s3a.path.style.access": "true",
+        "spark.scheduler.mode": "FAIR",
+        "spark.sql.adaptive.enabled": "true",
+        "spark.shuffle.service.enabled": "true",
+        "spark.sql.adaptive.coalescePartitions.enabled": "true",
+        "spark.dynamicAllocation.enabled": "true",
+        "spark.dynamicAllocation.shuffleTracking.enabled": "true",
+        "spark.dynamicAllocation.maxExecutors":"4",
+    }
+
+
+    return spark_conf
