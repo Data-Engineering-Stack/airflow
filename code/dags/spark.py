@@ -26,7 +26,7 @@ with DAG('spark_job',schedule=None,start_date=datetime(2022, 3, 4),catchup=False
     SparkSubmitOperator_task = SparkSubmitOperator(
     task_id='SparkSubmitOperator_task',
     application=app,
-    executor_memory="4g",
+    executor_memory="1g",
     conf=get_spark_config(),
     conn_id='spark_conn',
     verbose=True,
