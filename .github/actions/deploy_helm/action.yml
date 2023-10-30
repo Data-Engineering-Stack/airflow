@@ -62,7 +62,7 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
-    - shell: pwsh
+    - shell: bash
       run: |
         Set-ExecutionPolicy RemoteSigned –Scope Process
         pip install yq
@@ -84,7 +84,7 @@ runs:
 
     - name: Deploy Helmchart
       uses: actions/checkout@v3
-    - shell: pwsh
+    - shell: bash
       run: |
         helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
         --namespace ${{ inputs.namespace }} `
