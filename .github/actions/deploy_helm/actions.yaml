@@ -1,0 +1,93 @@
+name: Deploy helm chart on premise
+description: This action can be used to deploy a helm chart to k8s, mirroring the images to a private registry.
+
+inputs:
+  repo:
+    required: true
+    description: name of the helm repo to add
+    default: "placeholder"
+  repo_url:
+    required: true
+    description: url of the repo to add
+    default: "placeholder"
+  release:
+    required: false
+    description: release name to be used
+    default: ""
+  registry:
+    required: false
+    description: Image registry to be Used
+    default: "registry-emea.app.corpintra.net"
+  values:
+    required: true
+    description: values.yaml or path to file
+  values_override:
+    required: true
+    description: overridden values.yaml images for harbor registry
+  additional_flags:
+    required: false
+    description: If needed hand over additional flags/parameters for helm install
+  namespace:
+    required: false
+    description: k8s namespace to be used for deployment
+    default: default
+  harbor_robot:
+    required: true
+    description: Name of the harbor robot account to use
+  harbor_token:
+    required: true
+    description: Token for harbor login
+  kubeconfig:
+    required: true
+    default: kubeconfig for target k8s tenant (b64)
+    description: location of the Dockerfile to use
+  airflow_tag:
+    required: false
+    default: "2.5.0"
+    description: overrides the airflow tag
+
+runs:
+  using: "composite"
+  steps:
+    - name: Log into registry
+      shell: /usr/bin/bash -e {0}
+      env:
+        CONTAINER_REGISTRY: registry-emea.app.corpintra.net
+      run: |
+        echo ${{ inputs.harbor_token }} | docker login ${{ env.CONTAINER_REGISTRY }} -u ${{ inputs.harbor_robot }} --password-stdin
+
+    - name: Extract docker images
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - shell: /usr/bin/bash -e {0}
+      env:
+        CONTAINER_REGISTRY: registry-emea.app.corpintra.net
+      run: |
+        pip install yq
+
+        helm repo add ${{ inputs.repo }} ${{ inputs.repo_url }}
+        helm repo update ${{ inputs.repo }}
+
+        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} \
+        | yq '..|.image? | select(.)' \
+        | sort -u \
+        | tr -d '"' \
+        | xargs -I % -n 1 -P 4 bash -c "docker pull % " || true
+
+        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} \
+        | yq '..|.image? | select(.)' \
+        | sort -u \
+        | tr -d '"' \
+        | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/hr-datafactory/% && docker push ${{ inputs.registry }}/hr-datafactory/%" || true
+
+    - name: Deploy Helmchart
+      uses: actions/checkout@v3
+    - shell: /usr/bin/bash -e {0}
+      run: |
+        helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} \
+        --namespace ${{ inputs.namespace }} \
+        --values ${{ inputs.values }} \
+        --values ${{ inputs.values_override }} \
+        --set defaultAirflowTag=${{ inputs.airflow_tag }} \
+        ${{ inputs.additional_flags }}
