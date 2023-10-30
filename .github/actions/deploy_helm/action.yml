@@ -58,20 +58,33 @@ runs:
           Set-ExecutionPolicy RemoteSigned –Scope Process
 
 
-    - name: Extract docker images
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-    - shell: bash
-      run: |
-        Set-ExecutionPolicy RemoteSigned –Scope Process
-        pip install yq
+    # - name: Extract docker images
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: "3.10"
+    # - shell: bash
+    #   run: |
+    #     Set-ExecutionPolicy RemoteSigned –Scope Process
+    #     pip install yq
 
-        print("hello")
-        
+    #     helm repo add ${{ inputs.repo }} ${{ inputs.repo_url }}
+    #     helm repo update ${{ inputs.repo }}
+
+    #     helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
+    #     | yq '..|.image? | select(.)' `
+    #     | sort -u `
+    #     | tr -d '"' `
+    #     | xargs -I % -n 1 -P 4 bash -c "docker pull % " || true
+
+    #     helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
+    #     | yq '..|.image? | select(.)' `
+    #     | sort -u `
+    #     | tr -d '"' `
+    #     | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/maxvan112/% && docker push ${{ inputs.registry }}/maxvan112/%" || true
+
     - name: Deploy Helmchart
       uses: actions/checkout@v3
-    - shell: bash
+    - shell: pwsh
       run: |
         helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
         --namespace ${{ inputs.namespace }} `
