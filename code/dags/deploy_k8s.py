@@ -67,7 +67,7 @@ def get_spark_config():
         "spark.sql.legacy.timeParserPolicy": "CORRECTED",
         "spark.scheduler.mode": "FAIR",
         "spark.sql.adaptive.enabled": "true",
-        "spark.shuffle.service.enabled": "true",
+        "spark.shuffle.service.enabled": "false",
         "spark.sql.adaptive.coalescePartitions.enabled": "false",
         "spark.dynamicAllocation.enabled": "false",
         "spark.dynamicAllocation.shuffleTracking.enabled": "false",
@@ -77,7 +77,7 @@ def get_spark_config():
         "spark.cores.max":"2",
         "spark.driver.memory": "1g",  # Memory allocated for the driver.
         "spark.serializer": "org.apache.spark.serializer.KryoSerializer",
-        "spark.jars":"/opt/bitnami/spark/jars"
+        "spark.jars":"/home/airflow/.local/lib/python3.10/site-packages/pyspark/jars/"
 
     }
 
