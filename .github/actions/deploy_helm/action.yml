@@ -91,5 +91,4 @@ runs:
           -f ${{ inputs.values }} `
           --values ${{ inputs.values_override }} `
           --set defaultAirflowTag=${{ inputs.airflow_tag }} `
-          ${{ inputs.additional_flags }} `
-          --debug
+          ${{ inputs.additional_flags }}
