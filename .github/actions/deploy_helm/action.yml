@@ -55,6 +55,8 @@ runs:
           $cmd = 'docker build . --tag  ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.AIRFLOW_TAG }} --file helm/airflow/Dockerfile'
           $cleaned_command = $cmd.Replace('"', '')
           Invoke-Expression $cleaned_command
+          Set-ExecutionPolicy RemoteSigned –Scope Process
+
 
     - name: Extract docker images
       uses: actions/setup-python@v4
@@ -62,6 +64,7 @@ runs:
         python-version: "3.10"
     - shell: pwsh
       run: |
+        Set-ExecutionPolicy RemoteSigned –Scope Process
         pip install yq
 
         helm repo add ${{ inputs.repo }} ${{ inputs.repo_url }}
