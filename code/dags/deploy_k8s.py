@@ -19,13 +19,17 @@ def get_executor_config():
         containers=[
             k8s.V1Container(
                 name="base",
-                image="maxvan112/airflow-amin:1.8",
+                image="maxvan112/airflow-spark:3.3",
                 ports=[k8s.V1ContainerPort(container_port=4040),k8s.V1ContainerPort(container_port=7337)]
                 + [k8s.V1ContainerPort(container_port=port) for port in range(42000,42049)],
                 env=[
-                    k8s.V1EnvVar(name="JAVA_HOME",
-                                 value="/usr/lib/jvm/java-11-openjdk-amd64/"
-                                 ),
+                    # k8s.V1EnvVar(name="JAVA_HOME",
+                    #              value="/usr/lib/jvm/java-11-openjdk-amd64/"
+                    #              ),
+                    k8s.V1EnvVar(
+                                name="PYSPARK_PYTHON",
+                                value="/opt/bitnami/python/bin/python",
+                            ),
                     k8s.V1EnvVar(name="SPARK_HOME",
                                  value="/home/airflow/.local/lib/python3.10/site-packages/pyspark"
                                  ),
@@ -39,18 +43,6 @@ def get_executor_config():
     return executor_config
 
 executor_config = get_executor_config()
-
-
-
-
-
-
-
-
-
-
-
-
 
 def get_spark_config():
 

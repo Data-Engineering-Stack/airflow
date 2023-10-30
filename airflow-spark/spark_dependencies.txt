@@ -1,0 +1,4 @@
+software.amazon.awssdk:bundle:2.17.178
+software.amazon.awssdk:url-connection-client:2.17.178
+org.apache.hadoop:hadoop-aws:3.3.1
+com.amazonaws:aws-java-sdk-bundle:1.11.901
