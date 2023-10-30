@@ -17,7 +17,7 @@ inputs:
   registry:
     required: false
     description: Image registry to be Used
-    default: "rregistry.hub.docker.com"
+    default: "registry.hub.docker.com"
   values:
     required: true
     description: values.yaml or path to file
