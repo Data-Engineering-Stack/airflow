@@ -1,7 +1,7 @@
 FROM apache/airflow:2.7.1-python3.10
 
 USER root
-COPY ./r.txt /opt/airflow
+COPY helm/airflow/r.txt /opt/airflow
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     bzip2\
