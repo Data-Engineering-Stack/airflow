@@ -22,50 +22,61 @@ inputs:
     required: true
     description: OAuth client secret
 
+
+
 runs:
   using: "composite"
   steps:
-    - name: Setup kubectl
-      uses: ThomasKliszowski/setup-kubectl@v1
-      with:
-        kube-config: ${{ inputs.kubeconfig }}
-        version: v1.24.0
+  # - name: Setup kubectl
+  #   uses: Azure/setup-kubectl@v3.2
+  #   with:
+  #     kube-config: ${{ inputs.kubeconfig }}
+  #     version: v1.24.0
 
-    - name: Create namespace
-      shell: bash
-      run: |
-        kubectl create ns ${{ inputs.namespace }} || true
+  - name: Checkout code
+    uses: actions/checkout@v2
 
-    - name: Create networkpolicy
-      shell: bash
-      run: |
-        kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || true
+  - name: Set up kubectl
+    shell: bash
+    run: |
+      Write-Host $env:KUBECONFIG | Out-File -FilePath kubeconfig.yml -Encoding utf8
+      kubectl config use-context docker-desktop
 
-    - name: Create pull secret
-      shell: bash
-      run: |
-        kubectl create secret docker-registry hrdf-robot \
-        --namespace ${{ inputs.namespace }} \
-        --save-config \
-        --dry-run=client \
-        --docker-username=${{ inputs.HARBOR_ROBOT }} \
-        --docker-password=${{ inputs.HARBOR_TOKEN }} \
-        -o yaml | kubectl apply -f -
+  - name: Create namespace
+    shell: bash
+    run: |
+      kubectl create ns ${{ inputs.namespace }} || true
+
+  - name: Create networkpolicy
+    shell: bash
+    run: |
+      kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || true
+
+  - name: Create pull secret
+    shell: bash
+    run: |
+      kubectl create secret docker-registry hrdf-robot \
+      --namespace ${{ inputs.namespace }} \
+      --save-config \
+      --dry-run=client \
+      --docker-username=${{ inputs.HARBOR_ROBOT }} \
+      --docker-password=${{ inputs.HARBOR_TOKEN }} \
+      -o yaml | kubectl apply -f -
 
 
+  #   if: ${{ inputs.app_secret != ''}}
+  #   shell: bash
+  #   run: |
+  #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
+
+
+  - name: Create OAuth secret
     # - name: Create app secret
-    #   if: ${{ inputs.app_secret != ''}}
-    #   shell: bash
-    #   run: |
-    #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
-    
-
-    - name: Create OAuth secret
-      shell: bash
-      run: |
-        kubectl create secret generic github-oauth-secret \
-        --namespace ${{ inputs.namespace }} \
-        --dry-run=client \
-        --from-literal=OAUTH_CLIENT_ID=${{ inputs.oauth_client_id }} \
-        --from-literal=OAUTH_CLIENT_SECRET=${{ inputs.oauth_client_secret }} \
-        -o yaml | kubectl apply -f -
+    shell: bash
+    run: |
+      kubectl create secret generic github-oauth-secret \
+      --namespace ${{ inputs.namespace }} \
+      --dry-run=client \
+      --from-literal=OAUTH_CLIENT_ID=${{ inputs.oauth_client_id }} \
+      --from-literal=OAUTH_CLIENT_SECRET=${{ inputs.oauth_client_secret }} \
+      -o yaml | kubectl apply -f -
