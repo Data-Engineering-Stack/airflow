@@ -50,7 +50,8 @@ jobs:
           Invoke-Expression $cleaned_command
 
       - name: Log into registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" |  docker login   -u "${{ secrets.DOCKER_USER }}" --password-stdin
+        run: |
+                docker logout | echo "${{ secrets.DOCKER_PASSWORD }}" |  docker login   -u "${{ secrets.DOCKER_USER }}" --password-stdin
 
       - name: Push image
         run: |
