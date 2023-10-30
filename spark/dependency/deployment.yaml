@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dependency-server
+  namespace: spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dependency-server
+  template:
+    metadata:
+      labels:
+        app: dependency-server
+    spec:
+      containers:
+        - name: server
+          image: placeholder
+          command: ["python"]
+          args:
+            ["-m", "http.server", "8001", "--directory", "/opt/bitnami/server/jars"]
+          ports:
+            - containerPort: 8001
+              name: http
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 1001
+            runAsNonRoot: true
+      imagePullSecrets:
+        - name: hrdf-robot
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dependency-server
+  namespace: spark
+spec:
+  selector:
+    app: dependency-server
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001

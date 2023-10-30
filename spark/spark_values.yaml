@@ -177,8 +177,8 @@ master:
   ##
   podSecurityContext:
     enabled: true
-    fsGroup: 1004
-    runAsUser: 50000
+    fsGroup: 1001
+    runAsUser: 1001
     runAsGroup: 0
     seLinuxOptions: {}
   ## Configure Container Security Context
@@ -190,7 +190,7 @@ master:
   ##
   containerSecurityContext:
     enabled: true
-    runAsUser: 50000
+    runAsUser: 1001
     runAsNonRoot: true
     readOnlyRootFilesystem: false
   ## @param master.command Override default container command (useful when using custom images)
@@ -424,7 +424,7 @@ worker:
   coreLimit: "1"
   ## @param worker.dir Set a custom working directory for the application
   ##
-  dir: "/data"
+  dir: ""
   ## @param worker.javaOptions Set options for the JVM in the form `-Dx=y`
   ##
   javaOptions: ""
@@ -446,7 +446,7 @@ worker:
   extraEnvVarsSecret: ""
   ## @param worker.replicaCount Number of spark workers (will be the minimum number when autoscaling is enabled)
   ##
-  replicaCount: 2
+  replicaCount: 6
   ## Kubernetes Pods Security Context
   ## https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param worker.podSecurityContext.enabled Enable security context
@@ -457,8 +457,8 @@ worker:
   ##
   podSecurityContext:
     enabled: true
-    fsGroup: 1004
-    runAsUser: 50000
+    fsGroup: 1001
+    runAsUser: 1001
     runAsGroup: 0
     seLinuxOptions: {}
   ## Configure Container Security Context
@@ -470,7 +470,7 @@ worker:
   ##
   containerSecurityContext:
     enabled: true
-    runAsUser: 50000
+    runAsUser: 1001
     runAsNonRoot: true
     readOnlyRootFilesystem: false
   ## @param worker.command Override default container command (useful when using custom images)
@@ -820,7 +820,12 @@ service:
   ##     timeoutSeconds: 300
   ##
   sessionAffinityConfig: {}
-
+  ## Headless service properties
+  ##
+  # headless:
+  #   ## @param service.headless.annotations Annotations for the headless service.
+  #   ##
+  #   annotations: {}
 ## Configure the ingress resource that allows you to access the
 ## Spark installation. Set up the URL
 ## ref: https://kubernetes.io/docs/user-guide/ingress/
