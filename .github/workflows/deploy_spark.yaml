@@ -25,4 +25,4 @@ jobs:
 
       - name: upgrade helm
         run: |
-          helm upgrade --install spark oci://registry-1.docker.io/bitnamicharts/spark --namespace spark -f spark/spark_values.yaml  --debug
+          helm upgrade --install spark oci://registry-1.docker.io/bitnamicharts/spark --namespace spark --create-namespace  -f spark/spark_values.yaml  --debug
