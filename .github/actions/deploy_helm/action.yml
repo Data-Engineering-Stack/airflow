@@ -50,44 +50,42 @@ runs:
   using: "composite"
   steps:
     - name: Log into registry
-      shell: /usr/bin/bash -e {0}
-      env:
-        CONTAINER_REGISTRY: registry-emea.app.corpintra.net
+      shell: pwsh
       run: |
-        echo ${{ inputs.harbor_token }} | docker login ${{ env.CONTAINER_REGISTRY }} -u ${{ inputs.harbor_robot }} --password-stdin
+          $cmd = 'docker build . --tag  ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.AIRFLOW_TAG }} --file helm/airflow/Dockerfile'
+          $cleaned_command = $cmd.Replace('"', '')
+          Invoke-Expression $cleaned_command
 
     - name: Extract docker images
       uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
-    - shell: /usr/bin/bash -e {0}
-      env:
-        CONTAINER_REGISTRY: registry-emea.app.corpintra.net
+        python-version: "3.11.0"
+    - shell: pwsh
       run: |
         pip install yq
 
         helm repo add ${{ inputs.repo }} ${{ inputs.repo_url }}
         helm repo update ${{ inputs.repo }}
 
-        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} \
-        | yq '..|.image? | select(.)' \
-        | sort -u \
-        | tr -d '"' \
+        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
+        | yq '..|.image? | select(.)' `
+        | sort -u `
+        | tr -d '"' `
         | xargs -I % -n 1 -P 4 bash -c "docker pull % " || true
 
-        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} \
-        | yq '..|.image? | select(.)' \
-        | sort -u \
-        | tr -d '"' \
+        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
+        | yq '..|.image? | select(.)' `
+        | sort -u `
+        | tr -d '"' `
         | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/hr-datafactory/% && docker push ${{ inputs.registry }}/hr-datafactory/%" || true
 
     - name: Deploy Helmchart
       uses: actions/checkout@v3
-    - shell: /usr/bin/bash -e {0}
+    - shell: pwsh
       run: |
-        helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} \
-        --namespace ${{ inputs.namespace }} \
-        --values ${{ inputs.values }} \
-        --values ${{ inputs.values_override }} \
-        --set defaultAirflowTag=${{ inputs.airflow_tag }} \
+        helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
+        --namespace ${{ inputs.namespace }} `
+        --values ${{ inputs.values }} `
+        --values ${{ inputs.values_override }} `
+        --set defaultAirflowTag=${{ inputs.airflow_tag }} `
         ${{ inputs.additional_flags }}
