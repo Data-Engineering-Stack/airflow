@@ -45,7 +45,9 @@ runs:
   - name: Create namespace
     shell: pwsh
     run: |
-      kubectl create ns ${{ inputs.namespace }} 2>$null
+      if (!(kubectl get ns ${{ inputs.namespace }} --ignore-not-found)) {
+        kubectl create ns ${{ inputs.namespace }}
+      }
 
   - name: Create networkpolicy
     shell: pwsh
