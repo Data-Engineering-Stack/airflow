@@ -67,21 +67,8 @@ runs:
         Set-ExecutionPolicy RemoteSigned –Scope Process
         pip install yq
 
-        helm repo add ${{ inputs.repo }} ${{ inputs.repo_url }}
-        helm repo update ${{ inputs.repo }}
-
-        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
-        | yq '..|.image? | select(.)' `
-        | sort -u `
-        | tr -d '"' `
-        | xargs -I % -n 1 -P 4 bash -c "docker pull % " || true
-
-        helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
-        | yq '..|.image? | select(.)' `
-        | sort -u `
-        | tr -d '"' `
-        | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/maxvan112/% && docker push ${{ inputs.registry }}/maxvan112/%" || true
-
+        print("hello")
+        
     - name: Deploy Helmchart
       uses: actions/checkout@v3
     - shell: bash
