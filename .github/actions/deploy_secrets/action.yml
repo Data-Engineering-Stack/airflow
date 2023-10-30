@@ -58,12 +58,12 @@ runs:
   - name: Create pull secret
     shell: pwsh
     run: |
-      kubectl create secret docker-registry hrdf-robot \
-      --namespace ${{ inputs.namespace }} \
-      --save-config \
-      --dry-run=client \
-      --docker-username=${{ inputs.HARBOR_ROBOT }} \
-      --docker-password=${{ inputs.HARBOR_TOKEN }} \
+      kubectl create secret docker-registry hrdf-robot `
+      --namespace ${{ inputs.namespace }} `
+      --save-config `
+      --dry-run=client `
+      --docker-username=${{ inputs.HARBOR_ROBOT }} `
+      --docker-password=${{ inputs.HARBOR_TOKEN }} `
       -o yaml | kubectl apply -f -
 
 
@@ -77,9 +77,9 @@ runs:
     #   if: ${{ inputs.app_secret != ''}}
     shell: pwsh
     run: |
-      kubectl create secret generic github-oauth-secret \
-      --namespace ${{ inputs.namespace }} \
-      --dry-run=client \
-      --from-literal=OAUTH_CLIENT_ID=${{ inputs.oauth_client_id }} \
-      --from-literal=OAUTH_CLIENT_SECRET=${{ inputs.oauth_client_secret }} \
+      kubectl create secret generic github-oauth-secret `
+      --namespace ${{ inputs.namespace }} `
+      --dry-run=client `
+      --from-literal=OAUTH_CLIENT_ID=${{ inputs.oauth_client_id }} `
+      --from-literal=OAUTH_CLIENT_SECRET=${{ inputs.oauth_client_secret }} `
       -o yaml | kubectl apply -f -
