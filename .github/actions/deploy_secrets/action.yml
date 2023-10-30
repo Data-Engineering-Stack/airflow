@@ -39,7 +39,7 @@ runs:
   - name: Set up kubectl
     shell: pwsh
     run: |
-      ${{ inputs.kubeconfig }} | Out-File -FilePath kubeconfig.yml -Encoding utf8
+      "${{ inputs.kubeconfig }}" | Out-File -FilePath kubeconfig.yml
       kubectl config use-context docker-desktop
 
   - name: Create namespace
@@ -64,12 +64,12 @@ runs:
       -o yaml | kubectl apply -f -
 
 
-  #   run: |
   #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
 
 
   - name: Create OAuth secret
     # - name: Create app secret
+    #   run: |
     #   shell: bash
     #   if: ${{ inputs.app_secret != ''}}
     shell: pwsh
