@@ -67,8 +67,8 @@ jobs:
           repo: apache-airflow
           repo_url: https://airflow.apache.org
           release: airflow
-          values: helm\airflow\values.yaml
-          values_override: helm\airflow\override.yaml
+          values: values.yaml
+          values_override: override.yaml
           namespace: airflow
           harbor_robot: "${{ secrets.DOCKER_USER }}"
           harbor_token: "${{ secrets.DOCKER_PASSWORD }}"

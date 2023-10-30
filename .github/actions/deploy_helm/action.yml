@@ -86,6 +86,7 @@ runs:
       uses: actions/checkout@v3
     - shell: pwsh
       run: |
+        cd helm/airflow/ `
         helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
         --namespace ${{ inputs.namespace }} `
         --values ${{ inputs.values }} `
