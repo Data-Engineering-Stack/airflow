@@ -91,3 +91,9 @@ git rm --cached values.yaml
 git reset --hard HEAD~10
 (iii) force push from local to remote in case doing hard reset:
  git push origin main --force
+
+
+
+
+## Github Actions:
+./run.cmd
