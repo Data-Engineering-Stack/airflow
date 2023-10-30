@@ -95,5 +95,5 @@ git reset --hard HEAD~10
 
 
 
-## Github Actions:
+## Github Actions: go to folder actions-runner
 ./run.cmd
