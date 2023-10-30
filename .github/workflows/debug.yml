@@ -1,4 +1,4 @@
-name: Pylint
+name: test-self-hosted
 
 on: [push]
 
