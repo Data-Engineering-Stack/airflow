@@ -26,7 +26,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup kubectl
-      uses: action/setup-kubectl@2bf1e67dfb67732087c0420e2a0a294ce8b6093b
+      uses: ThomasKliszowski/setup-kubectl@v1
       with:
         kube-config: ${{ inputs.kubeconfig }}
         version: v1.24.0
