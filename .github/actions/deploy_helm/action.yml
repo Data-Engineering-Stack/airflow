@@ -17,7 +17,7 @@ inputs:
   registry:
     required: false
     description: Image registry to be Used
-    default: "registry-emea.app.corpintra.net"
+    default: "rregistry.hub.docker.com"
   values:
     required: true
     description: values.yaml or path to file
@@ -80,7 +80,7 @@ runs:
         | yq '..|.image? | select(.)' `
         | sort -u `
         | tr -d '"' `
-        | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/hr-datafactory/% && docker push ${{ inputs.registry }}/hr-datafactory/%" || true
+        | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/maxvan112/% && docker push ${{ inputs.registry }}/maxvan112/%" || true
 
     - name: Deploy Helmchart
       uses: actions/checkout@v3
