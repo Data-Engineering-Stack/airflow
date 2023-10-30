@@ -81,15 +81,15 @@ runs:
     #     | sort -u `
     #     | tr -d '"' `
     #     | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/maxvan112/% && docker push ${{ inputs.registry }}/maxvan112/%" || true
-        # helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
-        # -n ${{ inputs.namespace }} `
-        # -f ${{ inputs.values }} `
-        # --values ${{ inputs.values_override }} `
-        # --set defaultAirflowTag=${{ inputs.airflow_tag }} `
-        # ${{ inputs.additional_flags }} `
-        # --debug
+
     - name: Deploy Helmchart
       uses: actions/checkout@v3
     - shell: pwsh
       run: |
-        Write-Host (Get-Location)
+          helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
+          -n ${{ inputs.namespace }} `
+          -f ${{ inputs.values }} `
+          --values ${{ inputs.values_override }} `
+          --set defaultAirflowTag=${{ inputs.airflow_tag }} `
+          ${{ inputs.additional_flags }} `
+          --debug
