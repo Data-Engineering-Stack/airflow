@@ -80,7 +80,8 @@ def get_spark_config():
         "spark.jars":"/home/airflow/.local/lib/python3.10/site-packages/pyspark/jars/", #not required
         "spark.kubernetes.executor.request.cores":"1",
         "spark.executor.cores":"1",
-        "spark.executor.pyspark.memory":"200m"
+        "spark.executor.pyspark.memory":"200m",
+        "spark.kubernetes.driver.pod.name":"{{ task_instance.hostname }}"
 
     }
 

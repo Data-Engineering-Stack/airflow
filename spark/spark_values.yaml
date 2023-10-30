@@ -153,14 +153,18 @@ master:
   daemonMemoryLimit: ""
   ## @param master.configOptions Use a string to set the config options for in the form "-Dx=y"
   ##
-  configOptions: ""
+  # configOptions: |
+  #     -Dspark.ui.reverseProxy=true 
+  #     -Dspark.ui.reverseProxyUrl=/ 
   ## @param master.extraEnvVars Extra environment variables to pass to the master container
   ## For example:
   ## extraEnvVars:
   ##  - name: SPARK_DAEMON_JAVA_OPTS
   ##    value: -Dx=y
   ##
-  extraEnvVars: []
+  extraEnvVars: 
+      # - name: SPARK_LOCAL_DIRS
+      #   value: "/data"
   ## @param master.extraEnvVarsCM Name of existing ConfigMap containing extra env vars for master nodes
   ##
   extraEnvVarsCM: ""
@@ -418,7 +422,7 @@ worker:
   daemonMemoryLimit: ""
   ## @param worker.memoryLimit Set the maximum memory the worker is allowed to use
   ##
-  memoryLimit: "2g"
+  memoryLimit: "800m"
   ## @param worker.coreLimit Se the maximum number of cores that the worker can use
   ##
   coreLimit: "1"
@@ -430,14 +434,16 @@ worker:
   javaOptions: ""
   ## @param worker.configOptions Set extra options to configure the worker in the form `-Dx=y`
   ##
-  configOptions: ""
-  ## @param worker.extraEnvVars An array to add extra env vars
+  # configOptions:  "-Dspark.ui.reverseProxyUrl=/ -Dspark.ui.reverseProxy=true -Dspark.worker.cleanup.enabled=true -Dspark.worker.cleanup.interval=14400 -Dspark.worker.cleanup.appDataTtl=86400 -Dspark.sql.adaptive.enabled=true -Dspark.shuffle.service.enabled=true "
+  # ## @param worker.extraEnvVars An array to add extra env vars
   ## For example:
   ## extraEnvVars:
   ##  - name: SPARK_DAEMON_JAVA_OPTS
   ##    value: -Dx=y
   ##
-  extraEnvVars: []
+  extraEnvVars: 
+      # - name: SPARK_LOCAL_DIRS
+      #   value: "/data"
   ## @param worker.extraEnvVarsCM Name of existing ConfigMap containing extra env vars for worker nodes
   ##
   extraEnvVarsCM: ""
@@ -446,7 +452,7 @@ worker:
   extraEnvVarsSecret: ""
   ## @param worker.replicaCount Number of spark workers (will be the minimum number when autoscaling is enabled)
   ##
-  replicaCount: 6
+  replicaCount: 2
   ## Kubernetes Pods Security Context
   ## https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param worker.podSecurityContext.enabled Enable security context
@@ -515,8 +521,17 @@ worker:
   ## @param worker.affinity Spark worker affinity for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ## Note: worker.podAffinityPreset, worker.podAntiAffinityPreset, and worker.nodeAffinityPreset will be ignored when it's set
-  ##
-  affinity: {}
+  # ##
+  # affinity: 
+  #     podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       - labelSelector:
+  #           matchExpressions:
+  #             - key: "app.kubernetes.io/component"
+  #               operator: In
+  #               values:
+  #                 - worker
+  #         topologyKey: "kubernetes.io/hostname"
   ## @param worker.nodeSelector Spark worker node labels for pod assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
