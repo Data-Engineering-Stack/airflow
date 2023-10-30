@@ -77,7 +77,10 @@ def get_spark_config():
         "spark.cores.max":"2",
         "spark.driver.memory": "1g",  # Memory allocated for the driver.
         "spark.serializer": "org.apache.spark.serializer.KryoSerializer",
-        "spark.jars":"/home/airflow/.local/lib/python3.10/site-packages/pyspark/jars/"
+        "spark.jars":"/home/airflow/.local/lib/python3.10/site-packages/pyspark/jars/", #not required
+        "spark.kubernetes.executor.request.cores":"1",
+        "spark.executor.cores":"1",
+        "spark.executor.pyspark.memory":"200m"
 
     }
 
