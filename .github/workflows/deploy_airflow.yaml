@@ -51,7 +51,7 @@ jobs:
 
       - name: Log into registry
         run: |
-                docker logout | echo "${{ secrets.DOCKER_PASSWORD }}" |  docker login   -u "${{ secrets.DOCKER_USER }}" --password-stdin
+                docker logout |  docker login   -u "${{ secrets.DOCKER_USER }}" -p "${{ secrets.DOCKER_PASSWORD }}"
 
       - name: Push image
         run: |
