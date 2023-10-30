@@ -37,23 +37,23 @@ runs:
     uses: actions/checkout@v2
 
   - name: Set up kubectl
-    shell: bash
+    shell: pwsh
     run: |
-      Write-Host $env:KUBECONFIG | Out-File -FilePath kubeconfig.yml -Encoding utf8
+      Write-Host ${{ inputs.kubeconfig }} | Out-File -FilePath kubeconfig.yml -Encoding utf8
       kubectl config use-context docker-desktop
 
   - name: Create namespace
-    shell: bash
+    shell: pwsh
     run: |
       kubectl create ns ${{ inputs.namespace }} || true
 
   - name: Create networkpolicy
-    shell: bash
+    shell: pwsh
     run: |
       kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || true
 
   - name: Create pull secret
-    shell: bash
+    shell: pwsh
     run: |
       kubectl create secret docker-registry hrdf-robot \
       --namespace ${{ inputs.namespace }} \
@@ -64,7 +64,6 @@ runs:
       -o yaml | kubectl apply -f -
 
 
-  #   if: ${{ inputs.app_secret != ''}}
   #   shell: bash
   #   run: |
   #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
@@ -72,7 +71,8 @@ runs:
 
   - name: Create OAuth secret
     # - name: Create app secret
-    shell: bash
+    #   if: ${{ inputs.app_secret != ''}}
+    shell: pwsh
     run: |
       kubectl create secret generic github-oauth-secret \
       --namespace ${{ inputs.namespace }} \
