@@ -44,14 +44,10 @@ runs:
 
   - name: Create namespace
     shell: pwsh
-    run: |
-      kubectl create ns ${{ inputs.namespace }} || true
-
+    run: "kubectl create ns ${{ inputs.namespace }} || $null \n#magic___^_^___line\n"
   - name: Create networkpolicy
     shell: pwsh
-    run: |
-      kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || true
-
+    run: "kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || $null \n#magic___^_^___line\n"
   - name: Create pull secret
     shell: pwsh
     run: |
@@ -64,11 +60,11 @@ runs:
       -o yaml | kubectl apply -f -
 
 
-  #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
-
-
   - name: Create OAuth secret
     # - name: Create app secret
+    #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
+
+
     #   run: |
     #   shell: bash
     #   if: ${{ inputs.app_secret != ''}}
