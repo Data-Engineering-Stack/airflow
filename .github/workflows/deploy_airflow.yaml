@@ -46,14 +46,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build the Docker image
         run: |
-          docker build . --tag $AIRFLOW_IMAGE_NAME:$AIRFLOW_TAG --file helm/airflow/Dockerfile
+          docker build . --tag ${AIRFLOW_IMAGE_NAME}:${AIRFLOW_TAG} --file helm/airflow/Dockerfile
 
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_PASSWORD }}" |  docker login   -u "${{ secrets.DOCKER_USER }}" --password-stdin
 
       - name: Push image
         run: |
-          docker push $AIRFLOW_IMAGE_NAME:$AIRFLOW_TAG
+          docker push ${AIRFLOW_IMAGE_NAME}:${AIRFLOW_TAG}
 
   deploy_airflow:
     runs-on: self-hosted
