@@ -45,11 +45,7 @@ runs:
   - name: Create namespace
     shell: pwsh
     run: |
-      try {
-      kubectl create ns ${{ inputs.namespace }}
-      } catch {
-        Write-Host "${{ inputs.namespace }} already exists."
-      }
+      kubectl create ns ${{ inputs.namespace }} 2>$null
 
   - name: Create networkpolicy
     shell: pwsh
