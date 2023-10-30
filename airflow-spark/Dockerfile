@@ -22,11 +22,6 @@ COPY download_spark_packages.py /opt/airflow/download_spark_packages.py
 COPY spark_dependencies.txt /opt/airflow/spark_dependencies.txt
 RUN python /opt/airflow/download_spark_packages.py
 
-# Download assembled jar for exasol connector
-RUN curl -O -L --create-dirs https://github.com/exasol/spark-connector/releases/download/1.2.2/spark-connector_2.12-1.2.2-spark-3.2.2-assembly.jar --output-dir home/airflow/.ivy2/jars/
-
-
-
 
 
 
