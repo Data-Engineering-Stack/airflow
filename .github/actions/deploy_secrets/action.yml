@@ -44,10 +44,18 @@ runs:
 
   - name: Create namespace
     shell: pwsh
-    run: "kubectl create ns ${{ inputs.namespace }} || $null \n#magic___^_^___line\n"
+    run: |
+      try {
+      kubectl create ns ${{ inputs.namespace }}
+      } catch {
+        Write-Host ${{ inputs.namespace }} already exists."
+      }
+
   - name: Create networkpolicy
     shell: pwsh
-    run: "kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || $null \n#magic___^_^___line\n"
+    run: |
+      kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} || true
+
   - name: Create pull secret
     shell: pwsh
     run: |
