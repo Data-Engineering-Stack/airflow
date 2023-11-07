@@ -10,7 +10,7 @@ import io
 from airflow.operators.bash import BashOperator
 from airflow.sensors.bash import BashSensor
 from airflow.operators.python import get_current_context
-
+from airflow.decorators import dag, task
 
 
 default_args={
@@ -36,7 +36,7 @@ default_args={
 
 
 
-def get_prev_state(context):
+def get_prev_state(**context):
     ti = context["dag_run"].get_task_instance('task1')
     state = ti.get_previous_ti.state
     print(state)
@@ -64,9 +64,14 @@ with DAG(
         provide_context=True
     )
 
+    @task()
+    def get_state1(**context):
+        ti = context['dag_run'].get_task_instance('task1')
+        state = ti.get_previous_ti.state
+        print(state)
 
 
-task1 >> get_state
+task1 >> (get_state,get_state1)
 
 
 
