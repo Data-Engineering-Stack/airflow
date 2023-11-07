@@ -11,7 +11,7 @@ from airflow.operators.bash import BashOperator
 from airflow.sensors.bash import BashSensor
 from airflow.operators.python import get_current_context
 from airflow.decorators import dag, task
-
+from airflow.utils.state import State
 
 default_args={
     "depends_on_past": False,
@@ -38,7 +38,7 @@ default_args={
 
 def get_prev_state(**context):
     ti = context["dag_run"].get_task_instance('task1')
-    state = ti.get_previous_ti.state
+    state = ti.get_previous_ti.State
     print(state)
 
 
