@@ -39,8 +39,8 @@ default_args={
 def get_prev_state(**context):
     print('===================================')
     ti = context["dag_run"].get_task_instance('task1')
-    print(ti)
-    print(ti.state)
+    if ti.state == 'success':
+        print('yay!!! we did it!!')
 
 
 
