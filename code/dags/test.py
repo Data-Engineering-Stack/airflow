@@ -38,8 +38,8 @@ default_args={
 
 def get_prev_state(**context):
     ti = context["ti"]
-    state = ti.get_previous_ti.state
-    print(state)
+    #state = ti.get_previous_ti
+    print(ti)
 
 
 
