@@ -80,6 +80,6 @@ runs:
       kubectl create secret generic github-oauth-secret `
       --namespace ${{ inputs.namespace }} `
       --dry-run=client `
-      --from-literal=OAUTH_CLIENT_ID=${{ inputs.oauth_client_id }} `
-      --from-literal=OAUTH_CLIENT_SECRET=${{ inputs.oauth_client_secret }} `
+      --from-literal=GIT_SYNC_USERNAME=${{ inputs.oauth_client_id }} `
+      --from-literal=GIT_SYNC_PASSWORD=${{ inputs.oauth_client_secret }} `
       -o yaml | kubectl apply -f -
