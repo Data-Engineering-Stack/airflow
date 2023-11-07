@@ -37,8 +37,9 @@ default_args={
 
 
 def get_prev_state(**context):
-    ti = context["dag_run"].get_task_instance('task1')
-    print(ti)
+    ti = context["ti"]
+    state = ti.get_previous_ti.state
+    print(state)
 
 
 
