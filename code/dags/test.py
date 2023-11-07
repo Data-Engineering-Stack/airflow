@@ -37,8 +37,9 @@ default_args={
 
 
 def get_prev_state(**context):
+    print('===================================')
     ti = context["dag_run"].get_task_instance('task1')
-    state = ti.get_previous_ti.end_date
+    state = ti.get_previous_ti()
     print(ti)
     print(state)
 
@@ -56,7 +57,7 @@ with DAG(
 
     task1 = BashOperator(
         task_id="task1",
-        bash_command='sleep 5',
+        bash_command='sleep 1',
     )
 
     get_state = python_task = PythonOperator(
