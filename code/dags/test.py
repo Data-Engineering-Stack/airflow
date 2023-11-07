@@ -64,14 +64,14 @@ with DAG(
         provide_context=True
     )
 
-    @task()
-    def get_state1(**context):
-        ti = context['dag_run'].get_task_instance('task1')
-        state = ti.get_previous_ti.state
-        print(state)
+    # @task()
+    # def get_state1(**context):
+    #     ti = context['dag_run'].get_task_instance('task1')
+    #     state = ti.get_previous_ti.state
+    #     print(state)
 
 
-task1 >> (get_state,get_state1)
+task1 >> get_state
 
 
 
