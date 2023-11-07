@@ -82,11 +82,16 @@ runs:
     #     | tr -d '"' `
     #     | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/maxvan112/% && docker push ${{ inputs.registry }}/maxvan112/%" || true
 
+    - name: Update helm repo
+      uses: actions/checkout@v3
+    - shell: pwsh
+      run: |
+          helm repo update 
+
     - name: Deploy Helmchart
       uses: actions/checkout@v3
     - shell: pwsh
       run: |
-          helm repo update `
           helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
           -n ${{ inputs.namespace }} `
           -f ${{ inputs.values }} `
