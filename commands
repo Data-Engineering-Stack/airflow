@@ -106,6 +106,13 @@ git reset --hard HEAD~10
 helm install kafka oci://registry-1.docker.io/bitnamicharts/kafka -n kafka --create-namespace
 helm upgrade --install kafka  oci://registry-1.docker.io/bitnamicharts/kafka -n kafka -f values.yaml --values override.yaml --debug
 
-## FLINK:
+## FLINK: (NOT WOKRING)
 helm install flink oci://registry-1.docker.io/bitnamicharts/flink -n flink --create-namespace
 helm upgrade --install flink oci://registry-1.docker.io/bitnamicharts/flink -n flink  -f values.yaml --values override.yaml --debug
+
+## FLINK KUBERNETES OPERATOR:  (NOT WOKRING)
+kubectl create -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.yaml
+helm repo add flink-operator-repo https://downloads.apache.org/flink/flink-kubernetes-operator-1.6.1/
+helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator -n flink 
+
+## not sure:  helm upgrade --install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator -n flink  -f values.yaml --values override.yaml --debug

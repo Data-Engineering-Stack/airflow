@@ -1,1 +1,0 @@
-from airflow.providers.apache.flink.operators.flink_kubernetes import FlinkKubernetesOperator
