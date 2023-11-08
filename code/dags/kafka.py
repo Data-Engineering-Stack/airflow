@@ -36,9 +36,11 @@ def prod_function(num_treats, pet_name):
 
 def consume_function(message, name):
     "Takes in consumed messages and prints its contents to the logs."
-
+    print(message,name)
     key = json.loads(message.key())
+    print(key)
     message_content = json.loads(message.value())
+    print(message_content)
     pet_name = message_content["pet_name"]
     pet_mood_post_treat = message_content["pet_mood_post_treat"]
     print(
