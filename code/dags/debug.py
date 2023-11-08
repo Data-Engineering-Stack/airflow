@@ -56,7 +56,7 @@ with DAG(
 
     task1 = BashOperator(
         task_id="task1",
-        bash_command='sleep 1',
+        bash_command='sleep 500',
     )
 
     get_state = python_task = PythonOperator(
