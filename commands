@@ -104,5 +104,8 @@ git reset --hard HEAD~10
 #### KAFKA:
 
 helm install kafka oci://registry-1.docker.io/bitnamicharts/kafka -n kafka --create-namespace
-
 helm upgrade --install kafka  oci://registry-1.docker.io/bitnamicharts/kafka -n kafka -f values.yaml --values override.yaml --debug
+
+## FLINK:
+helm install flink oci://registry-1.docker.io/bitnamicharts/flink -n flink --create-namespace
+helm upgrade --install flink oci://registry-1.docker.io/bitnamicharts/flink -n flink  -f values.yaml --values override.yaml --debug
