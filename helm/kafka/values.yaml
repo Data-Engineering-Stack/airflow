@@ -350,6 +350,7 @@ tls:
   ## ref: https://docs.confluent.io/current/kafka/authentication_ssl.html#optional-settings
   ##
   sslClientAuth: "required"
+  #sslClientAuth: "None"
   ## Zookeeper TLS connection configuration for Kafka
   ##
   zookeeper:
@@ -446,7 +447,7 @@ controller:
   ## @param controller.replicaCount Number of Kafka controller-eligible nodes
   ## Ignore this section if running in Zookeeper mode.
   ##
-  replicaCount: 0
+  replicaCount: 3
   ## @param controller.controllerOnly If set to true, controller nodes will be deployed as dedicated controllers, instead of controller+broker processes.
   ##
   controllerOnly: false
@@ -751,7 +752,7 @@ controller:
   persistence:
     ## @param controller.persistence.enabled Enable Kafka data persistence using PVC, note that ZooKeeper persistence is unaffected
     ##
-    enabled: false
+    enabled: true
     ## @param controller.persistence.existingClaim A manually managed Persistent Volume and Claim
     ## If defined, PVC must be created manually before volume will be bound
     ## The value is evaluated as a template
@@ -829,7 +830,7 @@ controller:
 broker:
   ## @param broker.replicaCount Number of Kafka broker-only nodes
   ##
-  replicaCount: 1
+  replicaCount: 0
   ## @param broker.minId Minimal node.id values for broker-only nodes. Do not change after first initialization.
   ## Broker-only id increment their ID starting at this minimal value.
   ## We recommend setting this this value high enough, as IDs under this value will be used by controller-eligible nodes
@@ -1132,7 +1133,7 @@ broker:
   persistence:
     ## @param broker.persistence.enabled Enable Kafka data persistence using PVC, note that ZooKeeper persistence is unaffected
     ##
-    enabled: false
+    enabled: true
     ## @param broker.persistence.existingClaim A manually managed Persistent Volume and Claim
     ## If defined, PVC must be created manually before volume will be bound
     ## The value is evaluated as a template
@@ -2314,7 +2315,7 @@ provisioning:
 kraft:
   ## @param kraft.enabled Switch to enable or disable the KRaft mode for Kafka
   ##
-  enabled: false
+  enabled: true
   ## @param kraft.existingClusterIdSecret Name of the secret containing the cluster ID for the Kafka KRaft cluster. This is incompatible with the clusterId parameter. If both are set, the existingClusterIdSecret will be used
   existingClusterIdSecret: ""
   ## @param kraft.clusterId Kafka Kraft cluster ID. If not set, a random cluster ID will be generated the first time Kraft is initialized.
@@ -2339,7 +2340,7 @@ zookeeperChrootPath: ""
 zookeeper:
   ## @param zookeeper.enabled Switch to enable or disable the ZooKeeper helm chart. Must be false if you use KRaft mode.
   ##
-  enabled: true
+  enabled: false
   ## @param zookeeper.replicaCount Number of ZooKeeper nodes
   ##
   replicaCount: 1
@@ -2370,7 +2371,7 @@ zookeeper:
   ## @param zookeeper.persistence.size Persistent Volume size
   ##
   persistence:
-    enabled: false
+    enabled: true
     storageClass: ""
     accessModes:
       - ReadWriteOnce
