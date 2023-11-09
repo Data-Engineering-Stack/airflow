@@ -15,10 +15,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - lakefs.net
+      - lakefs.local
     secretName: letsencrypt
   rules:
-  - host: lakefs.net #change it from here: C:\Windows\System32\drivers\etc,
+  - host: lakefs.local #change it from here: C:\Windows\System32\drivers\etc,
     http:
       paths:
       - path: /
