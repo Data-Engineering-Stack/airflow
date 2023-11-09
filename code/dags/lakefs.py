@@ -25,8 +25,8 @@ default_args = {
 # The execution context and any results are automatically passed by task.post_execute method
 def print_commit_result(context, result, message):
     LoggingMixin().log.info(message + result \
-        + ' and lakeFS URL is: ' + Variable.get("lakefsUIEndPoint") \
-        + '/repositories/' + Variable.get("repo") + '/commits/' + result)
+        + ' and lakeFS URL is: ' +"lakefsUIEndPoint" \
+        + '/repositories/' + "main" + '/commits/' + result)
 
     
 @dag(default_args=default_args,
@@ -55,11 +55,11 @@ def lakefs_wrapper_dag():
 
     # The execution context is automatically passed by task.pre_execute method
     task_trigger.pre_execute = lambda context: LoggingMixin().log.info(
-        'Branch name is: ' + Variable.get("newBranch") + '_' \
+        'Branch name is: ' + "ok" + '_' \
         + context['ts_nodash'] \
-        + ' and lakeFS URL is: ' + Variable.get("lakefsUIEndPoint") \
-        + '/repositories/' + Variable.get("repo") + '/objects?ref=' \
-        + Variable.get("newBranch") + '_' + context['ts_nodash'] )
+        + ' and lakeFS URL is: ' + "ok" \
+        + '/repositories/' + "ok" + '/objects?ref=' \
+        + "ok" + '_' + context['ts_nodash'] )
 
     task_commit_etl_branch = LakeFSCommitOperator(
         task_id='commit_etl_branch',
