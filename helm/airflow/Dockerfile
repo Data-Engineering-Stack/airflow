@@ -28,7 +28,7 @@ RUN pip install --no-cache-dir \
     apache-airflow-providers-apache-spark==4.1.0 \
     apache-airflow-providers-postgres==5.5.0 \
     apache-airflow-providers-apache-kafka==1.0.0 \
-    apache-airflow-providers-apache-flink==1.2.0 \
+    airflow-provider-lakefs \
     findspark==2.0.1 \
     pyspark==3.2.1 \
     pynessie==0.48.2 
