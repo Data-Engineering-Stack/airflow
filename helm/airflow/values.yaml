@@ -265,6 +265,8 @@ env:
     value: "/opt/airflow/dags/repo/"
   # - name: AIRFLOW__LOGGING__REMOTE__BASE_LOG_FOLDER
   #   value: "/var/lib/k8s-pvs/airflow-logs"
+  - name: AIRFLOW__CORE__TEST_CONNECTION
+    value: "Enabled"
 
 
 # Volumes for all airflow containers

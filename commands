@@ -124,3 +124,4 @@ helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-oper
 helm repo add lakefs https://charts.lakefs.io
 helm upgrade --install lakefs lakefs/lakefs -n lakefs --create-namespace  -f values.yaml --values override.yaml --debug
 
+kubectl apply -f .\ingress.yaml -n lakefs
