@@ -1,1 +1,0 @@
-hostname: http://lakefs.lakefs.svc.cluster.local
