@@ -198,7 +198,7 @@ def lakefs_tutorial_taskflow_api_etl():
         print(f"Total order value is: {total_order_value:.2f}")
 
         # [START of lakeFS Code]
-        repo = Variable.get("repo")
+        repo = default_args['repo']
         context = get_current_context()
         newBranch = context["dag_run"].conf["newBranch"]
         contentToUpload = io.BytesIO(f"Total order value is: {total_order_value:.2f}".encode('utf-8'))
