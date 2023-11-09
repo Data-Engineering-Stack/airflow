@@ -1,0 +1,85 @@
+name: k8s preflight configuration
+description: This action can be used to prepare the k8s environment for deployment
+
+inputs:
+  kubeconfig:
+    required: true
+    description: kubeconfig for target k8s tenant
+  harbor_robot:
+    required: true
+    description: Name of the harbor robot account to use
+  harbor_token:
+    required: true
+    description: Token for harbor login
+  namespace:
+    required: false
+    description: k8s namespace to used
+    default: default
+  oauth_client_id:
+    required: true
+    description: OAuth client id
+  oauth_client_secret:
+    required: true
+    description: OAuth client secret
+
+
+
+runs:
+  using: "composite"
+  steps:
+  # - name: Setup kubectl
+  #   uses: Azure/setup-kubectl@v3.2
+  #   with:
+  #     kube-config: ${{ inputs.kubeconfig }}
+  #     version: v1.24.0
+
+  - name: Checkout code
+    uses: actions/checkout@v2
+
+  - name: Set up kubectl
+    shell: pwsh
+    run: |
+      "${{ inputs.kubeconfig }}" | Out-File -FilePath kubeconfig.yml
+      kubectl config use-context docker-desktop
+
+  - name: Create namespace
+    shell: pwsh
+    run: |
+      if (!(kubectl get ns ${{ inputs.namespace }} --ignore-not-found)) {
+        kubectl create ns ${{ inputs.namespace }}
+      }
+
+  - name: Create networkpolicy
+    shell: pwsh
+    run: |
+      kubectl apply -f helm/network-policy.yaml -n ${{ inputs.namespace }} 
+
+
+  - name: Create pull secret
+    shell: pwsh
+    run: |
+      kubectl create secret docker-registry hrdf-robot `
+      --namespace ${{ inputs.namespace }} `
+      --save-config `
+      --dry-run=client `
+      --docker-username=${{ inputs.HARBOR_ROBOT }} `
+      --docker-password=${{ inputs.HARBOR_TOKEN }} `
+      -o yaml | kubectl apply -f -
+
+
+  - name: Create OAuth secret
+    # - name: Create app secret
+    #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
+
+
+    #   run: |
+    #   shell: bash
+    #   if: ${{ inputs.app_secret != ''}}
+    shell: pwsh
+    run: |
+      kubectl create secret generic github-oauth-secret `
+      --namespace ${{ inputs.namespace }} `
+      --dry-run=client `
+      --from-literal=GIT_SYNC_USERNAME=${{ inputs.oauth_client_id }} `
+      --from-literal=GIT_SYNC_PASSWORD=${{ inputs.oauth_client_secret }} `
+      -o yaml | kubectl apply -f -

@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: spark-headless-service-controller-config
+data:
+    config.py: |
+        from kubernetes import client, config, watch
+        import os
+        import uuid
+        import time
+
+        def create_or_replace_service(v1, service, namespace):
+            try:
+                v1.create_namespaced_service(namespace=namespace, body=service)
+            except client.rest.ApiException as e:
+                if e.status == 409:  # Conflict
+                    v1.replace_namespaced_service(namespace=namespace, name=service.metadata.name, body=service)
+                else:
+                    print(f"Error creating/replacing service: {e}")
+
+        def create_headless_service(v1, pod_name, driver_id, namespace):
+            service_name = f"{pod_name}"
+            service = client.V1Service(
+                api_version="v1",
+                kind="Service",
+                metadata=client.V1ObjectMeta(name=service_name, labels={"spark-driver-id": driver_id}),
+                spec=client.V1ServiceSpec(
+                    selector={"airflow": "spark", "spark-driver-id": driver_id},
+                    cluster_ip="None",
+                    ports=[client.V1ServicePort(name=f"http-{port}", port=port, target_port=port) for port in range(42000, 42049)],
+                ),
+            )
+            create_or_replace_service(v1, service, namespace)
+
+        def delete_headless_service(v1, pod_name, namespace):
+            service_name = f"{pod_name}"
+            try:
+                v1.delete_namespaced_service(name=service_name, namespace=namespace)
+            except client.rest.ApiException as e:
+                if e.status == 404:  # Not Found
+                    print(f"Service {service_name} not found in namespace {namespace}.")
+                else:
+                    print(f"Error deleting service {service_name}: {e}")
+
+        def label_pod(v1, pod_name, label_key, label_value, namespace):
+            try:
+                body = {"metadata": {"labels": {label_key: label_value}}}
+                v1.patch_namespaced_pod(name=pod_name, namespace=namespace, body=body)
+                print(f"Updated pod {pod_name} with label {label_key}={label_value}")
+            except client.rest.ApiException as e:
+                if e.status == 404:  # Not Found
+                    print(f"Pod {pod_name} not found in namespace {namespace}.")
+                else:
+                    print(f"Error updating pod {pod_name}: {e}")
+
+        def watch_pods(namespace):
+            config.load_incluster_config()  # assuming running inside a pod
+            v1 = client.CoreV1Api()
+
+            w = watch.Watch()
+            resource_version = ""
+            try:
+                for event in w.stream(v1.list_namespaced_pod, namespace=namespace, label_selector="airflow=spark", resource_version=resource_version):
+                    pod = event["object"]
+                    pod_driver_id = str(uuid.uuid4())
+
+                    if pod.metadata.name:
+                        if len(pod.metadata.name) > 63:
+                            servicename = pod.metadata.annotations["dag_id"].replace("__", "-").replace("_", "-")
+                        else:
+                            servicename = pod.metadata.name
+
+                        print(f"Creating headless svc {servicename} for driver {pod_driver_id}")
+
+                        if event["type"] == "ADDED":
+                            # add the calico pod-id annotation as label (since services can only select labels)
+                            label_pod(v1, pod.metadata.name, "spark-driver-id", pod_driver_id, namespace)
+                            create_headless_service(v1, servicename, pod_driver_id, namespace)
+
+                        elif event["type"] == "DELETED":
+                            delete_headless_service(v1, servicename, namespace)
+
+                    else:
+                        print(f"No pod IP assigned, cannot create headless svc.")
+
+                    resource_version = event["object"].metadata.resource_version
+            except client.rest.ApiException as e:
+                if e.status == 410:  # Gone (Resource version too old)
+                    # Retry watch operation with the latest resource version
+                    print("Resource version is too old. Retrying watch operation...")
+                    watch_pods(namespace)
+                else:
+                    print(f"Kubernetes API error: {e}")
+            except Exception as e:
+                print(f"Error in watch_pods: {e}")
+
+        if __name__ == "__main__":
+            namespace = os.getenv("POD_NAMESPACE")
+            watch_pods(namespace)

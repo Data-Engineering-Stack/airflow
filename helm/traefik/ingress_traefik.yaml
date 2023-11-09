@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: airflow-ingress
+  namespace: airflow
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    kubernetes.io/ingress.class: "traefik"
+    kubernetes.io/tls-acme: "true"
+#    traefik.ingress.kubernetes.io/router.entrypoints: web
+#    traefik.ingress.kubernetes.io/router.tls: "false"
+#    ingress.kubernetes.io/rewrite-target: /
+
+
+spec:
+  tls:
+  - hosts:
+      - airflow.net
+    secretName: letsencrypt
+  rules:
+  - host: airflow.net #change it from here: C:\Windows\System32\drivers\etc,
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: airflow-webserver
+            port:
+              number: 8080

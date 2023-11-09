@@ -1,0 +1,100 @@
+name: Deploy helm chart on premise
+description: This action can be used to deploy a helm chart to k8s, mirroring the images to a private registry.
+
+inputs:
+  repo:
+    required: true
+    description: name of the helm repo to add
+    default: "placeholder"
+  repo_url:
+    required: true
+    description: url of the repo to add
+    default: "placeholder"
+  release:
+    required: false
+    description: release name to be used
+    default: ""
+  registry:
+    required: false
+    description: Image registry to be Used
+    default: "docker.io"
+  values:
+    required: true
+    description: values.yaml or path to file
+  values_override:
+    required: true
+    description: overridden values.yaml images for harbor registry
+  additional_flags:
+    required: false
+    description: If needed hand over additional flags/parameters for helm install
+  namespace:
+    required: false
+    description: k8s namespace to be used for deployment
+    default: default
+  harbor_robot:
+    required: true
+    description: Name of the harbor robot account to use
+  harbor_token:
+    required: true
+    description: Token for harbor login
+  kubeconfig:
+    required: true
+    default: kubeconfig for target k8s tenant (b64)
+    description: location of the Dockerfile to use
+  airflow_tag:
+    required: false
+    default: "2.5.0"
+    description: overrides the airflow tag
+
+runs:
+  using: "composite"
+  steps:
+    - name: Log into registry
+      shell: pwsh
+      run: |
+          $cmd = 'docker build . --tag  ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.AIRFLOW_TAG }} --file helm/airflow/Dockerfile'
+          $cleaned_command = $cmd.Replace('"', '')
+          Invoke-Expression $cleaned_command
+          Set-ExecutionPolicy RemoteSigned –Scope Process
+
+
+    # - name: Extract docker images
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: "3.10"
+    # - shell: bash
+    #   run: |
+    #     Set-ExecutionPolicy RemoteSigned –Scope Process
+    #     pip install yq
+
+    #     helm repo add ${{ inputs.repo }} ${{ inputs.repo_url }}
+    #     helm repo update ${{ inputs.repo }}
+
+    #     helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
+    #     | yq '..|.image? | select(.)' `
+    #     | sort -u `
+    #     | tr -d '"' `
+    #     | xargs -I % -n 1 -P 4 bash -c "docker pull % " || true
+
+    #     helm template ${{ inputs.repo}}/${{ inputs.release }} --values=${{ inputs.values }} `
+    #     | yq '..|.image? | select(.)' `
+    #     | sort -u `
+    #     | tr -d '"' `
+    #     | xargs -I % -n 1 -P 4 bash -c "docker tag % ${{ inputs.registry }}/maxvan112/% && docker push ${{ inputs.registry }}/maxvan112/%" || true
+
+    - name: Update helm repo
+      uses: actions/checkout@v3
+    - shell: pwsh
+      run: |
+          helm repo update 
+
+    - name: Deploy Helmchart
+      uses: actions/checkout@v3
+    - shell: pwsh
+      run: |
+          helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
+          -n ${{ inputs.namespace }} `
+          -f ${{ inputs.values }} `
+          --values ${{ inputs.values_override }} `
+          --set defaultAirflowTag=${{ inputs.airflow_tag }} `
+          ${{ inputs.additional_flags }}
