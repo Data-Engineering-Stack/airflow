@@ -1231,9 +1231,9 @@ webserver:
       
       # a mapping from the values of `userinfo["role_keys"]` to a list of FAB roles
       AUTH_ROLES_MAPPING = {
-          "airflow-temp/airflow-team": ["User"],
-          "airflow-temp/airflow-viewers": ["Viewer"],
-          "airflow-temp/airflow-admin": ["Admin"],
+          "Data-Engineering-Stack/airflow-team": ["User"],
+          "Data-Engineering-Stack/airflow-viewers": ["Viewer"],
+          "Data-Engineering-Stack/airflow-admin": ["Admin"],
       }
       
       # if we should replace ALL the user's roles each login, or only on registration
