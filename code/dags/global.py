@@ -42,6 +42,13 @@ def some_fn():
 
 
 
+
+
+def recieve_fn():
+    print(test)
+
+
+
 with DAG(
     'check_global_variable',
     start_date=datetime(2023, 9, 9),  
@@ -52,19 +59,24 @@ with DAG(
 ) as dag:
 
 
-    some_fn = python_task = PythonOperator(
+    some_fn = PythonOperator(
         task_id="some_fn",
         python_callable=some_fn,
         provide_context=True
     )
 
-    task1 = BashOperator(
-        task_id="task1",
-        bash_command=f'echo "{test}"',
+    # task1 = BashOperator(
+    #     task_id="task1",
+    #     bash_command=f'echo "{test}"',
+    # )
+
+    recieve_fn = PythonOperator(
+        task_id="recieve_fn",
+        python_callable=recieve_fn,
+        provide_context=True
     )
 
-
-some_fn >> task1
+some_fn >> recieve_fn
 
 
 
