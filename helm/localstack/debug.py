@@ -16,6 +16,7 @@ s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id,
 # List objects in the bucket
 response = s3.list_objects_v2(Bucket=bucket_name)
 
+print(response)
 # Print the list of files
-for obj in response.get('Contents', []):
-    print(f"File: {obj['Key']}")
+# for obj in response.get('Contents', []):
+#     print(f"File: {obj['Key']}")

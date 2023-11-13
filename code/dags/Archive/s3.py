@@ -68,7 +68,7 @@ with DAG(
         aws_secret_access_key = 'test'
         region_name = 'us-east-1'  # e.g., 'us-east-1'
         bucket_name = 'sample-bucket'
-        endpoint_url='http://localhost:31566'
+        endpoint_url='http://localstack.localstack.svc.cluster.local'
 
         # Create an S3 client
         s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id,
