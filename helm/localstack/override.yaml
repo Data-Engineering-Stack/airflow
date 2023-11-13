@@ -1,0 +1,5 @@
+extraEnvVars: 
+  - name: DEFAULT_REGION
+    value: "us-east-1"
+  - name: SERVICES
+    value: "s3"
