@@ -60,7 +60,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-debug: true
+debug: false
 
 
 startServices: ""
@@ -110,7 +110,7 @@ service:
   annotations: {}
   ipFamiles: []
   ipFamilyPolicy: ""
-  externalTrafficPolicy: Cluster
+  externalTrafficPolicy: ""
   edgeService:
     name: edge
     targetPort: 4566

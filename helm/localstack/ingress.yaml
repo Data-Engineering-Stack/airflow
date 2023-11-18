@@ -27,5 +27,5 @@ spec:
           service:
             name: localstack
             port:
-              number: 8080
+              number: 4566
 

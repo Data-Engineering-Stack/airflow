@@ -13,12 +13,16 @@ export AWS_ACCESS_KEY_ID="test"
 export AWS_SECRET_ACCESS_KEY="test"
 export AWS_DEFAULT_REGION="us-east-1"
 
-run this: aws s3api  list-buckets
+run this: aws --endpoint-url=http://localhost:62807 s3api  list-buckets
 
 commands:
-awslocal s3api create-bucket --bucket sample-bucket
+awslocal --endpoint-url=http://localhost:62807 s3api create-bucket --bucket sample-bucket
 awslocal s3api list-buckets
 awslocal s3api put-object \
   --bucket sample-bucket \
   --key image.jpg \
   --body image.jpg
+
+
+
+aws --endpoint-url=http://host.docker.internal:62807 s3api create-bucket --bucket sample-bucket
