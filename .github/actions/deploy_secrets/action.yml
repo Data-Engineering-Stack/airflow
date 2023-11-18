@@ -15,12 +15,12 @@ inputs:
     required: false
     description: k8s namespace to used
     default: default
-  oauth_client_id:
+  GIT_SYNC_USERNAME:
     required: true
-    description: OAuth client id
-  oauth_client_secret:
+    description: GIT_SYNC_USERNAME
+  GIT_SYNC_PASSWORD:
     required: true
-    description: OAuth client secret
+    description: GIT_SYNC_PASSWORD
 
 
 
@@ -80,6 +80,6 @@ runs:
       kubectl create secret generic github-oauth-secret `
       --namespace ${{ inputs.namespace }} `
       --dry-run=client `
-      --from-literal=GIT_SYNC_USERNAME=${{ inputs.oauth_client_id }} `
-      --from-literal=GIT_SYNC_PASSWORD=${{ inputs.oauth_client_secret }} `
+      --from-literal=GIT_SYNC_USERNAME=${{ inputs.GIT_SYNC_USERNAME }} `
+      --from-literal=GIT_SYNC_PASSWORD=${{ inputs.GIT_SYNC_PASSWORD }} `
       -o yaml | kubectl apply -f -

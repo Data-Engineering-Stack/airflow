@@ -35,8 +35,8 @@ jobs:
           harbor_robot: "${{ secrets.DOCKER_USER }}"
           harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
           kubeconfig: ${{ secrets.KUBECONFIG }}
-          oauth_client_id: "${{ secrets.OAUTH_CLIENT_ID}}"
-          oauth_client_secret: "${{ secrets.OAUTH_CLIENT_SECRET}}"
+          GIT_SYNC_USERNAME: "${{ secrets.GIT_SYNC_USERNAME}}"
+          GIT_SYNC_PASSWORD: "${{ secrets.GIT_SYNC_PASSWORD}}"
 
   build_custom_airflow:
     runs-on: self-hosted
