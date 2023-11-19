@@ -55,9 +55,6 @@ jobs:
         run: |
           docker push ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.AIRFLOW_TAG }}
 
-      - name: Remove Dangling Image
-        run: |
-          docker image prune -a -f
 
   deploy_airflow:
     runs-on: self-hosted
