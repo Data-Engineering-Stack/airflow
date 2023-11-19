@@ -57,7 +57,7 @@ jobs:
 
       - name: Remove Dangling Image
         run: |
-            docker image prune -f
+          docker image prune -a -f
 
   deploy_airflow:
     runs-on: self-hosted
