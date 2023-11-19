@@ -55,7 +55,7 @@ jobs:
   
   deploy_lakefs:
     runs-on: self-hosted
-    needs: [prepare_namespace,deploy_ingress]
+    needs: [prepare_namespace]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm/
@@ -71,12 +71,4 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           additional_flags: 
 
-  deploy_ingress:
-      runs-on: self-hosted
-      needs: [prepare_namespace]
-      steps:
-          - uses: actions/checkout@v3
-          - name: Deploy lakefs ingress
-            shell: pwsh
-            run: |
-              kubectl apply -f  ../../../../helm/lakefs/ingress.yaml -n lakefs
+

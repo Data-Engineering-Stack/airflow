@@ -71,7 +71,7 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           additional_flags: 
 
-  deploy_ingress:
+  deploy_airflow_ingress:
       runs-on: self-hosted
       needs: [prepare_namespace,deploy_traefik]
       steps:
@@ -79,4 +79,15 @@ jobs:
           - name: Deploy airflow traefik ingress
             shell: pwsh
             run: |
-              kubectl apply -f  ../../../../helm/traefik/ingress.yaml
+              kubectl apply -f  ../../../../helm/traefik/ingress.yaml -n airflow
+
+
+  deploy_lakefs_ingress:
+    runs-on: self-hosted
+    needs: [prepare_namespace,deploy_traefik]
+    steps:
+        - uses: actions/checkout@v3
+        - name: Deploy lakefs ingress
+          shell: pwsh
+          run: |
+            kubectl apply -f  ../../../../helm/lakefs/ingress.yaml -n lakefs
