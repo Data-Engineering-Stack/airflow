@@ -93,7 +93,7 @@ runs:
     - shell: pwsh
       run: |
           helm upgrade --install ${{ inputs.release }} ${{ inputs.repo }}/${{ inputs.release }} `
-          -n ${{ inputs.namespace }} --create-namespace`
+          -n ${{ inputs.namespace }} `
           -f ${{ inputs.values }} `
           --values ${{ inputs.values_override }} `
           --set defaultAirflowTag=${{ inputs.image_tag }} `
