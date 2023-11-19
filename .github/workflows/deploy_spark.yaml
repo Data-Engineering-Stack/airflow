@@ -61,8 +61,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm/
         with:
-          repo: oci://registry-1.docker.io/bitnamicharts
-          repo_url: spark
+          repo: bitnami
+          repo_url: https://charts.bitnami.com/bitnami
           release: spark
           values: ../../../../helm/spark/values.yaml
           values_override: ../../../../helm/spark/override.yaml
