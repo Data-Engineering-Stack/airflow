@@ -61,7 +61,7 @@ jobs:
       - uses: ./.github/actions/deploy_helm/
         with:
           repo: lakefs
-          repo_url: lakefs
+          repo_url: https://charts.lakefs.io
           release: lakefs
           values: ../../../../helm/lakefs/values.yaml
           values_override: ../../../../helm/lakefs/override.yaml
