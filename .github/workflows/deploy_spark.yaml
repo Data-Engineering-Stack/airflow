@@ -53,6 +53,10 @@ jobs:
       - name: Push image
         run: |
           docker push ${{ env.SPARK_IMAGE_NAME }}:${{ env.SPARK_TAG }}
+  
+      - name: Remove Dangling Image
+        run: |
+            docker image prune -f
 
   deploy_spark:
     runs-on: self-hosted
