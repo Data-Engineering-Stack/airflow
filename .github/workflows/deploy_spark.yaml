@@ -48,7 +48,7 @@ jobs:
 
       - name: Log into registry
         run: |
-                docker logout |  docker login   -u "${{ secrets.DOCKER_USER }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+            docker logout |  docker login   -u "${{ secrets.DOCKER_USER }}" -p "${{ secrets.DOCKER_PASSWORD }}"
 
       - name: Push image
         run: |
@@ -75,6 +75,7 @@ jobs:
 
   build_headless_image:
         runs-on: self-hosted
+        needs: [prepare_namespace]
         steps:
             - uses: actions/checkout@v3
             - name: Build the Docker image
@@ -93,7 +94,7 @@ jobs:
 
   deploy_headless:
         runs-on: self-hosted
-        needs: [prepare_namespace, build_custom_image]
+        needs: [prepare_namespace, build_headless_image]
         steps:
             - uses: actions/checkout@v3
             - name: Deploy headless spark

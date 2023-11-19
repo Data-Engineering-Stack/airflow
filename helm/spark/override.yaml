@@ -1,0 +1,5 @@
+
+image:
+  registry: docker.io
+  repository: maxvan112/airflow-spark
+  tag: 3.3
