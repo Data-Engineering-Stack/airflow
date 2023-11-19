@@ -3,7 +3,6 @@ FROM bitnami/spark:3.0.0
 USER root
 RUN apt-get update && apt-get install -y curl
 
-
 RUN pip3 install --upgrade pip && pip3 install wheel
 
 RUN pip install --no-cache-dir \
@@ -11,7 +10,8 @@ RUN pip install --no-cache-dir \
     pyspark==3.2.1 
 
 RUN rm -r /opt/bitnami/spark/jars && \
-    curl --location http://mirror.cc.columbia.edu/pub/software/apache/spark/spark-3.0.0/spark-3.0.0-bin-hadoop2.7.tgz | \
-    tar --extract --gzip --strip=1 --directory /opt/bitnami/spark/ spark-3.0.0-bin-hadoop2.7/jars/
+    curl --location https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz | \
+    tar --extract --gzip --strip=1 --directory /opt/bitnami/spark/ spark-3.5.0-bin-hadoop3/jars/
+
 
 USER 1001
