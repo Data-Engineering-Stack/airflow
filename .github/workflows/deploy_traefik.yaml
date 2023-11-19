@@ -79,7 +79,7 @@ jobs:
           - name: Deploy airflow traefik ingress
             shell: pwsh
             run: |
-              kubectl apply -f  ../../../../helm/traefik/ingress.yaml -n airflow
+              kubectl apply -f  ../../../../helm/airflow/ingress.yaml -n airflow
 
 
   deploy_lakefs_ingress:
