@@ -103,7 +103,7 @@ jobs:
               run: |
                 kubectl apply -f  ../../../../helm/spark/headless/configmap.yaml -n airflow
                 kubectl apply -f  ../../../../helm/spark/headless/deployment.yaml -n airflow
-                kubectl set image deployment spark-headless-service-controller spark-headless-service-controller=${HEADLESS_IMAGE_NAME}:${SPARK_TAG} -n airflow
+                kubectl set image deployment spark-headless-service-controller spark-headless-service-controller= ${{ env.HEADLESS_IMAGE_NAME }}:${{ env.SPARK_TAG }} -n airflow
 
 
             
