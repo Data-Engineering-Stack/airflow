@@ -61,7 +61,7 @@ jobs:
       - uses: ./.github/actions/deploy_helm/
         with:
           repo: traefik
-          repo_url: traefik
+          repo_url: https://traefik.github.io/charts
           release: traefik
           values: ../../../../helm/traefik/values.yaml
           values_override: ../../../../helm/traefik/override.yaml
