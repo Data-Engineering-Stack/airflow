@@ -23,16 +23,16 @@ env:
   lakefs_IMAGE_NAME: maxvan112/airflow-lakefs
 
 jobs:
-  # prepare_namespace:
-  #   runs-on: self-hosted
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: ./.github/actions/deploy_secrets
-  #       with:
-  #         namespace: lakefs
-  #         harbor_robot: "${{ secrets.DOCKER_USER }}"
-  #         harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
-  #         kubeconfig: ${{ secrets.KUBECONFIG }}
+  prepare_namespace:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/deploy_secrets
+        with:
+          namespace: lakefs
+          harbor_robot: "${{ secrets.DOCKER_USER }}"
+          harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
+          kubeconfig: ${{ secrets.KUBECONFIG }}
 
 
   # build_custom_image:
@@ -73,7 +73,7 @@ jobs:
 
   deploy_ingress:
       runs-on: self-hosted
-      #needs: [prepare_namespace]
+      needs: [prepare_namespace]
       steps:
           - uses: actions/checkout@v3
           - name: Deploy lakefs ingress
