@@ -60,8 +60,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm/
         with:
-          repo: oci://registry-1.docker.io/bitnamicharts
-          repo_url: kafka
+          repo: kafka
+          repo_url: oci://registry-1.docker.io/bitnamicharts
           release: kafka
           values: ../../../../helm/kafka/values.yaml
           values_override: ../../../../helm/kafka/override.yaml
