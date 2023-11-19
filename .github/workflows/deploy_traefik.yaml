@@ -76,7 +76,7 @@ jobs:
       needs: [prepare_namespace]
       steps:
           - uses: actions/checkout@v3
-          - name: Deploy traefik ingress
+          - name: Deploy airflow traefik ingress
             shell: pwsh
             run: |
-              kubectl apply -f  ../../../../helm/traefik/ingress.yaml -n traefik
+              kubectl apply -f  ../../../../helm/traefik/ingress.yaml
