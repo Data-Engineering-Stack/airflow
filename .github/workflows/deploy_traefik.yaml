@@ -55,7 +55,7 @@ jobs:
   
   deploy_traefik:
     runs-on: self-hosted
-    needs: [prepare_namespace,deploy_ingress]
+    needs: [prepare_namespace]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm/
@@ -73,7 +73,7 @@ jobs:
 
   deploy_ingress:
       runs-on: self-hosted
-      needs: [prepare_namespace]
+      needs: [prepare_namespace,deploy_traefik]
       steps:
           - uses: actions/checkout@v3
           - name: Deploy airflow traefik ingress
