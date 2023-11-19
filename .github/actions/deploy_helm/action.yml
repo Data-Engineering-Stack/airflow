@@ -96,5 +96,6 @@ runs:
           -n ${{ inputs.namespace }} `
           -f ${{ inputs.values }} `
           --values ${{ inputs.values_override }} `
-          --set defaultAirflowTag=${{ inputs.airflow_tag }} `
+          --set defaultAirflowTag=${{ inputs.image_tag }} `
+          --set image.tag=${{ inputs.image_tag }} `
           ${{ inputs.additional_flags }}

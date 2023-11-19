@@ -75,7 +75,7 @@ jobs:
           harbor_robot: "${{ secrets.DOCKER_USER }}"
           harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
           kubeconfig: ${{ secrets.KUBECONFIG }}
-          airflow_tag: ${{env.AIRFLOW_TAG}}
+          image_tag: ${{env.AIRFLOW_TAG}}
           additional_flags: 
 
 

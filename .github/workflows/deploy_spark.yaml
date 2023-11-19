@@ -74,6 +74,7 @@ jobs:
           harbor_robot: "${{ secrets.DOCKER_USER }}"
           harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
           kubeconfig: ${{ secrets.KUBECONFIG }}
+          image_tag: ${{env.SPARK_TAG}}
           additional_flags: 
           
 
@@ -110,5 +111,7 @@ jobs:
               run: |
                 kubectl apply -f  ../../../../helm/spark/headless/configmap.yaml -n airflow
                 kubectl apply -f  ../../../../helm/spark/headless/deployment.yaml -n airflow
+                kubectl set image deployment spark-headless-service-controller spark-headless-service-controller=$HEADLESS_IMAGE_NAME:$SPARK_TAG -n airflow
+
 
             
