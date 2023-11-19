@@ -61,8 +61,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm/
         with:
-          repo: bitnami
-          repo_url: https://charts.bitnami.com/bitnami
+          repo: oci://registry-1.docker.io/bitnamicharts
+          repo_url: spark
           release: spark
           values: ../../../../helm/spark/values.yaml
           values_override: ../../../../helm/spark/override.yaml
@@ -70,7 +70,6 @@ jobs:
           harbor_robot: "${{ secrets.DOCKER_USER }}"
           harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
           kubeconfig: ${{ secrets.KUBECONFIG }}
-          image_tag: ${{env.SPARK_TAG}}
           additional_flags: 
           
 
