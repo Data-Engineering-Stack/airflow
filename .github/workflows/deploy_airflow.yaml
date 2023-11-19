@@ -45,8 +45,7 @@ jobs:
       - name: Build the Docker image
         run: | 
           $cmd = 'docker build . --tag  ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.AIRFLOW_TAG }} --file helm/airflow/Dockerfile'
-          $cleaned_command = $cmd.Replace('"', '')
-          Invoke-Expression $cleaned_command
+          Invoke-Expression $cmd
 
       - name: Log into registry
         run: |
@@ -58,7 +57,7 @@ jobs:
 
       - name: Remove Dangling Image
         run: |
-          docker image prune -f
+            docker image prune -f
 
   deploy_airflow:
     runs-on: self-hosted

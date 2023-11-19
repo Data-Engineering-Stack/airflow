@@ -41,21 +41,21 @@ inputs:
     required: true
     default: kubeconfig for target k8s tenant (b64)
     description: location of the Dockerfile to use
-  airflow_tag:
+  image_tag:
     required: false
-    default: "2.5.0"
-    description: overrides the airflow tag
+    default: "0"
+    description: overrides the image tag
 
 runs:
   using: "composite"
   steps:
-    - name: Log into registry
-      shell: pwsh
-      run: |
-          $cmd = 'docker build . --tag  ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.AIRFLOW_TAG }} --file helm/airflow/Dockerfile'
-          $cleaned_command = $cmd.Replace('"', '')
-          Invoke-Expression $cleaned_command
-          Set-ExecutionPolicy RemoteSigned –Scope Process
+  #   - name: Log into registry
+  #     shell: pwsh
+  #     run: |
+  #         $cmd = 'docker build . --tag  ${{ env.AIRFLOW_IMAGE_NAME }}:${{ env.image_tag }} --file helm/${{ env.namespace }}/Dockerfile'
+  #         $cleaned_command = $cmd.Replace('"', '')
+  #         Invoke-Expression $cleaned_command
+  #         Set-ExecutionPolicy RemoteSigned –Scope Process
 
 
     # - name: Extract docker images

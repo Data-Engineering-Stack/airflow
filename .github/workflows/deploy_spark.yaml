@@ -43,7 +43,8 @@ jobs:
       - name: Build the Docker image
         run: | 
           $cmd = 'docker build . --tag  ${{ env.SPARK_IMAGE_NAME }}:${{ env.SPARK_TAG }} --file helm/spark/Dockerfile'
-          Invoke-Expression $cmd
+          $cleaned_command = $cmd.Replace('"', '')
+          Invoke-Expression $cleaned_command
 
       - name: Log into registry
         run: |
