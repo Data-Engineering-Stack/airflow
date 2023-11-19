@@ -55,7 +55,7 @@ jobs:
   
   deploy_traefik:
     runs-on: self-hosted
-    #needs: [prepare_namespace,deploy_ingress]
+    needs: [prepare_namespace,deploy_ingress]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm/
