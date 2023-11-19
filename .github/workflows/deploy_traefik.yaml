@@ -1,0 +1,82 @@
+name: Deploy traefik
+on:
+  workflow_dispatch:
+    inputs:
+      ENV:
+        required: false
+        description: Select which environment you want to deploy to.
+        type: choice
+        options:
+          - STAGE
+          - PROD
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+    contents: read
+    packages: write
+
+env:
+  traefik_TAG: ${{ github.sha }}
+  traefik_IMAGE_NAME: maxvan112/airflow-traefik
+
+jobs:
+  # prepare_namespace:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: ./.github/actions/deploy_secrets
+  #       with:
+  #         namespace: traefik
+  #         harbor_robot: "${{ secrets.DOCKER_USER }}"
+  #         harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
+  #         kubeconfig: ${{ secrets.KUBECONFIG }}
+
+
+  # build_custom_image:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Build the Docker image
+  #       run: | 
+  #         $cmd = 'docker build . --tag  ${{ env.traefik_IMAGE_NAME }}:${{ env.traefik_TAG }} --file helm/traefik/Dockerfile'
+  #         $cleaned_command = $cmd.Replace('"', '')
+  #         Invoke-Expression $cleaned_command
+
+  #     - name: Log into registry
+  #       run: |
+  #           docker logout |  docker login   -u "${{ secrets.DOCKER_USER }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+
+  #     - name: Push image
+  #       run: |
+  #         docker push ${{ env.traefik_IMAGE_NAME }}:${{ env.traefik_TAG }}
+  
+  deploy_traefik:
+    runs-on: self-hosted
+    #needs: [prepare_namespace,deploy_ingress]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/deploy_helm/
+        with:
+          repo: traefik
+          repo_url: traefik
+          release: traefik
+          values: ../../../../helm/traefik/values.yaml
+          values_override: ../../../../helm/traefik/override.yaml
+          namespace: traefik
+          harbor_robot: "${{ secrets.DOCKER_USER }}"
+          harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          additional_flags: 
+
+  deploy_ingress:
+      runs-on: self-hosted
+      #needs: [prepare_namespace]
+      steps:
+          - uses: actions/checkout@v3
+          - name: Deploy traefik ingress
+            shell: pwsh
+            run: |
+              kubectl apply -f  ../../../../helm/traefik/ingress.yaml -n traefik

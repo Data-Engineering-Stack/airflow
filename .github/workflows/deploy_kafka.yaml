@@ -1,0 +1,73 @@
+name: Deploy Kafka
+on:
+  workflow_dispatch:
+    inputs:
+      ENV:
+        required: false
+        description: Select which environment you want to deploy to.
+        type: choice
+        options:
+          - STAGE
+          - PROD
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+    contents: read
+    packages: write
+
+env:
+  KAFKA_TAG: ${{ github.sha }}
+  KAFKA_IMAGE_NAME: maxvan112/airflow-kafka
+
+jobs:
+  # prepare_namespace:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: ./.github/actions/deploy_secrets
+  #       with:
+  #         namespace: kafka
+  #         harbor_robot: "${{ secrets.DOCKER_USER }}"
+  #         harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
+  #         kubeconfig: ${{ secrets.KUBECONFIG }}
+
+
+  # build_custom_image:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Build the Docker image
+  #       run: | 
+  #         $cmd = 'docker build . --tag  ${{ env.KAFKA_IMAGE_NAME }}:${{ env.KAFKA_TAG }} --file helm/kafka/Dockerfile'
+  #         $cleaned_command = $cmd.Replace('"', '')
+  #         Invoke-Expression $cleaned_command
+
+  #     - name: Log into registry
+  #       run: |
+  #           docker logout |  docker login   -u "${{ secrets.DOCKER_USER }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+
+  #     - name: Push image
+  #       run: |
+  #         docker push ${{ env.KAFKA_IMAGE_NAME }}:${{ env.KAFKA_TAG }}
+  
+  deploy_kafka:
+    runs-on: self-hosted
+    # needs: [prepare_namespace, build_custom_image]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/deploy_helm/
+        with:
+          repo: oci://registry-1.docker.io/bitnamicharts
+          repo_url: kafka
+          release: kafka
+          values: ../../../../helm/kafka/values.yaml
+          values_override: ../../../../helm/kafka/override.yaml
+          namespace: kafka
+          harbor_robot: "${{ secrets.DOCKER_USER }}"
+          harbor_token: "${{ secrets.DOCKER_PASSWORD }}"
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          additional_flags: 
+          
