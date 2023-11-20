@@ -75,7 +75,17 @@ jobs:
           image_tag: ${{env.AIRFLOW_TAG}}
           additional_flags: 
 
-
+  deploy_PV:
+    runs-on: self-hosted
+    needs: [prepare_namespace]
+    steps:
+        - uses: actions/checkout@v3
+        - name: Deploy PV airflow
+          shell: pwsh
+          run: |
+            kubectl apply -f  ../../../../helm/airflow/PV.yaml  -n airflow
+      
+                  
   # cleanup_stage:
   #   runs-on: self-hosted
   #   needs: [deploy_airflow]

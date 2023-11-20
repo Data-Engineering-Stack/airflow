@@ -1,3 +1,5 @@
+# first create folder struc: \\wsl.localhost\docker-desktop-data\data\k8s-pvs\airflow-pv\airflow-pvc
+
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -15,7 +17,7 @@ spec:
   accessModes:
     - ReadWriteMany
   local:
-    path: /var/lib/k8s/airflow-pv
+    path: /var/lib/k8s-pvs/airflow-pv
   nodeAffinity:
     required:
       nodeSelectorTerms:
