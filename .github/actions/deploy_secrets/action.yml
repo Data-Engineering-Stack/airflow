@@ -72,7 +72,19 @@ runs:
       -o yaml | kubectl apply -f -
 
 
-  - name: Create OAuth secret
+  - name: Create GitSync OAuth secret
+    shell: pwsh
+    run: |
+      kubectl create secret generic github-oauth-secret `
+      --namespace ${{ inputs.namespace }} `
+      --dry-run=client `
+      --from-literal=GIT_SYNC_USERNAME=${{ inputs.GIT_SYNC_USERNAME }} `
+      --from-literal=GIT_SYNC_PASSWORD=${{ inputs.GIT_SYNC_PASSWORD }} `
+      -o yaml | kubectl apply -f -
+
+
+
+  - name: Create airflow-app OAuth secret
     shell: pwsh
     run: |
       kubectl create secret generic airflow-app-webui-oauth-secret `

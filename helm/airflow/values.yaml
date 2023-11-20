@@ -278,16 +278,16 @@ volumeMounts: []
 # Secrets for all airflow containers
 secret: 
 - envName: "AIRFLOW_APP_CLIENT_ID"
-  secretName: "airflow-app-client-id"
+  secretName: "airflow-app-webui-oauth-secret"
   secretKey: "AIRFLOW_APP_CLIENT_ID"
 - envName: "AIRFLOW_APP_CLIENT_SECRET"
-  secretName: "airflow-app-client-secret"
+  secretName: "airflow-app-webui-oauth-secret"
   secretKey: "AIRFLOW_APP_CLIENT_SECRET"
 - envName: "GIT_SYNC_USERNAME"
-  secretName: "git-sync-username"
+  secretName: "github-oauth-secret"
   secretKey: "GIT_SYNC_USERNAME"
 - envName: "GIT_SYNC_PASSWORD"
-  secretName: "git-sync-password"
+  secretName: "github-oauth-secret"
   secretKey: "GIT_SYNC_PASSWORD"  
 # Enables selected built-in secrets that are set via environment variables by default.
 # Those secrets are provided by the Helm Chart secrets by default but in some cases you
