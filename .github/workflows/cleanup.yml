@@ -14,7 +14,7 @@ on:
       workflows: ["Deploy Airflow","Deploy lakefs","Deploy Spark","Deploy kafka"]
       types:
         - completed
-        
+
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: false
@@ -27,4 +27,4 @@ jobs:
 
     - name: Cleanup Unused Image
       run: |
-        docker prune -a -f
+        docker system prune -a -f
