@@ -58,7 +58,7 @@ jobs:
 
   deploy_airflow:
     runs-on: self-hosted
-    needs: [prepare_namespace, build_custom_airflow]
+    needs: [prepare_namespace, build_custom_airflow,deploy_PV]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/deploy_helm
