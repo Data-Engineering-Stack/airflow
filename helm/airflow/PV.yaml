@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: airflow-pv1
+  name: airflow-pv
   namespace: airflow
   # annotations:
   #   docker.io/hostpath: /var/lib/k8s-pvs/airflow-logs  ##docker path in local sys
@@ -15,7 +15,7 @@ spec:
   accessModes:
     - ReadWriteMany
   local:
-    path: /var/lib/k8s-pvs/airflow-pv1
+    path: /var/lib/k8s/airflow-pv
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -28,11 +28,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: airflow-pvc1
+  name: airflow-pvc
   namespace: airflow
 
 spec:
-  volumeName: airflow-pv1
+  volumeName: airflow-pv
   storageClassName: local-storage
   volumeMode: Filesystem
   accessModes:

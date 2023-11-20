@@ -2350,4 +2350,4 @@ logs:
     # If using a custom storageClass, pass name here
     storageClassName: local-storage
     ## the name of an existing PVC to use
-    existingClaim: airflow-pvc1
+    existingClaim: airflow-pvc
