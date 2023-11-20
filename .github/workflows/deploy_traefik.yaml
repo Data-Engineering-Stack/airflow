@@ -10,6 +10,11 @@ on:
           - STAGE
           - PROD
 
+  workflow_run:
+    workflows: ["Deploy Airflow","Deploy lakefs"]
+    types:
+      - completed
+
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
