@@ -1200,6 +1200,7 @@ webserver:
       # Actual `webserver_config.py`
       #######################################
       from flask_appbuilder.security.manager import AUTH_OAUTH
+      import os
       
       # only needed for airflow 1.10
       #from airflow import configuration as conf
@@ -1219,8 +1220,8 @@ webserver:
               "icon": "fa-github",
               "token_key": "access_token",
               "remote_app": {
-                  "client_id": "65f07295fd7723a035c8",
-                  "client_secret": "ffcee0932431e172f6484d136afab7b0bddaf1fd",
+                  "client_id": os.getenv("AIRFLOW_APP_CLIENT_ID"),
+                  "client_secret": os.getenv("AIRFLOW_APP_CLIENT_SECRET"),
                   "api_base_url": "https://api.github.com",
                   "client_kwargs": {"scope": "read:org read:user user:email"},
                   "access_token_url": "https://github.com/login/oauth/access_token",

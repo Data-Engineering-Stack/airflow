@@ -21,7 +21,12 @@ inputs:
   GIT_SYNC_PASSWORD:
     required: true
     description: GIT_SYNC_PASSWORD
-
+  AIRFLOW_APP_CLIENT_ID:
+    required: true
+    description: AIRFLOW_APP_CLIENT_ID
+  AIRFLOW_APP_CLIENT_SECRET:
+    required: true
+    description: AIRFLOW_APP_CLIENT_SECRET
 
 
 runs:
@@ -68,18 +73,11 @@ runs:
 
 
   - name: Create OAuth secret
-    # - name: Create app secret
-    #     echo ${{ inputs.app_secret }} | base64 --decode | kubectl apply -n ${{ inputs.namespace }}  -f -
-
-
-    #   run: |
-    #   shell: bash
-    #   if: ${{ inputs.app_secret != ''}}
     shell: pwsh
     run: |
-      kubectl create secret generic github-oauth-secret `
+      kubectl create secret generic airflow-app-webui-oauth-secret `
       --namespace ${{ inputs.namespace }} `
       --dry-run=client `
-      --from-literal=GIT_SYNC_USERNAME=${{ inputs.GIT_SYNC_USERNAME }} `
-      --from-literal=GIT_SYNC_PASSWORD=${{ inputs.GIT_SYNC_PASSWORD }} `
+      --from-literal=AIRFLOW_APP_CLIENT_ID=${{ inputs.AIRFLOW_APP_CLIENT_ID }} `
+      --from-literal=AIRFLOW_APP_CLIENT_SECRET=${{ inputs.AIRFLOW_APP_CLIENT_SECRET }} `
       -o yaml | kubectl apply -f -

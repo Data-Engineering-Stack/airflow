@@ -37,6 +37,8 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           GIT_SYNC_USERNAME: "${{ secrets.GIT_SYNC_USERNAME}}"
           GIT_SYNC_PASSWORD: "${{ secrets.GIT_SYNC_PASSWORD}}"
+          AIRFLOW_APP_CLIENT_ID: "${{ secrets.AIRFLOW_APP_CLIENT_ID}}"
+          AIRFLOW_APP_CLIENT_SECRET: "${{ secrets.AIRFLOW_APP_CLIENT_SECRET}}"
 
   build_custom_airflow:
     runs-on: self-hosted
