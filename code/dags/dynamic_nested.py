@@ -37,10 +37,6 @@ default_args={
 configs = {
     "ho": {"schema": "P8206A", "dataset": Dataset("zh_ho")},
     "fz": {"schema": "P8207A", "dataset": Dataset("zh_fz")},
-    "shift": {"schema": "P8208A", "dataset": Dataset("zh_shift")},
-    "ta": {"schema": "P8209A", "dataset": Dataset("zh_ta")},
-    "maz": {"schema": "P8210A", "dataset": Dataset("zh_maz")},
-    "loe": {"schema": "P8211A", "dataset": Dataset("zh_loe")},
 }
 
 # create list for expand:
