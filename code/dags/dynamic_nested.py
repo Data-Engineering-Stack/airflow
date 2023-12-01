@@ -14,6 +14,9 @@ from airflow.decorators import dag, task
 from airflow.utils.state import State
 from airflow.datasets.manager import dataset_manager
 from airflow.utils.session import NEW_SESSION, provide_session
+from sqlalchemy.orm.session import Session
+from airflow.models.dataset import DatasetDagRunQueue, DatasetEvent, DatasetModel
+
 
 
 default_args={
@@ -50,6 +53,15 @@ def test(**context):
     print("==============ok")
     return "============ok"
 
+def create_datasets(self, dataset_models: list[DatasetModel], session: Session) -> None:
+    """Create new datasets."""
+    for dataset_model in dataset_models:
+        session.add(dataset_model)
+    session.flush()
+
+    for dataset_model in dataset_models:
+        self.notify_dataset_created(dataset=Dataset(uri=dataset_model.uri, extra=dataset_model.extra))
+
 
 with DAG(
     'dynamic_nested',
@@ -81,11 +93,8 @@ with DAG(
         
 
         task1.execute(context=context)
-        for dataset_model in [dataset]:
-            session.add(dataset_model)
-        session.flush()
 
-
+        create_datasets(dataset_models=[dataset], session=session)
         dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
     
