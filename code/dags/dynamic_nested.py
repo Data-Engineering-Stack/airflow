@@ -66,7 +66,8 @@ with DAG(
     @task()
     @provide_session
     def task1(configs_lst=configs_lst, session=NEW_SESSION):
-
+        context=get_current_context()
+        ti = context["ti"]
         schema =configs_lst[0]
         dataset = configs_lst[1]
         print(f"schema: {schema} and dataset: {dataset}")
@@ -81,8 +82,8 @@ with DAG(
 
         
 
-        task1.execute(context=get_current_context())
-        dataset_manager.register_dataset_change(dataset=[dataset], session=session)
+        task1.execute(context=context)
+        dataset_manager.register_dataset_change(task_instance=ti,dataset=[dataset], session=session)
         
     
 
