@@ -12,6 +12,9 @@ from airflow.sensors.bash import BashSensor
 from airflow.operators.python import get_current_context
 from airflow.decorators import dag, task
 from airflow.utils.state import State
+from airflow.datasets.manager import dataset_manager
+from airflow.utils.session import NEW_SESSION, provide_session
+
 
 default_args={
     "depends_on_past": False,
@@ -43,7 +46,7 @@ configs = {
 configs_lst = [[value["schema"], value["dataset"]] for key, value in configs.items()]
 
 
-def test():
+def test(**context):
     print("==============ok")
     return "============ok"
 
@@ -61,7 +64,7 @@ with DAG(
 
 
     @task()
-    def task1(configs_lst=configs_lst):
+    def task1(configs_lst=configs_lst, session=NEW_SESSION):
 
         schema =configs_lst[0]
         dataset = configs_lst[1]
@@ -74,7 +77,11 @@ with DAG(
         on_success_callback=test
     )
         
+
+        
+
         task1.execute(context=get_current_context())
+        dataset_manager.create_datasets(dataset_models=dataset, session=session)
         
     
 
