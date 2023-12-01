@@ -74,8 +74,7 @@ with DAG(
 
         task1 = BashOperator(
         task_id="task1",
-        bash_command=f'echo {schema}',
-=        on_success_callback=test
+        bash_command=f'echo {schema}'
     )
         
 
