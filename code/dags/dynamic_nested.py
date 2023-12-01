@@ -61,7 +61,7 @@ with DAG(
 
 
     @task()
-    def task1(n=configs_lst):
+    def task1(configs_lst=configs_lst):
 
         schema =configs_lst[0]
         dataset = configs_lst[1]
