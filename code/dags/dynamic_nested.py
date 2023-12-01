@@ -64,11 +64,11 @@ with DAG(
     max_active_runs=1,
 ) as dag:
 
-    task0 = BashOperator(
-    task_id="task0",
-    bash_command=f'sleep 1',
-    outlets=[Dataset("zh_ho")]
-    )
+    # task0 = BashOperator(
+    # task_id="task0",
+    # bash_command=f'sleep 1',
+    # outlets=[Dataset("zh_ho")]
+    # )
 
 
 
@@ -85,12 +85,14 @@ with DAG(
 
         task1 = BashOperator(
         task_id="task1",
-        bash_command=f'echo {schema}',
-        outlets=[dataset]
+        bash_command=f'echo {schema}'
         )
         
 
         task1.execute(context=context)
+
+        for dataset_model in [dataset]:
+            session.add(dataset_model)
 
         dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
@@ -113,7 +115,7 @@ with DAG(
 
 
 
-    task0 >>    task1
+    task1
 
 
 
