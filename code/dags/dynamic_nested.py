@@ -17,7 +17,7 @@ from airflow.utils.session import NEW_SESSION, provide_session
 from sqlalchemy.orm.session import Session
 from airflow.models.dataset import DatasetDagRunQueue, DatasetEvent, DatasetModel
 
-
+from airflow.listeners.listener import get_listener_manager
 
 default_args={
     "depends_on_past": False,
@@ -53,6 +53,10 @@ def test(**context):
     print("==============ok")
     return "============ok"
 
+def notify_dataset_created(self, dataset: Dataset):
+    """Run applicable notification actions when a dataset is created."""
+    get_listener_manager().hook.on_dataset_created(dataset=dataset)
+    
 def create_datasets(self, dataset_models: list[DatasetModel], session: Session) -> None:
     """Create new datasets."""
     for dataset_model in dataset_models:
