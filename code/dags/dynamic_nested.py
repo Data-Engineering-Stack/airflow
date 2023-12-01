@@ -75,15 +75,14 @@ with DAG(
         task1 = BashOperator(
         task_id="task1",
         bash_command=f'echo {schema}',
-        outlets=[Dataset("inside")],
-        on_success_callback=test
+=        on_success_callback=test
     )
         
 
         
 
         task1.execute(context=context)
-        dataset_manager.register_dataset_change(task_instance=ti,dataset=[dataset], session=session)
+        dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
     
 
