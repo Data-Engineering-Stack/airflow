@@ -34,9 +34,20 @@ default_args={
     # 'trigger_rule': 'all_success'
 }
 
-test_d = Dataset('hello')
+configs = {
+    "ho": {"schema": "P8206A", "dataset": Dataset("zh_ho")},
+    "fz": {"schema": "P8207A", "dataset": Dataset("zh_fz")},
+    "shift": {"schema": "P8208A", "dataset": Dataset("zh_shift")},
+    "ta": {"schema": "P8209A", "dataset": Dataset("zh_ta")},
+    "maz": {"schema": "P8210A", "dataset": Dataset("zh_maz")},
+    "loe": {"schema": "P8211A", "dataset": Dataset("zh_loe")},
+}
 
-n = [1,2,3]
+# create list for expand:
+configs_lst = [[value["schema"], value["dataset"]] for key, value in configs.items()]
+
+
+
 with DAG(
     'dynamic_nested',
     start_date=datetime(2023, 9, 9),  
@@ -50,18 +61,23 @@ with DAG(
 
 
     @task()
-    def task1(n=None):
+    def task1(n=configs_lst):
+
+        schema =configs_lst[0]
+        dataset = configs_lst[1]
+        print(f"schema: {schema} and dataset: {dataset}")
+
         task1 = BashOperator(
         task_id="task1",
-        bash_command=f'sleep {n}',
-        outlets=[test_d]
+        bash_command=f'echo {schema + dataset}',
+        outlets=[dataset]
     )
         
-        task1.execute(get_current_context())
+        task1.execute(context=get_current_context())
         
     
 
-    task1 = task1.expand(n=n)
+    task1 = task1.expand(configs_lst=configs_lst)
 
     task1
 
