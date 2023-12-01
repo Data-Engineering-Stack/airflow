@@ -35,8 +35,8 @@ default_args={
 }
 
 configs = {
-    "ho": {"schema": "P8206A", "dataset": Dataset("zh_ho")},
-    "fz": {"schema": "P8207A", "dataset": Dataset("zh_fz")},
+    "ho": {"schema": "P8206A", "dataset": "zh_ho"},
+    "fz": {"schema": "P8207A", "dataset": "zh_fz"},
 }
 
 # create list for expand:
@@ -70,7 +70,7 @@ with DAG(
         task1 = BashOperator(
         task_id="task1",
         bash_command=f'echo {schema}',
-        outlets=[dataset],
+        outlets=f"Dataset({dataset})",
         on_success_callback=test
     )
         
