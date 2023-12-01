@@ -64,6 +64,7 @@ with DAG(
 
 
     @task()
+    @provide_session
     def task1(configs_lst=configs_lst, session=NEW_SESSION):
 
         schema =configs_lst[0]
