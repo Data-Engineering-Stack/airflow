@@ -82,7 +82,7 @@ with DAG(
         
 
         task1.execute(context=get_current_context())
-        dataset_manager.create_datasets(dataset_models=[dataset], session=session)
+        dataset_manager.register_dataset_change(dataset=[dataset], session=session)
         
     
 
