@@ -91,7 +91,7 @@ with DAG(
 
         task1.execute(context=context)
 
-        for dataset_model in [dataset]:
+        for dataset_model in dataset:
             session.add(dataset_model)
 
         dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
