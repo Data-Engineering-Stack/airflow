@@ -43,6 +43,10 @@ configs = {
 configs_lst = [[value["schema"], value["dataset"]] for key, value in configs.items()]
 
 
+def test():
+    print("==============ok")
+    return "============ok"
+
 
 with DAG(
     'dynamic_nested',
@@ -66,7 +70,8 @@ with DAG(
         task1 = BashOperator(
         task_id="task1",
         bash_command=f'echo {schema}',
-        outlets=[dataset]
+        outlets=[dataset],
+        on_success_callback=test
     )
         
         task1.execute(context=get_current_context())
