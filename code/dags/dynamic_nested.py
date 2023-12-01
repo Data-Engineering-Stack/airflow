@@ -1,4 +1,4 @@
-from airflow import DAG
+from airflow import DAG,Dataset
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime,timedelta
 from airflow.providers.postgres.hooks.postgres import PostgresHook
@@ -34,7 +34,9 @@ default_args={
     # 'trigger_rule': 'all_success'
 }
 
+test_d = Dataset('hello')
 
+n = [1,2,3]
 with DAG(
     'dynamic_nested',
     start_date=datetime(2023, 9, 9),  
@@ -48,13 +50,19 @@ with DAG(
 
 
     @task()
-    def task1():
+    def task1(n=None):
         task1 = BashOperator(
         task_id="task1",
-        bash_command='sleep 500',
+        bash_command=f'sleep {n}',
+        outlets=[test_d]
     )
+        
         task1.execute(get_current_context())
         
+    
+
+    task1 = task1.expand(n=n)
+
     task1
 
 
