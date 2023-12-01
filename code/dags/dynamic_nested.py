@@ -70,7 +70,7 @@ with DAG(
         task1 = BashOperator(
         task_id="task1",
         bash_command=f'echo {schema}',
-        outlets=f"Dataset({dataset})",
+        outlets=[Dataset("inside")],
         on_success_callback=test
     )
         
