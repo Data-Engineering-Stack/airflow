@@ -80,6 +80,22 @@ with DAG(
 
     task1 = task1.expand(configs_lst=configs_lst)
 
+
+    @task
+    def print_triggering_dataset_events(triggering_dataset_events=None):
+        for dataset, dataset_list in triggering_dataset_events.items():
+            print(dataset, dataset_list)
+            print(dataset_list[0].source_dag_run.dag_id)
+
+    print_triggering_dataset_events()
+
+
+
+
+
+
+
+
     task1
 
 
