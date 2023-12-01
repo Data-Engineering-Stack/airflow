@@ -53,18 +53,6 @@ def test(**context):
     print("==============ok")
     return "============ok"
 
-def notify_dataset_created( dataset: Dataset):
-    """Run applicable notification actions when a dataset is created."""
-    get_listener_manager().hook.on_dataset_created(dataset=dataset)
-    
-def create_datasets(dataset_models: list[DatasetModel], session: Session) -> None:
-    """Create new datasets."""
-    for dataset_model in dataset_models:
-        session.add(dataset_model)
-    session.flush()
-
-    for dataset_model in dataset_models:
-        notify_dataset_created(dataset=Dataset(uri=dataset_model.uri, extra=dataset_model.extra))
 
 
 with DAG(
@@ -76,6 +64,11 @@ with DAG(
     max_active_runs=1,
 ) as dag:
 
+    task0 = BashOperator(
+    task_id="task1",
+    bash_command=f'sleep 1',
+    outlets=[Dataset("zh_ho")]
+    )
 
 
 
@@ -86,22 +79,21 @@ with DAG(
         ti = context["ti"]
         schema =configs_lst[0]
         dataset = configs_lst[1]
+
+
         print(f"schema: {schema} and dataset: {dataset}")
 
         task1 = BashOperator(
         task_id="task1",
-        bash_command=f'echo {schema}'
-    )
-        
-
+        bash_command=f'echo {schema}',
+        outlets=[dataset]
+        )
         
 
         task1.execute(context=context)
 
-        create_datasets(dataset_models=[dataset], session=session)
         dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
-    
 
     task1 = task1.expand(configs_lst=configs_lst)
 
@@ -121,7 +113,7 @@ with DAG(
 
 
 
-    task1
+    task0 >>    task1
 
 
 
