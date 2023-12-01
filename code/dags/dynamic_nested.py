@@ -65,7 +65,7 @@ with DAG(
 ) as dag:
 
     task0 = BashOperator(
-    task_id="task1",
+    task_id="task0",
     bash_command=f'sleep 1',
     outlets=[Dataset("zh_ho")]
     )
