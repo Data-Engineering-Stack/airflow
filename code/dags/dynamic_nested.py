@@ -38,8 +38,8 @@ default_args={
 }
 
 configs = {
-    "ho": {"schema": "P8206A", "dataset": "zh_ho"},
-    "fz": {"schema": "P8207A", "dataset": "zh_fz"},
+    "ho": {"schema": "P8206A", "dataset": Dataset("zh_ho")},
+    "fz": {"schema": "P8207A", "dataset": Dataset("zh_fz")},
 }
 
 # create list for expand:
