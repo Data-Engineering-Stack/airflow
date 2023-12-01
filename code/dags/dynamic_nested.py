@@ -53,18 +53,18 @@ def test(**context):
     print("==============ok")
     return "============ok"
 
-def notify_dataset_created(self, dataset: Dataset):
+def notify_dataset_created( dataset: Dataset):
     """Run applicable notification actions when a dataset is created."""
     get_listener_manager().hook.on_dataset_created(dataset=dataset)
     
-def create_datasets(self, dataset_models: list[DatasetModel], session: Session) -> None:
+def create_datasets(dataset_models: list[DatasetModel], session: Session) -> None:
     """Create new datasets."""
     for dataset_model in dataset_models:
         session.add(dataset_model)
     session.flush()
 
     for dataset_model in dataset_models:
-        self.notify_dataset_created(dataset=Dataset(uri=dataset_model.uri, extra=dataset_model.extra))
+        notify_dataset_created(dataset=Dataset(uri=dataset_model.uri, extra=dataset_model.extra))
 
 
 with DAG(
