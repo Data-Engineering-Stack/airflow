@@ -69,7 +69,7 @@ with DAG(
 
         task1 = BashOperator(
         task_id="task1",
-        bash_command=f'echo {schema + dataset}',
+        bash_command=f'echo {schema}',
         outlets=[dataset]
     )
         
