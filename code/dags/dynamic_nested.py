@@ -91,8 +91,9 @@ with DAG(
 
 
 
-    @task()
+
     @provide_session
+    @task.python()
     def task1(configs_lst=configs_lst, session=NEW_SESSION):
         context=get_current_context()
         ti = context["ti"]
@@ -109,7 +110,7 @@ with DAG(
         
 
         task1.execute(context=context)
-        
+
         stored_dataset = session.query(DatasetModel).filter(DatasetModel.uri == dataset.uri).first()
 
         if not stored_dataset:
