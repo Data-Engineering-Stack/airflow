@@ -92,8 +92,9 @@ with DAG(
 
 
 
-    @provide_session
     @task()
+    @provide_session
+
     def task1(configs_lst=configs_lst, session=NEW_SESSION):
         context=get_current_context()
         ti = context["ti"]
