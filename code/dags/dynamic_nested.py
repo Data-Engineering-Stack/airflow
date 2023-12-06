@@ -41,8 +41,8 @@ default_args={
 }
 
 configs = {
-    "ho": {"schema": "P8206A", "dataset": Dataset("zh_ho")},
-    "fz": {"schema": "P8207A", "dataset": Dataset("zh_fz")},
+    "ho": {"schema": "P8206A", "dataset": Dataset("ds_1")},
+    "fz": {"schema": "P8207A", "dataset": Dataset("ds_2")},
 }
 
 # create list for expand:
@@ -70,6 +70,25 @@ with DAG(
     # outlets=[Dataset("zh_ho")]
     # )
 
+    # @provide_session
+    # @task.python(task_id="generate_dataset", on_failure_callback=lambda x: None)
+    # def executable_func(session: Session = NEW_SESSION, **context: TaskInstance) -> list[Dataset]:
+    #     datasets = [Dataset(f"s3://potato-{random.randint(1, 4)}"), Dataset("s3://tomato")]
+    #     for dataset in datasets:
+    #         stored_dataset = session.query(DatasetModel).filter(DatasetModel.uri == dataset.uri).first()
+    #         if not stored_dataset:
+    #             print(f"Dataset {dataset} not stored, proceeding to storing it")
+    #             dataset_model = DatasetModel.from_public(dataset)
+    #             session.add(dataset_model)
+    #         else:
+    #             print(f"Dataset {dataset} already stored, register dataset event instead")
+    #             dm = DatasetManager()
+    #             dm.register_dataset_change(task_instance=context["ti"], dataset=dataset, session=session)
+
+    #     session.flush()
+    #     session.commit()
+    #     return datasets
+
 
 
     @task()
@@ -91,8 +110,11 @@ with DAG(
 
         task1.execute(context=context)
 
-        for dataset_model in [Dataset("zh_ho")]:
-            session.add(dataset_model)
+        # for dataset_model in [Dataset("zh_ho")]:
+        #     session.add(dataset_model)
+
+        dataset_model = DatasetModel.from_public(dataset)
+        session.add(dataset_model)
 
         dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
