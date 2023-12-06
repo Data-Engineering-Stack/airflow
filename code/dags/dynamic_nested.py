@@ -122,6 +122,10 @@ with DAG(
             dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
 
+        session.flush()
+        session.commit()
+        return True
+
     task1 = task1.expand(configs_lst=configs_lst)
 
 
