@@ -151,3 +151,18 @@ with DAG(
 
 
 
+with DAG(
+    'child_dynamic_nested',
+    start_date=datetime(2023, 9, 9),  
+    schedule=[Dataset("ds_1")], 
+    default_args=default_args,
+    catchup=False,  # Set to False if you don't want to backfill
+    max_active_runs=1,
+) as dag:
+
+        schema = 'abc'
+
+        task1 = BashOperator(
+        task_id="task1",
+        bash_command=f'echo {schema}'
+        )
