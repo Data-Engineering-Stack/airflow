@@ -109,14 +109,16 @@ with DAG(
         
 
         task1.execute(context=context)
+        
+        stored_dataset = session.query(DatasetModel).filter(DatasetModel.uri == dataset.uri).first()
 
-        # for dataset_model in [Dataset("zh_ho")]:
-        #     session.add(dataset_model)
-
-        dataset_model = DatasetModel.from_public(dataset)
-        session.add(dataset_model)
-
-        dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
+        if not stored_dataset:
+            print(f"Dataset {dataset} not stored, proceeding to storing it")
+            dataset_model = DatasetModel.from_public(dataset)
+            session.add(dataset_model)
+        else:
+            print(f"Dataset {dataset} already stored, register dataset event instead")
+            dataset_manager.register_dataset_change(task_instance=ti,dataset=dataset, session=session)
         
 
     task1 = task1.expand(configs_lst=configs_lst)
