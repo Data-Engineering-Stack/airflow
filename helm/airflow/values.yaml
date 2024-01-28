@@ -57,7 +57,7 @@ defaultAirflowTag: "1.3"
 defaultAirflowDigest: ~
 
 # Airflow version (Used to make some decisions based on Airflow Version being deployed)
-airflowVersion: "2.7"
+airflowVersion: "2.8.1"
 
 # Images
 images:
