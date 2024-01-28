@@ -1,5 +1,6 @@
 defaultAirflowTag: "1.8"
 airflowVersion: "2.8.1"
+executor: "CeleryExecutor"
 secret: 
 - envName: "AIRFLOW_APP_CLIENT_ID"
   secretName: "airflow-app-webui-oauth-secret"
