@@ -102,26 +102,38 @@ class DatasetSensor(BaseSensorOperator):
 
             print(f"last_update_dataset_ts: {last_update_dataset_ts}")
 
+
+            # catch old dataset update:
             if not (producer_dag_ts <= last_update_dataset_ts <= consumer_dag_start_ts):
-                # this case can only arise when consumer dag has started, and some  datasets are refreshed after that
+                # this case can only arise when consumer dag has started, when queue some datasets are in queue
+                # and are refreshed after that
                 # which means there were some old dataset which triggered this consumer dag
                 # we can wait until this condiditon becomes true for old dataset as well!
                 new_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
                 if dataset_list[0].source_dag_run.dag_id in old_dataset_update:
+                    print('Old Dataset has been refreshed. Hence removing...')
                     old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
-                print("yes!")
+                print("We found a stale dataset!")
+
+                #clear up the queue as well!
+                print(f"Clearing up the Queue with dataset id : {dataset_list[0].dataset_id} ...")
+                delete_sql=f"delete from public.dataset_dag_run_queue where dataset_id = '{dataset_list[0].dataset_id}'"
+                res_del = db_hook.get_first(delete_sql)
+                print(f"deleted rec cnt: {res_del}")
+
             else:
 
                 old_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
-                print("no! :()")
+                print("Dataset is upto date!")
         
 
         if len(new_dataset_update) > 0 :
-            print(f'we have old datasets. Please check : {old_dataset_update}')
-            print('waiting until all new datasets are refreshed!')
-            print('checking if new data last update dataset > ')
             required = total_datasets - len(new_dataset_update)
-            print(f'checking if all {required} old datasets are refreshed...')
+            self.log.info(
+            "we have old datasets: %s. Poking untill all %s are refreshed...",
+            old_dataset_update,
+            required
+        )
 
         if len(old_dataset_update) == 0 or len(old_dataset_update) == total_datasets:
             self.log.info(
@@ -131,18 +143,11 @@ class DatasetSensor(BaseSensorOperator):
             
             context['ti'].xcom_push(key='dataset_uri', value=list(triggering_dataset_events.keys()))
             
-            # Invalidate the queue!
-            # print("Clearing up the Queue...")
-            # delete_sql=f"delete from public.dataset_dag_run_queue where target_dag_id = '{dag_id}'"
-            # res_del = db_hook.get_first(delete_sql)
-            # print(f"deleted rec cnt: {res_del}")
+
             
             return True
 
-        self.log.info(
-            "Not all datasets available for execution date %s. Poking again...",
-            consumer_dag_start_date,
-        )
+
         return False
 
 
