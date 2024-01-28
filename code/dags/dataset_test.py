@@ -91,10 +91,11 @@ class DatasetSensor(BaseSensorOperator):
             print(dataset_list[0].source_dag_run.dag_id)
             print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
             print(f"consumer_dag_start_ts: {consumer_dag_start}")
-            print(f"last update ts of dataset: {session.query(func.max(DatasetEvent.timestamp))\
+            x = session.query(func.max(DatasetEvent.timestamp))\
                       .filter_by(dataset_id=dataset_list[0].dataset_id)\
-                      .scalar()}")
+                      .scalar()
 
+            print(f"last update ts of dataset: {x}")
 
                 
         ## information:
