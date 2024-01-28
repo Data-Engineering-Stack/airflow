@@ -117,11 +117,10 @@ class DatasetSensor(BaseSensorOperator):
                         old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
                     print("We found a stale dataset!")
 
-                    #clear up the queue as well!
-                    print(f"Clearing up the Queue with dataset id : {dataset_list[0].dataset_id} ...")
-                    delete_sql=f"delete from public.dataset_dag_run_queue where dataset_id = '{dataset_list[0].dataset_id}'"
-                    res_del = db_hook.get_first(delete_sql)
-                    print(f"deleted rec cnt: {res_del}")
+                    print(f"Removing  dataset id:  {dataset_list[0].dataset_id} from Queue...")
+                    session.query(DatasetDagRunQueue).filter(
+                                DatasetDagRunQueue.dataset_id == dataset_list[0].dataset_id
+                            ).delete()
 
                 else:
 
@@ -144,7 +143,12 @@ class DatasetSensor(BaseSensorOperator):
             )
             
             context['ti'].xcom_push(key='dataset_uri', value=list(triggering_dataset_events.keys()))
-            
+            #clear up the queue as well!
+            # print(f"Clearing up the Queue with dataset id : {dataset_list[0].dataset_id} ...")
+            # delete_sql=f"delete from public.dataset_dag_run_queue where dataset_id = '{dataset_list[0].dataset_id}'"
+            # res_del = db_hook.get_first(delete_sql)
+            # print(f"deleted rec cnt: {res_del}")
+
 
             
             return True
