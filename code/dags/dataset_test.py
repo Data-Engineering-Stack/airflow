@@ -107,7 +107,8 @@ class DatasetSensor(BaseSensorOperator):
                 # which means there were some old dataset which triggered this consumer dag
                 # we can wait until this condiditon becomes true for old dataset as well!
                 new_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
-                old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
+                if dataset_list[0].source_dag_run.dag_id in old_dataset_update:
+                    old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
                 print("yes!")
             else:
 
