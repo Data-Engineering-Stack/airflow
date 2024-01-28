@@ -8,6 +8,8 @@ from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.context import Context
 from airflow.utils.session import NEW_SESSION, provide_session
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+
 from typing import Union,Any
 from dateutil import parser
 
@@ -89,7 +91,9 @@ class DatasetSensor(BaseSensorOperator):
             print(dataset_list[0].source_dag_run.dag_id)
             print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
             print(f"consumer_dag_start_ts: {consumer_dag_start}")
-            print(f"last update ts of dataset: {session.query(DatasetEvent.timestamp).filter_by(dataset_id=dataset_list[0].dataset_id).all()}")
+            print(f"last update ts of dataset: {session.query(func.max(DatasetEvent.timestamp))\
+                      .filter_by(dataset_id=dataset_list[0].dataset_id)\
+                      .scalar()}")
 
 
                 
