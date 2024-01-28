@@ -18,6 +18,7 @@ import pytz
 from airflow.utils.db import provide_session
 from airflow.models.dataset import DatasetDagRunQueue, DatasetEvent, DatasetModel
 from datetime import datetime
+from airflow.utils.session import create_session
 
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
@@ -58,7 +59,7 @@ class DatasetSensor(BaseSensorOperator):
                 f"execution_date should be passed either as a str or datetime, not {type(execution_date)}"
             )
 
-    @provide_session
+    #@provide_session
     def poke(self, context: Context, session: Session = NEW_SESSION) -> bool:
         """
         This function is used to poke a list of consumer dag's dataset and verify if
@@ -88,43 +89,44 @@ class DatasetSensor(BaseSensorOperator):
         old_dataset_update = []
         new_dataset_update = []
 
-        for dataset, dataset_list in triggering_dataset_events.items():
+        with create_session() as session: 
+            for dataset, dataset_list in triggering_dataset_events.items():
 
-            print(dataset, dataset_list)
-            print(dataset_list[0].source_dag_run.dag_id)
-            producer_dag_ts=dataset_list[0].source_dag_run.execution_date
-            print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
-            print(f"consumer_dag_start_ts: {consumer_dag_start_ts}")
-            
-            last_update_dataset_ts = session.query(func.max(DatasetEvent.timestamp))\
-                    .filter_by(dataset_id=dataset_list[0].dataset_id)\
-                    .scalar()
+                print(dataset, dataset_list)
+                print(dataset_list[0].source_dag_run.dag_id)
+                producer_dag_ts=dataset_list[0].source_dag_run.execution_date
+                print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
+                print(f"consumer_dag_start_ts: {consumer_dag_start_ts}")
+                
+                last_update_dataset_ts = session.query(func.max(DatasetEvent.timestamp))\
+                        .filter_by(dataset_id=dataset_list[0].dataset_id)\
+                        .scalar()
 
-            print(f"last_update_dataset_ts: {last_update_dataset_ts}")
+                print(f"last_update_dataset_ts: {last_update_dataset_ts}")
 
 
-            # catch old dataset update:
-            if not (producer_dag_ts <= last_update_dataset_ts <= consumer_dag_start_ts):
-                # this case can only arise when consumer dag has started, when queue some datasets are in queue
-                # and are refreshed after that
-                # which means there were some old dataset which triggered this consumer dag
-                # we can wait until this condiditon becomes true for old dataset as well!
-                new_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
-                if dataset_list[0].source_dag_run.dag_id in old_dataset_update:
-                    print('Old Dataset has been refreshed. Hence removing...')
-                    old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
-                print("We found a stale dataset!")
+                # catch old dataset update:
+                if not (producer_dag_ts <= last_update_dataset_ts <= consumer_dag_start_ts):
+                    # this case can only arise when consumer dag has started, when queue some datasets are in queue
+                    # and are refreshed after that
+                    # which means there were some old dataset which triggered this consumer dag
+                    # we can wait until this condiditon becomes true for old dataset as well!
+                    new_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
+                    if dataset_list[0].source_dag_run.dag_id in old_dataset_update:
+                        print('Old Dataset has been refreshed. Hence removing...')
+                        old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
+                    print("We found a stale dataset!")
 
-                #clear up the queue as well!
-                print(f"Clearing up the Queue with dataset id : {dataset_list[0].dataset_id} ...")
-                delete_sql=f"delete from public.dataset_dag_run_queue where dataset_id = '{dataset_list[0].dataset_id}'"
-                res_del = db_hook.get_first(delete_sql)
-                print(f"deleted rec cnt: {res_del}")
+                    #clear up the queue as well!
+                    print(f"Clearing up the Queue with dataset id : {dataset_list[0].dataset_id} ...")
+                    delete_sql=f"delete from public.dataset_dag_run_queue where dataset_id = '{dataset_list[0].dataset_id}'"
+                    res_del = db_hook.get_first(delete_sql)
+                    print(f"deleted rec cnt: {res_del}")
 
-            else:
+                else:
 
-                old_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
-                print("Dataset is upto date!")
+                    old_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
+                    print("Dataset is upto date!")
         
 
         if len(new_dataset_update) > 0 :
