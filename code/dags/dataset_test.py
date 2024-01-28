@@ -84,9 +84,12 @@ class DatasetSensor(BaseSensorOperator):
         consumer_dag_start =consumer_dag_start_ts.astimezone(cest).strftime("%Y-%m-%d %H:%M:%S")
 
         
+        total_datasets = len(triggering_dataset_events)
+        old_dataset_update = []
+        new_dataset_update = []
 
-            
         for dataset, dataset_list in triggering_dataset_events.items():
+
             print(dataset, dataset_list)
             print(dataset_list[0].source_dag_run.dag_id)
             producer_dag_ts=dataset_list[0].source_dag_run.execution_date
@@ -99,10 +102,51 @@ class DatasetSensor(BaseSensorOperator):
 
             print(f"last_update_dataset_ts: {last_update_dataset_ts}")
 
-            if producer_dag_ts <= last_update_dataset_ts <= consumer_dag_start_ts:
+            if not (producer_dag_ts <= last_update_dataset_ts <= consumer_dag_start_ts):
+                # this case can only arise when consumer dag has started, and some  datasets are refreshed after that
+                # which means there were some old dataset which triggered this consumer dag
+                # we can wait until this condiditon becomes true for old dataset as well!
+                new_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
+                old_dataset_update.remove(dataset_list[0].source_dag_run.dag_id)
                 print("yes!")
             else:
+
+                old_dataset_update.append(dataset_list[0].source_dag_run.dag_id)
                 print("no! :()")
+        
+
+        if len(new_dataset_update) > 0 :
+            print(f'we have old datasets. Please check : {old_dataset_update}')
+            print('waiting until all new datasets are refreshed!')
+            print('checking if new data last update dataset > ')
+            required = total_datasets - len(new_dataset_update)
+            print(f'checking if all {required} old datasets are refreshed...')
+
+        if len(old_dataset_update) == 0 or len(old_dataset_update) == total_datasets:
+            self.log.info(
+                "Found all dataset produced on execution_date %s",
+                self.execution_date,
+            )
+            
+            context['ti'].xcom_push(key='dataset_uri', value=list(triggering_dataset_events.keys()))
+            
+            # Invalidate the queue!
+            # print("Clearing up the Queue...")
+            # delete_sql=f"delete from public.dataset_dag_run_queue where target_dag_id = '{dag_id}'"
+            # res_del = db_hook.get_first(delete_sql)
+            # print(f"deleted rec cnt: {res_del}")
+            
+            return True
+
+        self.log.info(
+            "Not all datasets available for execution date %s. Poking again...",
+            consumer_dag_start_date,
+        )
+        return False
+
+
+
+
 
                 
         ## information:
@@ -113,32 +157,32 @@ class DatasetSensor(BaseSensorOperator):
         # 1. Once the consumer dag start, it clears up the Queue!
         # 2. But we can still get dataset created_at value i suppose
         
-        counter = 0
-        print(f'check that no dagruns were queued...{session.query(DatasetDagRunQueue).count()}')
-        #assert session.query(DatasetDagRunQueue).count() == 0
+        # counter = 0
+        # print(f'check that no dagruns were queued...{session.query(DatasetDagRunQueue).count()}')
+        # #assert session.query(DatasetDagRunQueue).count() == 0
 
-        print(f' count of Queue: {session.query(DatasetDagRunQueue).filter_by(target_dag_id=dag_id).count()}')
-        if session.query(DatasetDagRunQueue).filter_by(target_dag_id=dag_id).count() > 0:
-            for uri, dataset in triggering_dataset_events.items():
-                print(uri,dataset)
+        # print(f' count of Queue: {session.query(DatasetDagRunQueue).filter_by(target_dag_id=dag_id).count()}')
+        # if session.query(DatasetDagRunQueue).filter_by(target_dag_id=dag_id).count() > 0:
+        #     for uri, dataset in triggering_dataset_events.items():
+        #         print(uri,dataset)
                 
-                ddrq_created_at = (
-                                session.query(DatasetDagRunQueue.created_at).filter_by(dataset_id=dataset[0].dataset_id).all()
-                        )
+        #         ddrq_created_at = (
+        #                         session.query(DatasetDagRunQueue.created_at).filter_by(dataset_id=dataset[0].dataset_id).all()
+        #                 )
 
-                print(f"{uri} created at : {ddrq_created_at} , {type(ddrq_created_at)}")
+        #         print(f"{uri} created at : {ddrq_created_at} , {type(ddrq_created_at)}")
                 
                 
                 
-                ddrq = (
-                                session.query(DatasetDagRunQueue).filter_by(dataset_id=dataset[0].dataset_id).all()
-                        )
+        #         ddrq = (
+        #                         session.query(DatasetDagRunQueue).filter_by(dataset_id=dataset[0].dataset_id).all()
+        #                 )
                 
                 
-                print(f"{uri} info : {ddrq} , {type(ddrq)}")
+        #         print(f"{uri} info : {ddrq} , {type(ddrq)}")
                 
-                if  ddrq_created_at > consumer_dag_start:
-                    counter+=1
+        #         if  ddrq_created_at > consumer_dag_start:
+        #             counter+=1
                 
             
 
@@ -208,27 +252,6 @@ class DatasetSensor(BaseSensorOperator):
         # else:
         #     old_dataset = []
 
-        if counter == 0:
-            self.log.info(
-                "Found all dataset produced on execution_date %s",
-                self.execution_date,
-            )
-            
-            context['ti'].xcom_push(key='dataset_uri', value=list(triggering_dataset_events.keys()))
-            
-            # Invalidate the queue!
-            # print("Clearing up the Queue...")
-            # delete_sql=f"delete from public.dataset_dag_run_queue where target_dag_id = '{dag_id}'"
-            # res_del = db_hook.get_first(delete_sql)
-            # print(f"deleted rec cnt: {res_del}")
-            
-            return True
-
-        self.log.info(
-            "Not all datasets available for execution date %s. Poking again...",
-            consumer_dag_start_date,
-        )
-        return False
 
 
 
