@@ -143,13 +143,11 @@ class DatasetSensor(BaseSensorOperator):
             )
             
             context['ti'].xcom_push(key='dataset_uri', value=list(triggering_dataset_events.keys()))
-            #clear up the queue as well!
-            # print(f"Clearing up the Queue with dataset id : {dataset_list[0].dataset_id} ...")
-            # delete_sql=f"delete from public.dataset_dag_run_queue where dataset_id = '{dataset_list[0].dataset_id}'"
-            # res_del = db_hook.get_first(delete_sql)
-            # print(f"deleted rec cnt: {res_del}")
 
-
+            for dataset, dataset_list in triggering_dataset_events.items():
+                session.query(DatasetDagRunQueue).filter(
+                                    DatasetDagRunQueue.dataset_id == dataset_list[0].dataset_id
+                                ).delete()
             
             return True
 
@@ -301,10 +299,10 @@ for i in range(1,5):
                 task_id=f"consumer_level1_task_{i}", 
                 bash_command="exit $((RANDOM % 2))")
             
-        # elif i ==8:
-        #     task = BashOperator(outlets=[outlet], 
-        #             task_id=f"consumer_level1_task_{i}", 
-        #             bash_command="sleep 15")
+        elif i ==3:
+            task = BashOperator(outlets=[outlet], 
+                    task_id=f"consumer_level1_task_{i}", 
+                    bash_command="sleep 120")
         
             
         else:
