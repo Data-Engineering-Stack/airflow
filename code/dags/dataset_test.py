@@ -82,20 +82,27 @@ class DatasetSensor(BaseSensorOperator):
         consumer_dag_start_date = parser.parse(self.execution_date).astimezone(cest).strftime("%Y-%m-%d %H:%M:%S %Z")
         print(f"consumer_dag_start_date: {consumer_dag_start_date}")
         consumer_dag_start =consumer_dag_start_ts.astimezone(cest).strftime("%Y-%m-%d %H:%M:%S")
-       
+
         
 
             
         for dataset, dataset_list in triggering_dataset_events.items():
             print(dataset, dataset_list)
             print(dataset_list[0].source_dag_run.dag_id)
+            producer_dag_ts=dataset_list[0].source_dag_run.execution_date
             print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
-            print(f"consumer_dag_start_ts: {consumer_dag_start}")
-            x = session.query(func.max(DatasetEvent.timestamp))\
-                      .filter_by(dataset_id=dataset_list[0].dataset_id)\
-                      .scalar()
+            print(f"consumer_dag_start_ts: {consumer_dag_start_ts}")
+            
+            last_update_dataset_ts = session.query(func.max(DatasetEvent.timestamp))\
+                    .filter_by(dataset_id=dataset_list[0].dataset_id)\
+                    .scalar()
 
-            print(f"last update ts of dataset: {x}")
+            print(f"last_update_dataset_ts: {last_update_dataset_ts}")
+
+            if producer_dag_ts <= last_update_dataset_ts <= consumer_dag_start_ts:
+                print("yes!")
+            else:
+                print("no! :()")
 
                 
         ## information:
