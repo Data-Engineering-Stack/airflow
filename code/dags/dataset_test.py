@@ -85,13 +85,11 @@ class DatasetSensor(BaseSensorOperator):
 
             
         for dataset, dataset_list in triggering_dataset_events.items():
-                print(dataset, dataset_list)
-                print(dataset_list[0].source_dag_run.dag_id)
-                print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
-                print(f"consumer_dag_start_ts: {consumer_dag_start}")
-                print(f"last update ts of dataset: 
-                      {session.query(DatasetEvent.timestamp).filter_by(dataset_id=dataset[0].dataset_id).all()}"
-                )
+            print(dataset, dataset_list)
+            print(dataset_list[0].source_dag_run.dag_id)
+            print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
+            print(f"consumer_dag_start_ts: {consumer_dag_start}")
+            print(f"last update ts of dataset: {session.query(DatasetEvent.timestamp).filter_by(dataset_id=dataset[0].dataset_id).all()}")
 
 
                 
