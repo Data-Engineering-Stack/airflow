@@ -96,6 +96,7 @@ class DatasetSensor(BaseSensorOperator):
                 print(dataset_list[0].source_dag_run.dag_id)
                 producer_dag_ts=dataset_list[0].source_dag_run.execution_date
                 print(f"producer_dag_ts: {dataset_list[0].source_dag_run.execution_date}")
+                print(f"producer_dag_state: {dataset_list[0].source_dag_run.state}")
                 print(f"consumer_dag_start_ts: {consumer_dag_start_ts}")
                 
                 last_update_dataset_ts = session.query(func.max(DatasetEvent.timestamp))\
@@ -128,7 +129,13 @@ class DatasetSensor(BaseSensorOperator):
                     print("Dataset is upto date!")
         
 
-        if len(new_dataset_update) > 0 :
+        required_new = total_datasets - len(old_dataset_update)
+        # 
+        if len(new_dataset_update) == required_new:
+            return True
+        
+        if new_dataset_update:
+            
             required = total_datasets - len(new_dataset_update)
             self.log.info(
             "we have old datasets: %s. Poking untill all %s are refreshed...",
@@ -136,7 +143,7 @@ class DatasetSensor(BaseSensorOperator):
             required
         )
 
-        if len(old_dataset_update) == 0 or len(old_dataset_update) == total_datasets:
+        if not old_dataset_update or len(old_dataset_update) == total_datasets:
             self.log.info(
                 "Found all dataset produced on execution_date %s",
                 self.execution_date,
