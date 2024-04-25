@@ -43,7 +43,7 @@ with DAG(
     catchup=False,
     start_date=pendulum.datetime(2024, 1, 1, tz="UTC"),
     schedule=DatasetOrTimeSchedule(
-        timetable=CronTriggerTimetable("0 2 * * *", timezone="UTC"),
+        timetable=CronTriggerTimetable("40 20 * * *", timezone="UTC"),
         datasets=[Producer_dataset_1,Producer_dataset_2 ],
     ),
     tags=["debug","dataset","consumer","level1"],
