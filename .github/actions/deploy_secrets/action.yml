@@ -80,6 +80,8 @@ runs:
       --dry-run=client `
       --from-literal=GIT_SYNC_USERNAME=${{ inputs.GIT_SYNC_USERNAME }} `
       --from-literal=GIT_SYNC_PASSWORD=${{ inputs.GIT_SYNC_PASSWORD }} `
+      --from-literal=GITSYNC_USERNAME=${{ inputs.GIT_SYNC_USERNAME }} `
+      --from-literal=GITSYNC_PASSWORD=${{ inputs.GIT_SYNC_PASSWORD }} `
       -o yaml | kubectl apply -f -
 
 
