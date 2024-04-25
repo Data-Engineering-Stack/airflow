@@ -74,15 +74,15 @@ class DatasetSensor(BaseSensorOperator):
             bool: True if the dataset is found, False otherwise.
         """
         
-        db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
-        dag_id = context['dag'].dag_id
+        # db_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+        # dag_id = context['dag'].dag_id
         consumer_dag_start_ts = context["dag_run"].start_date
         cest = pytz.timezone("Europe/Berlin")
         triggering_dataset_events = context["triggering_dataset_events"]
 
         consumer_dag_start_date = parser.parse(self.execution_date).astimezone(cest).strftime("%Y-%m-%d %H:%M:%S %Z")
         print(f"consumer_dag_start_date: {consumer_dag_start_date}")
-        consumer_dag_start =consumer_dag_start_ts.astimezone(cest).strftime("%Y-%m-%d %H:%M:%S")
+        # consumer_dag_start =consumer_dag_start_ts.astimezone(cest).strftime("%Y-%m-%d %H:%M:%S")
 
         
         total_datasets = len(triggering_dataset_events)
