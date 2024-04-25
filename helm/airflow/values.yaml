@@ -2213,8 +2213,8 @@ config:
     smtp_password: gaehlweadtdjkhnp
     smtp_port: 587
     smtp_mail_from: airflow@amin.com
-  api:
-    auth_backends: 'airflow.api.auth.backend.basic_auth'
+  # api:
+  #   auth_backends: 'airflow.api.auth.backend.basic_auth'
 # yamllint enable rule:line-length
 
 # Whether Airflow can launch workers and/or pods in multiple namespaces
