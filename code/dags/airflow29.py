@@ -40,6 +40,7 @@ with DAG(
 
 with DAG(
     dag_id="Consumer_1",
+     dag_display_name="📣 Best DAG ever 🎉",
     catchup=False,
     start_date=pendulum.datetime(2024, 1, 1, tz="UTC"),
     schedule=DatasetOrTimeSchedule(
