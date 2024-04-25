@@ -1,5 +1,5 @@
 defaultAirflowTag: "1.8"
-airflowVersion: "2.8.1"
+airflowVersion: "2.9.0"
 executor: "KubernetesExecutor"
 secret: 
 - envName: "AIRFLOW_APP_CLIENT_ID"
