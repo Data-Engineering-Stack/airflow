@@ -283,10 +283,10 @@ secret:
 - envName: "AIRFLOW_APP_CLIENT_SECRET"
   secretName: "airflow-app-webui-oauth-secret"
   secretKey: "AIRFLOW_APP_CLIENT_SECRET"
-- envName: "GIT_SYNC_USERNAME"
+- envName: "GITSYNC_USERNAME"
   secretName: "github-oauth-secret"
   secretKey: "GIT_SYNC_USERNAME"
-- envName: "GIT_SYNC_PASSWORD"
+- envName: "GITSYNC_PASSWORD"
   secretName: "github-oauth-secret"
   secretKey: "GIT_SYNC_PASSWORD"  
 # Enables selected built-in secrets that are set via environment variables by default.
