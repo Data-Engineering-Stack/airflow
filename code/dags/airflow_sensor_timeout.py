@@ -8,20 +8,12 @@ from datetime import timedelta
 def minutes_till_midnight():
     from datetime import datetime
     import pytz
-    
-    # Set the timezone to Europe/Berlin
+
     berlin_tz = pytz.timezone('Europe/Berlin')
-    
-    # Hardcode 5 PM CET time
-    cet_5pm = berlin_tz.localize(datetime.now().replace(hour=21, minute=0, second=0, microsecond=0))
-
-    # Calculate the difference in seconds between current time and 5 PM CET
-    time_until_5_pm_cet = (cet_5pm - datetime.now(berlin_tz)).total_seconds()
-
-    # Convert seconds to minutes and round off to the nearest minute
-    minutes_until_5_pm_cet = round(time_until_5_pm_cet / 60)
-
-    return minutes_until_5_pm_cet
+    now = datetime.now(berlin_tz)
+    end_of_day = berlin_tz.localize(datetime(now.year, now.month, now.day, 23, 59, 59))
+    remaining_time = end_of_day - now
+    return remaining_time.seconds // 60
 
 
 with DAG(
