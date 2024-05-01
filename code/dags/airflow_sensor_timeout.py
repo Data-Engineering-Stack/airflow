@@ -18,6 +18,6 @@ with DAG(
     
     BashOperator(
         task_id="producer_trigger_dataset",
-        bash_command="sleep 5",
+        bash_command="sleep 3000",
     )
 
